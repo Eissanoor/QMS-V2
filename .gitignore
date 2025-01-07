@@ -1,0 +1,14 @@
+/.vscode
+
+# back end
+/backend/node_modules
+/backend/.env
+/backend/images/
+/backend/node_modules/.prisma
+/backend/prisma/migrations/
+# Ignore WebJS Auth directory
+backend/.wwebjs_auth/
+
+
+# front end
+/frontend/node_modules
