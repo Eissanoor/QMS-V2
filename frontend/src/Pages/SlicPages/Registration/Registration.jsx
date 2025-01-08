@@ -90,6 +90,11 @@ const Registration = () => {
                       boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                       backgroundColor: "white",
                       height: "auto",
+                      marginLeft: "30px",
+                    }}
+                    flagStyle={{
+                      width: "80px", // Increased flag size
+                      height: "80px", // Increased flag size
                     }}
                   />
                 </div>
