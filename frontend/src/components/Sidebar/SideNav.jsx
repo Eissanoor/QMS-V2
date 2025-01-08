@@ -1,6 +1,5 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import sliclogo from "../../Images/sliclogo.png";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Registration from "../../Images/Registration.png";
 import CentralWaitingArea from "../../Images/Central Waiting Area.png";
@@ -12,16 +11,25 @@ import LocationWaitingArea from "../../Images/Location Waiting Area.png";
 function SideNav({ children }) {
   const { t, i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("/patient-information"); // Default active tab
+  const [activeTab, setActiveTab] = useState(""); // Track active tab
+  const location = useLocation(); // Get current route
 
-  const handleTabClick = (path) => {
-    setActiveTab(path); // Update active tab
-  };
+  // Update activeTab based on the current route
+  useEffect(() => {
+    setActiveTab(location.pathname);
+  }, [location.pathname]);
 
+  // Determine the CSS class for tabs
   const getTabClass = (path) => {
     return `flex items-center py-1 rounded ${
-      activeTab === path ? "bg-gray-300 text-black" : "hover:bg-gray-100 text-gray-700"
-    } ${i18n.language === "ar" ? "pr-3 pl-4 justify-end" : "pl-3 pr-4 justify-start"}`;
+      activeTab === path
+        ? "bg-gray-300 text-black"
+        : "hover:bg-gray-100 text-gray-700"
+    } ${
+      i18n.language === "ar"
+        ? "pr-3 pl-4 justify-end"
+        : "pl-3 pr-4 justify-start"
+    }`;
   };
 
   return (
@@ -42,99 +50,146 @@ function SideNav({ children }) {
               </div>
               <div className="pb-6 mt-4 overflow-x-hidden overflow-y-auto">
                 <ul className="mb-8 text-sm">
+                  {/* Patient Information */}
                   <li>
                     <Link
                       to="/patient-information"
                       className={getTabClass("/patient-information")}
-                      onClick={() => handleTabClick("/patient-information")}
                     >
                       <div
                         className={`flex justify-center items-center gap-3 ${
-                          i18n.language === "ar" ? "flex-row-reverse" : "flex-row"
+                          i18n.language === "ar"
+                            ? "flex-row-reverse"
+                            : "flex-row"
                         }`}
                       >
-                        <img src={Registration} alt="logo" className="w-8 h-8 object-cover" />
-                        <span className="text-black font-medium text-lg">{t("Patient Information")}</span>
+                        <img
+                          src={Registration}
+                          alt="logo"
+                          className="w-8 h-8 object-cover"
+                        />
+                        <span className="text-black font-medium text-lg">
+                          {t("Patient Information")}
+                        </span>
                       </div>
                     </Link>
                   </li>
+
+                  {/* Central/Waiting Area */}
                   <li className="mt-3">
                     <Link
                       to="/waiting-area"
                       className={getTabClass("/waiting-area")}
-                      onClick={() => handleTabClick("/waiting-area")}
                     >
                       <div
                         className={`flex justify-center items-center gap-3 ${
-                          i18n.language === "ar" ? "flex-row-reverse" : "flex-row"
+                          i18n.language === "ar"
+                            ? "flex-row-reverse"
+                            : "flex-row"
                         }`}
                       >
-                        <img src={CentralWaitingArea} alt="logo" className="w-8 h-8 object-cover" />
-                        <span className="text-black font-medium text-lg">{t("Central/Waiting Area")}</span>
+                        <img
+                          src={CentralWaitingArea}
+                          alt="logo"
+                          className="w-8 h-8 object-cover"
+                        />
+                        <span className="text-black font-medium text-lg">
+                          {t("Central/Waiting Area")}
+                        </span>
                       </div>
                     </Link>
                   </li>
+
+                  {/* Location Assignment */}
                   <li className="mt-3">
                     <Link
                       to="/location-assignment"
                       className={getTabClass("/location-assignment")}
-                      onClick={() => handleTabClick("/location-assignment")}
                     >
                       <div
                         className={`flex justify-center items-center gap-3 ${
-                          i18n.language === "ar" ? "flex-row-reverse" : "flex-row"
+                          i18n.language === "ar"
+                            ? "flex-row-reverse"
+                            : "flex-row"
                         }`}
                       >
-                        <img src={LocationAssignment} alt="logo" className="w-8 h-8 object-cover" />
-                        <span className="text-black font-medium text-lg">{t("Location Assignment")}</span>
+                        <img
+                          src={LocationAssignment}
+                          alt="logo"
+                          className="w-8 h-8 object-cover"
+                        />
+                        <span className="text-black font-medium text-lg">
+                          {t("Location Assignment")}
+                        </span>
                       </div>
                     </Link>
                   </li>
+
+                  {/* Location Waiting Area */}
                   <li className="mt-3">
                     <Link
                       to="/location-waiting-area"
                       className={getTabClass("/location-waiting-area")}
-                      onClick={() => handleTabClick("/location-waiting-area")}
                     >
                       <div
                         className={`flex justify-center items-center gap-3 ${
-                          i18n.language === "ar" ? "flex-row-reverse" : "flex-row"
+                          i18n.language === "ar"
+                            ? "flex-row-reverse"
+                            : "flex-row"
                         }`}
                       >
-                        <img src={LocationWaitingArea} alt="logo" className="w-8 h-8 object-cover" />
-                        <span className="text-black font-medium text-lg">{t("Location Waiting Area")}</span>
+                        <img
+                          src={LocationWaitingArea}
+                          alt="logo"
+                          className="w-8 h-8 object-cover"
+                        />
+                        <span className="text-black font-medium text-lg">
+                          {t("Location Waiting Area")}
+                        </span>
                       </div>
                     </Link>
                   </li>
+
+                  {/* Location */}
                   <li className="mt-3">
-                    <Link
-                      to="/location"
-                      className={getTabClass("/location")}
-                      onClick={() => handleTabClick("/location")}
-                    >
+                    <Link to="/location" className={getTabClass("/location")}>
                       <div
                         className={`flex justify-center items-center gap-3 ${
-                          i18n.language === "ar" ? "flex-row-reverse" : "flex-row"
+                          i18n.language === "ar"
+                            ? "flex-row-reverse"
+                            : "flex-row"
                         }`}
                       >
-                        <img src={Location} alt="logo" className="w-8 h-8 object-cover" />
-                        <span className="text-black font-medium text-lg">{t("Location")}</span>
+                        <img
+                          src={Location}
+                          alt="logo"
+                          className="w-8 h-8 object-cover"
+                        />
+                        <span className="text-black font-medium text-lg">
+                          {t("Location")}
+                        </span>
                       </div>
                     </Link>
                   </li>
+
+                  {/* KPI */}
                   <li className="mt-3">
-                    <Link
-                      to="/kpi"
-                      className={getTabClass("/kpi")}
-                      onClick={() => handleTabClick("/kpi")}
-                    >
+                    <Link to="/kpi" className={getTabClass("/kpi")}>
                       <div
                         className={`flex justify-center items-center gap-3 ${
-                          i18n.language === "ar" ? "flex-row-reverse" : "flex-row"
+                          i18n.language === "ar"
+                            ? "flex-row-reverse"
+                            : "flex-row"
                         }`}
                       >
-                        <img src={KPI} alt="logo" className="w-8 h-8 object-cover" />
-                        <span className="text-black font-medium text-lg">{t("KPI")}</span>
+                        <img
+                          src={KPI}
+                          alt="logo"
+                          className="w-8 h-8 object-cover"
+                        />
+                        <span className="text-black font-medium text-lg">
+                          {t("KPI")}
+                        </span>
                       </div>
                     </Link>
                   </li>
@@ -143,9 +198,13 @@ function SideNav({ children }) {
             </nav>
           </div>
         </div>
+
+        {/* Main content */}
         <div
           className={`mx-auto transition-all content-wrapper ${
-            isOpen ? `${i18n.language === "ar" ? "lg:mr-[280px]" : "lg:ml-[280px]"}` : "lg:ml-[280px]"
+            isOpen
+              ? `${i18n.language === "ar" ? "lg:mr-[280px]" : "lg:ml-[280px]"}`
+              : "lg:ml-[280px]"
           }`}
           id="dash"
         >
@@ -159,7 +218,6 @@ function SideNav({ children }) {
             </nav>
           </section>
 
-          {/* main content */}
           {children}
         </div>
       </div>

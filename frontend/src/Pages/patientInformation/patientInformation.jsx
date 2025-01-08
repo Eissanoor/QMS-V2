@@ -73,30 +73,32 @@ const PatientInformation = () => {
                   >
                     {t("Mobile Number")}
                   </label>
-                  <PhoneInput
-                    international
-                    country={"sa"}
-                    defaultCountry={"sa"}
-                    inputProps={{
-                      id: "mobileNumber",
-                      placeholder: t("Enter mobile number"),
-                    }}
-                    inputStyle={{
-                      width: "100%",
-                      border: "1px solid #05D899",
-                      borderRadius: "8px",
-                      padding: "12px",
-                      fontSize: "16px",
-                      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                      backgroundColor: "white",
-                      height: "auto",
-                      marginLeft: "30px",
-                    }}
-                    flagStyle={{
-                      width: "80px", // Increased flag size
-                      height: "80px", // Increased flag size
-                    }}
-                  />
+                  <div  className="mt-2">
+                    <PhoneInput
+                      international
+                      country={"sa"}
+                      defaultCountry={"sa"}
+                      inputProps={{
+                        id: "mobileNumber",
+                        placeholder: t("Enter mobile number"),
+                      }}
+                      inputStyle={{
+                        width: "100%",
+                        border: "1px solid #05D899",
+                        borderRadius: "8px",
+                        paddingTop: "10px",
+                        paddingBottom: "10px",
+                        fontSize: "16px",
+                        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                        backgroundColor: "white",
+                        height: "auto",
+                      }}
+                      flagStyle={{
+                        width: "80px", // Increased flag size
+                        height: "80px", // Increased flag size
+                      }}
+                    />
+                  </div>
                 </div>
                 <div>
                   <label
@@ -143,7 +145,9 @@ const PatientInformation = () => {
                     className="w-full mt-2 p-3 border border-green-400 rounded-lg focus:ring-2 focus:ring-green-300"
                   >
                     <option>{t("Select Status")}</option>
-                    <option value="NON - Critical">{t("NON - Critical")}</option>
+                    <option value="NON - Critical">
+                      {t("NON - Critical")}
+                    </option>
                   </select>
                 </div>
                 <div className="col-span-2">

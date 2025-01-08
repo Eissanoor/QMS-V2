@@ -42,8 +42,8 @@ module.exports = {
       'border-color': '#8E9CAB',
       'digital-color': '#A9A9A9',
       'serachbtn':"#350F9F",
-      'applybtn':'#F35C08'
-      // 'capture': '#E02266',  
+      'applybtn':'#F35C08',
+      'Allergies': '#BC0808',  
       // 'share': '#1DAE11',  
       // 'orange': '#F98E1A',
       // 'cpanel': '#F28C28',

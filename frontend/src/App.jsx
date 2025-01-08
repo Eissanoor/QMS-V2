@@ -8,6 +8,8 @@ import Login from "./Pages/adminLogin/login.jsx";
 import WaitingArea from "./Pages/waintingArea/waitingArea.jsx";
 import Dashboard from "./Pages/dashboard/dashoboard.jsx";
 import LocationAssignment from "./Pages/locationAssignment/locationAssignment.jsx";
+import LocationWaitingArea from "./Pages/LocationWaitingArea/LocationWaitingArea.jsx";
+import Locationpage from "./Pages/Locationpage/Locationpage.jsx";
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -24,6 +26,8 @@ const App = () => {
                   <Route path="/waiting-area" element={<WaitingArea />} />  
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/location-assignment" element={<LocationAssignment />} />
+                  <Route path="/location-waiting-area" element={<LocationWaitingArea />} />
+                  <Route path="/location" element={<Locationpage />} />
                 </Routes>
               </QueryClientProvider>
             </BrowserRouter>
