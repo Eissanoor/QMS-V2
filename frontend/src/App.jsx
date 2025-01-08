@@ -9,6 +9,7 @@ import SlicFirstScreen from "./Pages/MemberLogin/SlicUserLogin/SlicFirstScreen.j
 import RolesProvider from "./Contexts/FetchRolesContext.jsx";
 import PosHistory from "./Pages/SlicPages/PosHistory/PosHistory.jsx";
 import Registration from "./Pages/SlicPages/Registration/Registration.jsx";
+import Login from "./Pages/adminLogin/login.jsx";
 
 const queryClient = new QueryClient();
 
@@ -21,8 +22,8 @@ const App = () => {
             <BrowserRouter>
               <QueryClientProvider client={queryClient}>
                 <Routes>
-                  <Route path="/" element={<Registration />} />
-                  <Route path="/user-login" element={<SlicUserLogin />} />
+                  <Route path="/dashboard" element={<Registration />} />
+                  <Route path="/" element={<Login />} />
                   <Route path="slic-signup" element={<SlicUserSignUp />} />
 
                   <Route path="gtin-management" element={<GtinManagement />} />
