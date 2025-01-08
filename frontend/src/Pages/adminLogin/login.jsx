@@ -6,7 +6,7 @@ const Login = () => {
     const navigate = useNavigate();
 
     const handleSubmit = () => {
-        navigate('/dashboard');
+        navigate('/patient-information');
     };
 
     return (

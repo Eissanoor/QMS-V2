@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 
-const Registration = () => {
+const PatientInformation = () => {
   const { t, i18n } = useTranslation();
   const [PatientName, setPatientName] = useState("");
   const [IDNumber, setIDNumber] = useState("");
@@ -177,4 +177,4 @@ const Registration = () => {
   );
 };
 
-export default Registration;
+export default PatientInformation;

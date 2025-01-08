@@ -8,7 +8,7 @@ import SlicUserSignUp from "./Pages/MemberLogin/SlicUserSignUp/SlicUserSignUp.js
 import SlicFirstScreen from "./Pages/MemberLogin/SlicUserLogin/SlicFirstScreen.jsx";
 import RolesProvider from "./Contexts/FetchRolesContext.jsx";
 import PosHistory from "./Pages/SlicPages/PosHistory/PosHistory.jsx";
-import Registration from "./Pages/SlicPages/Registration/Registration.jsx";
+import PatientInformation from "./Pages/SlicPages/Registration/Registration.jsx";
 import Login from "./Pages/adminLogin/login.jsx";
 
 const queryClient = new QueryClient();
@@ -22,7 +22,7 @@ const App = () => {
             <BrowserRouter>
               <QueryClientProvider client={queryClient}>
                 <Routes>
-                  <Route path="/dashboard" element={<Registration />} />
+                  <Route path="/patient-information" element={<PatientInformation />} />
                   <Route path="/" element={<Login />} />
                   <Route path="slic-signup" element={<SlicUserSignUp />} />
 
