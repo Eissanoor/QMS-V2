@@ -41,7 +41,7 @@ function SideNav({ children }) {
                   <li>
                     <li>
                       <Link
-                        to="/"
+                        to="/patient-information"
                         className={`flex items-center py-1 rounded hover:bg-gray-100 ${i18n.language === "ar"
                           ? "pr-3 pl-4 justify-end"
                           : "pl-3 pr-4 justify-start"
@@ -59,14 +59,14 @@ function SideNav({ children }) {
                             className="w-8 h-8 object-cover"
                           />
                           <span className="text-black font-medium text-lg">
-                            {t("Registration")}
+                            {t("Patient Information")}
                           </span>
                         </div>
                       </Link>
                     </li>
                     <li className="mt-3">
                       <Link
-                        to="/gtin"
+                        to="#"
                         className={`flex items-center py-1  text-gray-700 rounded hover:bg-gray-100 ${i18n.language === "ar"
                           ? "pr-3 pl-4 justify-end"
                           : "pl-3 pr-4 justify-start"
@@ -91,7 +91,7 @@ function SideNav({ children }) {
                     </li>
                     <li className="mt-3">
                       <Link
-                        to="/products"
+                        to="#"
                         className={`flex items-center py-1  text-gray-700 rounded hover:bg-gray-100 ${i18n.language === "ar"
                           ? "pr-3 pl-4 justify-end"
                           : "pl-3 pr-4 justify-start"
@@ -116,7 +116,7 @@ function SideNav({ children }) {
                     </li>
                     <li className="mt-3">
                       <Link
-                        to="/purchase-order"
+                        to="#"
                         className={`flex items-center py-1  text-gray-700 rounded hover:bg-gray-100 ${i18n.language === "ar"
                           ? "pr-3 pl-4 justify-end"
                           : "pl-3 pr-4 justify-start"
@@ -141,7 +141,7 @@ function SideNav({ children }) {
                     </li>
                     <li className="mt-3">
                       <Link
-                        to="/sales-order"
+                        to="#"
                         className={`flex items-center py-1  text-gray-700 rounded hover:bg-gray-100 ${i18n.language === "ar"
                           ? "pr-3 pl-4 justify-end"
                           : "pl-3 pr-4 justify-start"
@@ -167,7 +167,7 @@ function SideNav({ children }) {
 
                     <li className="mt-3">
                       <Link
-                        to="/user-profile"
+                        to="#"
                         className={`flex items-center py-1  text-gray-700 rounded hover:bg-gray-100 ${i18n.language === "ar"
                           ? "pr-3 pl-4 justify-end"
                           : "pl-3 pr-4 justify-start"
