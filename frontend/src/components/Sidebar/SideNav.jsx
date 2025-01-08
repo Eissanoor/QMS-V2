@@ -23,7 +23,7 @@ function SideNav({ children }) {
   const getTabClass = (path) => {
     return `flex items-center py-1 rounded ${
       activeTab === path
-        ? "bg-gray-300 text-black"
+        ? "bg-[#13BA8885] text-black"
         : "hover:bg-gray-100 text-gray-700"
     } ${
       i18n.language === "ar"
