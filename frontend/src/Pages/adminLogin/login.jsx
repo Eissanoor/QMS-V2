@@ -1,9 +1,16 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../../index.css';
 
 const Login = () => {
+    const navigate = useNavigate();
+
+    const handleSubmit = () => {
+        navigate('/dashboard');
+    };
+
     return (
-        <form className="space-y-4 font-[sans-serif] max-w-md mx-auto">
+        <form className="space-y-4 font-[sans-serif] max-w-md mx-auto" onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
             <input 
                 type="email" 
                 placeholder="Enter Email"
@@ -22,7 +29,7 @@ const Login = () => {
             </div>
 
             <button 
-                type="button"
+                type="submit"
                 className="!mt-8 w-full px-4 py-2.5 mx-auto block text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
             >
                 Submit
