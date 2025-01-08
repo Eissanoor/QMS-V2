@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import SideNav from "../../../components/Sidebar/SideNav";
+import SideNav from "../../components/Sidebar/SideNav";
 import { useTranslation } from "react-i18next";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";

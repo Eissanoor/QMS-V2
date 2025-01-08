@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import DataTableProvider from "./Contexts/DataTableContext";
 import { QueryClient, QueryClientProvider } from "react-query";
 import RolesProvider from "./Contexts/FetchRolesContext.jsx";
-import PatientInformation from "./Pages/SlicPages/patientInformation/patientInformation.jsx";
+import PatientInformation from "./Pages/patientInformation/patientInformation.jsx";
 import Login from "./Pages/adminLogin/login.jsx";
 
 const queryClient = new QueryClient();
