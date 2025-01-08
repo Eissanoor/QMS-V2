@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import RolesProvider from "./Contexts/FetchRolesContext.jsx";
 import PatientInformation from "./Pages/patientInformation/patientInformation.jsx";
 import Login from "./Pages/adminLogin/login.jsx";
-
+import WaitingArea from "./Pages/waintingArea/waitingArea.jsx";
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -19,7 +19,7 @@ const App = () => {
                 <Routes>
                   <Route path="/patient-information" element={<PatientInformation />} />
                   <Route path="/" element={<Login />} />
-
+                  <Route path="/waiting-area" element={<WaitingArea />} />  
                 </Routes>
               </QueryClientProvider>
             </BrowserRouter>
