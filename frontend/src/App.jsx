@@ -10,6 +10,7 @@ import Dashboard from "./Pages/dashboard/dashoboard.jsx";
 import LocationAssignment from "./Pages/locationAssignment/locationAssignment.jsx";
 import LocationWaitingArea from "./Pages/LocationWaitingArea/LocationWaitingArea.jsx";
 import Locationpage from "./Pages/Locationpage/Locationpage.jsx";
+import Kpi from "./Pages/KPI/Kpi.jsx";
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -28,6 +29,7 @@ const App = () => {
                   <Route path="/location-assignment" element={<LocationAssignment />} />
                   <Route path="/location-waiting-area" element={<LocationWaitingArea />} />
                   <Route path="/location" element={<Locationpage />} />
+                  <Route path="/kpi" element={<Kpi />} />
                 </Routes>
               </QueryClientProvider>
             </BrowserRouter>
