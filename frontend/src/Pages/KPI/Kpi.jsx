@@ -52,7 +52,7 @@ const Kpi = () => {
                     type="date"
                     className="w-full border border-green-500 rounded px-2 "
                   />
-                  <button className="bg-[#13BA88] text-white hover:text-[#13BA88] ms-3 font-semibold px-4 rounded hover:bg-transparent hover:border-[#13BA88] hover:border">
+                  <button className="bg-[#13BA88] text-white hover:text-[#13BA88] ms-3 font-semibold px-4 rounded hover:bg-transparent hover:border-[#13BA88] border">
                     Refresh
                   </button>
                 </div>
