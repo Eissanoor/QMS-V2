@@ -3,12 +3,98 @@ import SideNav from "../../components/Sidebar/SideNav";
 import { useTranslation } from "react-i18next";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import { baseUrl } from "../../utils/config";
 
 const PatientInformation = () => {
   const { t, i18n } = useTranslation();
   const [PatientName, setPatientName] = useState("");
   const [IDNumber, setIDNumber] = useState("");
   const [Age, setAge] = useState("");
+  const [Nationality, setNationality] = useState("");
+  const [Sex, setSex] = useState("");
+  const [Status, setStatus] = useState("Active");
+  const [MobileNumber, setMobileNumber] = useState("");
+  const [cheifComplaint, setcheifComplaint] = useState("");
+  const [ticket, setTicket] = useState(null);
+  const [showPopup, setShowPopup] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState(null);
+  const [loading, setLoading] = useState(false);
+  console.log("pdfUrl",pdfUrl);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const patientData = {
+      name: PatientName,
+      nationality: Nationality,
+      sex: Sex,
+      idNumber: IDNumber,
+      age: Age,
+      mobileNumber: MobileNumber, // Add mobile number state if needed
+      cheifComplaint: cheifComplaint,
+      status: Status,
+    };
+    console.log("patientData",patientData);
+    try {
+      const response = await fetch(`${baseUrl}/api/v1/patients`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+        body: JSON.stringify(patientData),
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      setTicket(`${baseUrl}/${data.data.ticket}`);
+      setPdfUrl(data.data.ticket);
+      setShowPopup(true);
+    } catch (error) {
+      console.error('Error:', error);
+      // Handle error (e.g., show an error message)
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const closePopup = () => {
+    setShowPopup(false);
+  };
+
+  const Spinner = () => (
+    <div className="spinner-container">
+      <div className="spinner">
+        <style jsx>{`
+          .spinner-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 0, 0, 0.5); /* Optional: dim background */
+            z-index: 1000; /* Ensure it appears above other elements */
+          }
+          .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #05D899;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s ease infinite;
+          }
+          @keyframes spin {
+            to {
+              transform: rotate(360deg);
+            }
+          }
+        `}</style>
+      </div>
+    </div>
+  );
 
   return (
     <div className="bg-gray-100">
@@ -44,10 +130,14 @@ const PatientInformation = () => {
                     {t("Nationality")}
                   </label>
                   <select
+                    value={Nationality}
+                    onChange={(e) => setNationality(e.target.value)}
                     id="nationality"
                     className="w-full mt-2 p-3 border border-green-400 rounded-lg focus:ring-2 focus:ring-green-300"
                   >
                     <option>{t("Select Nationality")}</option>
+                    <option>{t("Saudi Arabia")}</option>
+                    <option>{t("Other")}</option>
                   </select>
                 </div>
                 <div>
@@ -75,6 +165,8 @@ const PatientInformation = () => {
                   </label>
                   <div  className="mt-2">
                     <PhoneInput
+                     
+                      onChange={(e) => setMobileNumber(e)}
                       international
                       country={"sa"}
                       defaultCountry={"sa"}
@@ -97,6 +189,7 @@ const PatientInformation = () => {
                         width: "80px", // Increased flag size
                         height: "80px", // Increased flag size
                       }}
+
                     />
                   </div>
                 </div>
@@ -108,13 +201,15 @@ const PatientInformation = () => {
                     {t("Sex")}
                   </label>
                   <select
+                    value={Sex}
+                    onChange={(e) => setSex(e.target.value)}
                     id="sex"
                     className="w-full mt-2 p-3 border border-green-400 rounded-lg focus:ring-2 focus:ring-green-300"
                   >
-                    <option>{t("Select Sex")}</option>
-                    <option value="Male">{t("Male")}</option>
-                    <option value="Female">{t("Female")}</option>
-                    <option value="Other">{t("Other")}</option>
+                    <option value="">{t("Select Sex")}</option>
+                    <option value="M">{t("Male")}</option>
+                    <option value="F">{t("Female")}</option>
+                    <option value="O">{t("Other")}</option>
                   </select>
                 </div>
                 <div>
@@ -125,7 +220,7 @@ const PatientInformation = () => {
                     {t("Age")}
                   </label>
                   <input
-                    type="text"
+                    type="number"
                     id="age"
                     value={Age}
                     onChange={(e) => setAge(e.target.value)}
@@ -152,14 +247,16 @@ const PatientInformation = () => {
                 </div>
                 <div className="col-span-2">
                   <label
-                    htmlFor="chiefComplaint"
+                    htmlFor="cheifComplaint"
                     className="text-lg font-medium text-gray-700"
                   >
                     {t("Chief Complaint")}
                   </label>
                   <textarea
-                    id="chiefComplaint"
+                    id="cheifComplaint"
                     rows="4"
+                    value={cheifComplaint}
+                    onChange={(e) => setcheifComplaint(e.target.value)}
                     placeholder={t("Describe the complaint")}
                     className="w-full mt-2 p-3 border border-green-400 rounded-lg focus:ring-2 focus:ring-green-300"
                   ></textarea>
@@ -169,7 +266,7 @@ const PatientInformation = () => {
                 <button className="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600">
                   {t("Close")}
                 </button>
-                <button className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600">
+                <button onClick={handleSubmit} type="submit" className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600">
                   {t("Issue Ticket")}
                 </button>
               </div>
@@ -177,6 +274,27 @@ const PatientInformation = () => {
           </div>
         </div>
       </SideNav>
+      {showPopup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h2 className="text-lg font-bold">Ticket Information</h2>
+            {pdfUrl ? (
+              <iframe
+                src={`${baseUrl}/${pdfUrl}`}
+                width="100%"
+                height="400px"
+                title="PDF Document"
+              />
+            ) : (
+              <p>No PDF available</p>
+            )}
+            <button onClick={closePopup} className="mt-4 bg-red-500 text-white px-4 py-2 rounded">
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+      {loading && <Spinner />}
     </div>
   );
 };
