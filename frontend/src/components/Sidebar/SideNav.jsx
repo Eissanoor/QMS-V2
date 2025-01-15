@@ -53,8 +53,8 @@ function SideNav({ children }) {
                   {/* Patient Information */}
                   <li>
                     <Link
-                      to="/patient-information"
-                      className={getTabClass("/patient-information")}
+                      to="/patient-table"
+                      className={getTabClass("/patient-table")}
                     >
                       <div
                         className={`flex justify-center items-center gap-3 ${

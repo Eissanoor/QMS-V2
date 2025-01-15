@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { baseUrl } from "../../utils/config";
+import Spinner from "../../components/spinner/spinner";
 
 const PatientInformation = () => {
   const { t, i18n } = useTranslation();
@@ -12,7 +13,7 @@ const PatientInformation = () => {
   const [Age, setAge] = useState("");
   const [Nationality, setNationality] = useState("");
   const [Sex, setSex] = useState("");
-  const [Status, setStatus] = useState("Active");
+  const [Status, setStatus] = useState("");
   const [MobileNumber, setMobileNumber] = useState("");
   const [cheifComplaint, setcheifComplaint] = useState("");
   const [ticket, setTicket] = useState(null);
@@ -61,40 +62,6 @@ const PatientInformation = () => {
   const closePopup = () => {
     setShowPopup(false);
   };
-
-  const Spinner = () => (
-    <div className="spinner-container">
-      <div className="spinner">
-        <style jsx>{`
-          .spinner-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: rgba(0, 0, 0, 0.5); /* Optional: dim background */
-            z-index: 1000; /* Ensure it appears above other elements */
-          }
-          .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-left-color: #05D899;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s ease infinite;
-          }
-          @keyframes spin {
-            to {
-              transform: rotate(360deg);
-            }
-          }
-        `}</style>
-      </div>
-    </div>
-  );
 
   return (
     <div className="bg-gray-100">
@@ -236,12 +203,20 @@ const PatientInformation = () => {
                     {t("Status")}
                   </label>
                   <select
+                    value={Status}
+                    onChange={(e) => setStatus(e.target.value)}
                     id="status"
                     className="w-full mt-2 p-3 border border-green-400 rounded-lg focus:ring-2 focus:ring-green-300"
                   >
                     <option>{t("Select Status")}</option>
-                    <option value="NON - Critical">
-                      {t("NON - Critical")}
+                    <option value="Non-urgent">
+                      {t("Non-urgent")}
+                    </option>
+                    <option value="Urgent">
+                      {t("Urgent")}
+                    </option>
+                    <option value="Critical">
+                      {t("Critical")}
                     </option>
                   </select>
                 </div>
