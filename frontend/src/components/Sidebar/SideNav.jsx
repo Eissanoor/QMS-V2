@@ -94,7 +94,7 @@ function SideNav({ children }) {
                           className="w-8 h-8 object-cover"
                         />
                         <span className="text-black font-medium text-lg">
-                          {t("Central/Waiting Area")}
+                          {t("Patient Monitoring")}
                         </span>
                       </div>
                     </Link>

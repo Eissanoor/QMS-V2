@@ -5,6 +5,7 @@ import { baseUrl } from "../../utils/config";
 import SideNav from '../../components/Sidebar/SideNav';
 function PatientTable() {
     const [patients, setPatients] = useState([]);
+    const [selectedPatientId, setSelectedPatientId] = useState(null);
     const navigate = useNavigate();
     useEffect(() => {
         const fetchPatients = async () => {
@@ -54,11 +55,15 @@ function PatientTable() {
                     </thead>
                     <tbody className="whitespace-nowrap">
                         {patients.map((patient) => (
-                            <tr key={patient.id} className="odd:bg-blue-50">
+                            <tr 
+                                key={patient.id} 
+                                className={`odd:bg-blue-50 ${selectedPatientId === patient.id ? 'bg-white' : ''}`}
+                                onClick={() => setSelectedPatientId(patient.id)}
+                            >
                                 <td className="pl-4 w-8">
                                     <input id={`checkbox-${patient.id}`} type="checkbox" className="hidden peer" />
-                                    <label htmlFor={`checkbox-${patient.id}`} className="relative flex items-center justify-center p-0.5 peer-checked:before:hidden before:block before:absolute before-w-full before-h-full before:bg-white w-5 h-5 cursor-pointer bg-blue-500 border border-gray-400 rounded overflow-hidden">
-                                        {/* Checkbox SVG */}
+                                    <label htmlFor={`checkbox-${patient.id}`} className="relative flex items-center justify-center p-0.5 peer-checked:before:hidden before:block before:absolute before-w-full before-h-full before:bg-white w-5 h-5 cursor-pointer bg-white-500 border border-gray-400 rounded overflow-hidden">
+                                        {selectedPatientId === patient.id && <span>✔️</span>}
                                     </label>
                                 </td>
                                 <td className="p-4 text-sm text-gray-800">{patient.name}</td>
