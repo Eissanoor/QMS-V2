@@ -1,16 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../index.css';
+import { baseUrl } from "../../utils/config";
+import Spinner from '../../components/spinner/spinner';
 
 const Login = () => {
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    const handleSubmit = () => {
-        navigate('/patient-information');
+    const handleSubmit = async () => {
+        setLoading(true);
+        const email = document.querySelector('input[type="email"]').value;
+        const password = document.querySelector('input[type="password"]').value;
+
+        const response = await fetch(`${baseUrl}/api/v1/user/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password }),
+        });
+
+        setLoading(false);
+
+        if (response.ok) {
+            const data = await response.json();
+            localStorage.setItem('accessToken', data.data.user.accessToken);
+            navigate('/patient-information');
+        } else {
+            // Handle error (e.g., show a message to the user)
+        }
     };
 
     return (
         <div className="flex justify-center items-center h-screen bg-gray-100">
+            {loading && <Spinner />}
             <form 
                 className="bg-white shadow-md rounded-lg p-8 space-y-6 max-w-sm w-full"
                 onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}

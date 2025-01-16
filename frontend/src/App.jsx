@@ -9,8 +9,10 @@ import WaitingArea from "./Pages/waintingArea/waitingArea.jsx";
 import Dashboard from "./Pages/dashboard/dashoboard.jsx";
 import LocationAssignment from "./Pages/locationAssignment/locationAssignment.jsx";
 import LocationWaitingArea from "./Pages/LocationWaitingArea/LocationWaitingArea.jsx";
+import PatientTable from "./Pages/patientInformation/patientTable.jsx";
 import Locationpage from "./Pages/Locationpage/Locationpage.jsx";
 import Kpi from "./Pages/KPI/Kpi.jsx";
+import PatientMonitoring from "./Pages/LocationWaitingArea/monitoring.jsx";
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -23,6 +25,7 @@ const App = () => {
               <QueryClientProvider client={queryClient}>
                 <Routes>
                   <Route path="/patient-information" element={<PatientInformation />} />
+                  <Route path="/patient-table" element={<PatientTable />} />
                   <Route path="/" element={<Login />} />
                   <Route path="/waiting-area" element={<WaitingArea />} />  
                   <Route path="/dashboard" element={<Dashboard />} />
@@ -30,6 +33,7 @@ const App = () => {
                   <Route path="/location-waiting-area" element={<LocationWaitingArea />} />
                   <Route path="/location" element={<Locationpage />} />
                   <Route path="/kpi" element={<Kpi />} />
+                  <Route path="/monitoring" element={<PatientMonitoring />} />
                 </Routes>
               </QueryClientProvider>
             </BrowserRouter>

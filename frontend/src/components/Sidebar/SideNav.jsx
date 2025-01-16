@@ -53,8 +53,8 @@ function SideNav({ children }) {
                   {/* Patient Information */}
                   <li>
                     <Link
-                      to="/patient-information"
-                      className={getTabClass("/patient-information")}
+                      to="/patient-table"
+                      className={getTabClass("/patient-table")}
                     >
                       <div
                         className={`flex justify-center items-center gap-3 ${
@@ -78,8 +78,8 @@ function SideNav({ children }) {
                   {/* Central/Waiting Area */}
                   <li className="mt-3">
                     <Link
-                      to="/waiting-area"
-                      className={getTabClass("/waiting-area")}
+                      to="/monitoring"
+                      className={getTabClass("/monitoring")}
                     >
                       <div
                         className={`flex justify-center items-center gap-3 ${
@@ -94,7 +94,7 @@ function SideNav({ children }) {
                           className="w-8 h-8 object-cover"
                         />
                         <span className="text-black font-medium text-lg">
-                          {t("Central/Waiting Area")}
+                          {t("Patient Monitoring")}
                         </span>
                       </div>
                     </Link>
