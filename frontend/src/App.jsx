@@ -11,6 +11,7 @@ import LocationAssignment from "./Pages/locationAssignment/locationAssignment.js
 import LocationWaitingArea from "./Pages/LocationWaitingArea/LocationWaitingArea.jsx";
 import PatientTable from "./Pages/patientInformation/patientTable.jsx";
 import Locationpage from "./Pages/Locationpage/Locationpage.jsx";
+import PatientMonitoring from "./Pages/LocationWaitingArea/monitoring.jsx";
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -30,6 +31,7 @@ const App = () => {
                   <Route path="/location-assignment" element={<LocationAssignment />} />
                   <Route path="/location-waiting-area" element={<LocationWaitingArea />} />
                   <Route path="/location" element={<Locationpage />} />
+                  <Route path="/monitoring" element={<PatientMonitoring />} />
                 </Routes>
               </QueryClientProvider>
             </BrowserRouter>
