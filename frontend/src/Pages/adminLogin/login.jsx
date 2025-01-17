@@ -26,7 +26,7 @@ const Login = () => {
         if (response.ok) {
             const data = await response.json();
             localStorage.setItem('accessToken', data.data.user.accessToken);
-            navigate('/patient-information');
+            navigate('/patient-table');
         } else {
             // Handle error (e.g., show a message to the user)
         }

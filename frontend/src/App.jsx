@@ -26,7 +26,7 @@ const App = () => {
                   <Route path="/patient-information" element={<PatientInformation />} />
                   <Route path="/patient-table" element={<PatientTable />} />
                   <Route path="/" element={<Login />} />
-                  <Route path="/waiting-area" element={<WaitingArea />} />  
+                  <Route path="/waiting-area/:id" element={<WaitingArea />} />  
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/location-assignment" element={<LocationAssignment />} />
                   <Route path="/location-waiting-area" element={<LocationWaitingArea />} />

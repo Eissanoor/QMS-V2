@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 import axios from "axios";
 import { baseUrl } from "../../utils/config";
 import SideNav from "../../components/Sidebar/SideNav";
@@ -9,6 +11,7 @@ const PatientMonitoring = () => {
   const [nowServing, setNowServing] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   // Fetch data from API
   useEffect(() => {
@@ -80,10 +83,12 @@ const PatientMonitoring = () => {
           {waitingPatients.map((patient) => (
             <div
               key={patient.id}
-              className="bg-green-100 border-l-4 border-green-500 rounded-lg p-4 text-center"
+              className="bg-green-100 border-l-4 border-green-500 rounded-lg p-4 text-center cursor-pointer"
+              onClick={() => navigate(`/waiting-area/${patient.id}`)}
             >
-              <h3 className="text-green-600 font-bold">{patient.acu}</h3>
-              <p className="text-gray-700 mt-2">{patient.name}</p>
+            <strong className="text-gray-700 mt-2">{patient.department?? "TR"}</strong>
+              <h3 className="text-green-600 font-bold">{patient.ticketNumber}</h3>
+              <p className="text-black-700 mt-2">{patient.name}</p>
             </div>
           ))}
         </div>
@@ -108,9 +113,11 @@ const PatientMonitoring = () => {
             <div
               key={patient.id}
               className="bg-blue-100 border-l-4 border-blue-500 rounded-lg p-4 text-center"
+             
             >
-              <h3 className="text-blue-600 font-bold">{patient.acu}</h3>
-              <p className="text-gray-700 mt-2">{patient.name}</p>
+              <strong className="text-gray-700 mt-2">{patient.department ?? "TR"}</strong>
+              <h3 className="text-green-600 font-bold">{patient.ticketNumber}</h3>
+              <p className="text-black-700 mt-2">{patient.name}</p>
             </div>
           ))}
         </div>
