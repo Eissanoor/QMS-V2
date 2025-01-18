@@ -86,7 +86,7 @@ const PatientMonitoring = () => {
               className="bg-green-100 border-l-4 border-green-500 rounded-lg p-4 text-center cursor-pointer"
               onClick={() => navigate(`/waiting-area/${patient.id}`)}
             >
-            <strong className="text-gray-700 mt-2">{patient.department?? "TR"}</strong>
+            <strong className="text-gray-700 mt-2">{patient.department ? patient.department?.deptname : "TR"?? "TR"}</strong>
               <h3 className="text-green-600 font-bold">{patient.ticketNumber}</h3>
               <p className="text-black-700 mt-2">{patient.name}</p>
             </div>
@@ -115,7 +115,7 @@ const PatientMonitoring = () => {
               className="bg-blue-100 border-l-4 border-blue-500 rounded-lg p-4 text-center"
              
             >
-              <strong className="text-gray-700 mt-2">{patient.department ?? "TR"}</strong>
+              <strong className="text-gray-700 mt-2">{patient.department ? patient.department?.deptname : "TR"?? "TR"}</strong>
               <h3 className="text-green-600 font-bold">{patient.ticketNumber}</h3>
               <p className="text-black-700 mt-2">{patient.name}</p>
             </div>

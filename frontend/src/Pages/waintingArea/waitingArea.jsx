@@ -28,6 +28,7 @@ const WaitingArea = () => {
   const [Sex, setSex] = useState("");
   const [Nationality, setNationality] = useState("");
   const [patientData, setPatientData] = useState(null);
+  const [callPatient, setCallPatient] = useState(false);
 
   useEffect(() => {
     const fetchPatientData = async () => {
@@ -44,6 +45,7 @@ const WaitingArea = () => {
           setMobileNumber(patient.mobileNumber);
           setSex(patient.sex);
           setNationality(patient.nationality);
+          setCallPatient(patient.callPatient);
           if (patient.vitalSigns.length > 0) {
             const latestVitalSign = patient.vitalSigns[0];
             setVitalSigns({
@@ -104,6 +106,30 @@ const WaitingArea = () => {
       }
     } catch (error) {
       console.error("Error saving vital signs:", error);
+    }
+  };
+
+  const handleCallPatientToggle = async () => {
+    const newCallPatientStatus = !callPatient;
+    setCallPatient(newCallPatientStatus);
+
+    try {
+      const response = await fetch(`${baseUrl}/api/v1/patients/${id}/toggle-call`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ callPatient: newCallPatientStatus }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        console.log("Patient call status toggled successfully");
+      } else {
+        console.error("Failed to toggle patient call status:", data.message);
+      }
+    } catch (error) {
+      console.error("Error toggling patient call status:", error);
     }
   };
 
@@ -263,12 +289,19 @@ const WaitingArea = () => {
 
             <div className="flex justify-between items-center mt-6">
               <button 
-                className={`bg-yellow-400 text-white px-6 py-2 rounded-lg hover:bg-yellow-500 ${VitalSigns.BP ? '' : 'opacity-50 cursor-not-allowed'}`} 
+                className={`text-white px-6 py-2 rounded-lg hover:bg-yellow-500 ${VitalSigns.BP ? '' : 'opacity-50 cursor-not-allowed'} ${callPatient ? 'bg-red-500 hover:bg-red-600' : 'bg-yellow-400 hover:bg-yellow-500'}`} 
                 disabled={VitalSigns.BP ? false : true}
+                onClick={handleCallPatientToggle}
               >
-                {t("Call Patient")}
+                {callPatient ? t("Cancel Call Patient") : t("Call Patient")}
               </button>
               <div className="flex space-x-4">
+              <button 
+              className={`text-white px-6 py-2 rounded-lg hover:bg-blue-600 ${VitalSigns.BP ? '' : 'opacity-50 cursor-not-allowed'} ${callPatient ? 'bg-blue-500 hover:bg-blue-600' : 'bg-yellow-400 hover:bg-yellow-500'}`} 
+              disabled={VitalSigns.BP ? false : true}
+              >
+                  {t("Assign")}
+                </button>
                 <button 
                   className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600"
                   onClick={handleSave}
@@ -278,6 +311,7 @@ const WaitingArea = () => {
                 <button className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600">
                   {t("Re-Print")}
                 </button>
+                
                 <button className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600">
                   {t("Void")}
                 </button>
