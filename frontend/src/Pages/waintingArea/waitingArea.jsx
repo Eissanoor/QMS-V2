@@ -5,7 +5,12 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { useParams } from "react-router-dom";
 import { baseUrl } from "../../utils/config";
+import AssignPopup from "./assignPopup";
 const WaitingArea = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const handleOpen = () => setIsOpen(true);
+  const handleClose = () => setIsOpen(false);
+
   const { t } = useTranslation();
   const { id } = useParams();
   const [PatientName, setPatientName] = useState("");
@@ -296,10 +301,11 @@ const WaitingArea = () => {
                 {callPatient ? t("Cancel Call Patient") : t("Call Patient")}
               </button>
               <div className="flex space-x-4">
-              <button 
-              className={`text-white px-6 py-2 rounded-lg hover:bg-blue-600 ${VitalSigns.BP ? '' : 'opacity-50 cursor-not-allowed'} ${callPatient ? 'bg-blue-500 hover:bg-blue-600' : 'bg-yellow-400 hover:bg-yellow-500'}`} 
-              disabled={VitalSigns.BP ? false : true}
-              >
+                <button 
+                  className={`text-white px-6 py-2 rounded-lg hover:bg-blue-600 ${VitalSigns.BP ? '' : 'opacity-50 cursor-not-allowed'} ${callPatient ? 'bg-blue-500 hover:bg-blue-600' : 'bg-yellow-400 hover:bg-yellow-500'}`} 
+                  disabled={VitalSigns.BP ? false : true}
+                  onClick={handleOpen}
+                >
                   {t("Assign")}
                 </button>
                 <button 
@@ -323,6 +329,7 @@ const WaitingArea = () => {
           </div>
         </div>
       </SideNav>
+      {isOpen && <AssignPopup onClose={handleClose} patientId={id} />}
     </div>
   );
 };
