@@ -5,7 +5,8 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { baseUrl } from "../../utils/config";
 import Spinner from "../../components/spinner/spinner";
-
+import toast from "react-hot-toast";
+import axios from "axios";
 const PatientInformation = () => {
   const { t, i18n } = useTranslation();
   const [PatientName, setPatientName] = useState("");
@@ -20,40 +21,39 @@ const PatientInformation = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [pdfUrl, setPdfUrl] = useState(null);
   const [loading, setLoading] = useState(false);
-  console.log("pdfUrl",pdfUrl);
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     const patientData = {
       name: PatientName,
       nationality: Nationality,
       sex: Sex,
       idNumber: IDNumber,
       age: Age,
-      mobileNumber: MobileNumber, // Add mobile number state if needed
+      mobileNumber: MobileNumber,
       cheifComplaint: cheifComplaint,
       status: Status,
     };
-    console.log("patientData",patientData);
+
     try {
-      const response = await fetch(`${baseUrl}/api/v1/patients`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-        body: JSON.stringify(patientData),
-      });
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
+      const response = await axios.post(`${baseUrl}/api/v1/patients`, patientData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        }
+      );
+      if (response.status === 200 || response.status === 201) {
+        const { data } = response.data;
+        setTicket(`${baseUrl}/${data.ticket}`);
+        setPdfUrl(data.ticket);
+        setShowPopup(true);
+        toast.success("Successfully submitted patient data!");
       }
-      const data = await response.json();
-      setTicket(`${baseUrl}/${data.data.ticket}`);
-      setPdfUrl(data.data.ticket);
-      setShowPopup(true);
     } catch (error) {
-      console.error('Error:', error);
-      // Handle error (e.g., show an error message)
+      toast.error(error.response?.data?.message || "Error");
     } finally {
       setLoading(false);
     }
@@ -130,9 +130,9 @@ const PatientInformation = () => {
                   >
                     {t("Mobile Number")}
                   </label>
-                  <div  className="mt-2">
+                  <div className="mt-2">
                     <PhoneInput
-                     
+
                       onChange={(e) => setMobileNumber(e)}
                       international
                       country={"sa"}
@@ -257,7 +257,7 @@ const PatientInformation = () => {
               <iframe
                 src={`${baseUrl}/${pdfUrl}`}
                 width="100%"
-                height="400px"
+                height="600px"
                 title="PDF Document"
               />
             ) : (

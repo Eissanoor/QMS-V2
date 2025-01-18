@@ -77,7 +77,7 @@ const PatientDisplay = () => {
           <Spinner />
         ) : (
           patients.length > 0 && (
-            <div className="bg-white p-10 rounded-lg shadow-lg border-4  items-center justify-center border-red-600 w-3/4 ">
+            <div className="bg-white p-10 rounded-2xl shadow-lg border-4  items-center justify-center border-red-600 w-3/4 ">
               <div className="flex flex-row justify-between">
                 <h3 className="text-4xl font-bold text-blue-800">
                   Ticket Number

@@ -8,6 +8,8 @@ import { baseUrl } from "../../utils/config";
 import AssignPopup from "./assignPopup";
 const WaitingArea = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState(null);
   const handleOpen = () => setIsOpen(true);
   const handleClose = () => setIsOpen(false);
 
@@ -34,7 +36,6 @@ const WaitingArea = () => {
   const [Nationality, setNationality] = useState("");
   const [patientData, setPatientData] = useState(null);
   const [callPatient, setCallPatient] = useState(false);
-
   useEffect(() => {
     const fetchPatientData = async () => {
       try {
@@ -42,6 +43,7 @@ const WaitingArea = () => {
         const data = await response.json();
         if (data.success) {
           const patient = data.data;
+          setPdfUrl(patient?.ticket);
           setPatientData(patient);
           setPatientName(patient.name);
           setIDNumber(patient.idNumber);
@@ -136,6 +138,12 @@ const WaitingArea = () => {
     } catch (error) {
       console.error("Error toggling patient call status:", error);
     }
+  };
+  const openPopup = () => {
+    setShowPopup(true);
+  };
+  const closePopup = () => {
+    setShowPopup(false);
   };
 
   return (
@@ -293,31 +301,31 @@ const WaitingArea = () => {
             </div>
 
             <div className="flex justify-between items-center mt-6">
-              <button 
-                className={`text-white px-6 py-2 rounded-lg hover:bg-yellow-500 ${VitalSigns.BP ? '' : 'opacity-50 cursor-not-allowed'} ${callPatient ? 'bg-red-500 hover:bg-red-600' : 'bg-yellow-400 hover:bg-yellow-500'}`} 
+              <button
+                className={`text-white px-6 py-2 rounded-lg hover:bg-yellow-500 ${VitalSigns.BP ? '' : 'opacity-50 cursor-not-allowed'} ${callPatient ? 'bg-red-500 hover:bg-red-600' : 'bg-yellow-400 hover:bg-yellow-500'}`}
                 disabled={VitalSigns.BP ? false : true}
                 onClick={handleCallPatientToggle}
               >
                 {callPatient ? t("Cancel Call Patient") : t("Call Patient")}
               </button>
               <div className="flex space-x-4">
-                <button 
-                  className={`text-white px-6 py-2 rounded-lg hover:bg-blue-600 ${VitalSigns.BP ? '' : 'opacity-50 cursor-not-allowed'} ${callPatient ? 'bg-blue-500 hover:bg-blue-600' : 'bg-yellow-400 hover:bg-yellow-500'}`} 
+                <button
+                  className={`text-white px-6 py-2 rounded-lg hover:bg-blue-600 ${VitalSigns.BP ? '' : 'opacity-50 cursor-not-allowed'} ${callPatient ? 'bg-blue-500 hover:bg-blue-600' : 'bg-yellow-400 hover:bg-yellow-500'}`}
                   disabled={VitalSigns.BP ? false : true}
                   onClick={handleOpen}
                 >
                   {t("Assign")}
                 </button>
-                <button 
+                <button
                   className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600"
                   onClick={handleSave}
                 >
                   {t("Save")}
                 </button>
-                <button className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600">
+                <button className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600" onClick={openPopup}>
                   {t("Re-Print")}
                 </button>
-                
+
                 <button className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600">
                   {t("Void")}
                 </button>
@@ -329,6 +337,26 @@ const WaitingArea = () => {
           </div>
         </div>
       </SideNav>
+      {showPopup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h2 className="text-lg font-bold">Ticket Information</h2>
+            {pdfUrl ? (
+              <iframe
+                src={`${baseUrl}/${pdfUrl}`}
+                width="100%"
+                height="600px"
+                title="PDF Document"
+              />
+            ) : (
+              <p>No PDF available</p>
+            )}
+            <button onClick={closePopup} className="mt-4 bg-red-500 text-white px-4 py-2 rounded">
+              Close
+            </button>
+          </div>
+        </div>
+      )}
       {isOpen && <AssignPopup onClose={handleClose} patientId={id} />}
     </div>
   );
