@@ -13,6 +13,7 @@ import PatientTable from "./Pages/patientInformation/patientTable.jsx";
 import Locationpage from "./Pages/Locationpage/Locationpage.jsx";
 import Kpi from "./Pages/KPI/Kpi.jsx";
 import PatientMonitoring from "./Pages/LocationWaitingArea/monitoring.jsx";
+import PatientDisplay from "./Pages/patientDisplay/patientDisplay.jsx";
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -27,13 +28,14 @@ const App = () => {
                   <Route path="/patient-information" element={<PatientInformation />} />
                   <Route path="/patient-table" element={<PatientTable />} />
                   <Route path="/" element={<Login />} />
-                  <Route path="/waiting-area" element={<WaitingArea />} />  
+                  <Route path="/waiting-area/:id" element={<WaitingArea />} />  
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/location-assignment" element={<LocationAssignment />} />
                   <Route path="/location-waiting-area" element={<LocationWaitingArea />} />
                   <Route path="/location" element={<Locationpage />} />
                   <Route path="/kpi" element={<Kpi />} />
                   <Route path="/monitoring" element={<PatientMonitoring />} />
+                  <Route path="/patient-display" element={<PatientDisplay />} />
                 </Routes>
               </QueryClientProvider>
             </BrowserRouter>
