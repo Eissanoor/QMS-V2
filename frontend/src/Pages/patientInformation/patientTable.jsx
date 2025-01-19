@@ -16,7 +16,7 @@ function PatientTable() {
     const navigate = useNavigate();
     const fetchPatients = async () => {
         try {
-            const response = await newRequest.get(`${baseUrl}/api/v1/patients`);
+            const response = await newRequest.get(`/api/v1/patients`);
             setPatients(response?.data?.data?.data || []); 
         } catch (error) {
             console.error("Error fetching patients:", error);
