@@ -103,7 +103,13 @@ const WaitingArea = () => {
    try {
      const response = await newRequest.post(
        `${baseUrl}/api/v1/patients/${patientId}/vital-sign`,
-       body
+       body,
+       {
+         headers: {
+           "Content-Type": "application/json",
+           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+         },
+       }
      );
      if (response.status >= 200) {
        toast.success( response?.data?.message || "Vital sign created successfully");
@@ -277,7 +283,7 @@ const WaitingArea = () => {
                 ))}
               </div>
               <div className="mt-6 flex items-center space-x-4">
-                <span className="text-sm font-medium text-gray-700">
+                <span className="text-sm font-medium text-red-700">
                   {t("Allergies")}
                 </span>
                 <div className="flex items-center space-x-4">
@@ -311,6 +317,16 @@ const WaitingArea = () => {
                     />
                   )}
                 </div>
+                
+              </div>
+              <div className="mt-6 flex items-center space-x-4">
+                
+                {patientData?.department && patientData?.department?.deptname !== "TR" && (
+                   <span className="text-sm font-medium text-green-700">
+                   {t("Assigned To  ")}
+                  <strong className="text-blue-700">{patientData?.department?.deptname}</strong>
+                 </span>
+                )}
               </div>
             </div>
 

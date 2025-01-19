@@ -29,6 +29,7 @@ const AssignPopup = ({ onClose, patientId }) => {
             );
             toast.success(response?.data?.message || "Department assigned to patient successfully");
             handleClose();
+            window.location.reload();
         } catch (error) {
             const errorMessage = error.response?.data?.message || "Failed to assign department";
             toast.error(errorMessage);
