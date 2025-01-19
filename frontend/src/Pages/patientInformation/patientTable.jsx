@@ -7,29 +7,24 @@ import Spinner from '../../components/spinner/spinner';
 import { FaTrash } from "react-icons/fa";
 import Swal from "sweetalert2";
 import toast from 'react-hot-toast';
+import newRequest from '../../utils/newRequest';
 function PatientTable() {
     const [patients, setPatients] = useState([]);
     const [selectedPatientId, setSelectedPatientId] = useState(null);
     const [dropdownVisible, setDropdownVisible] = useState(null);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+    const fetchPatients = async () => {
+        try {
+            const response = await newRequest.get(`${baseUrl}/api/v1/patients`);
+            setPatients(response?.data?.data?.data || []); 
+        } catch (error) {
+            console.error("Error fetching patients:", error);
+        } finally {
+            setLoading(false); 
+        }
+    };
     useEffect(() => {
-        const fetchPatients = async () => {
-            try {
-                const accessToken = localStorage.getItem("accessToken");
-                const response = await axios.get(`${baseUrl}/api/v1/patients`, {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`,
-                    },
-                });
-                setPatients(response?.data?.data?.data || []); // Adjust based on your API response structure
-            } catch (error) {
-                console.error("Error fetching patients:", error);
-            } finally {
-                setLoading(false); // Hide loader after fetching data
-            }
-        };
-
         fetchPatients();
     }, []);
     const toggleDropdown = (patientId) => {
@@ -50,10 +45,10 @@ function PatientTable() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const response = await axios.delete(`${baseUrl}/api/v1/patients/` + patient?.id);
-                    toast.success(response?.data?.message || "Patient information has been deleted successfully");
+                    const response = await newRequest.delete(`/api/v1/patients/` + patient?.id);
+                    toast.success(response?.data?.message || "Patient information has been deleted successfully");   
+                    fetchPatients();                 
                 } catch (error) {
-                    console.error("Error deleting patient:", error);
                     const errorMessage = error.response?.data?.message || "An unexpected error occurred";
                     toast.error(errorMessage);
                 }
