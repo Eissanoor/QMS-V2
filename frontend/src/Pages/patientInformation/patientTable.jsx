@@ -4,12 +4,13 @@ import axios from 'axios';
 import { baseUrl } from "../../utils/config";
 import SideNav from '../../components/Sidebar/SideNav';
 import Spinner from '../../components/spinner/spinner';
-import { FaSearch, FaPlus, FaEdit, FaTrash } from "react-icons/fa";
-
+import { FaTrash } from "react-icons/fa";
+import Swal from "sweetalert2";
+import toast from 'react-hot-toast';
 function PatientTable() {
     const [patients, setPatients] = useState([]);
     const [selectedPatientId, setSelectedPatientId] = useState(null);
-      const [dropdownVisible, setDropdownVisible] = useState(null);
+    const [dropdownVisible, setDropdownVisible] = useState(null);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
     useEffect(() => {
@@ -31,9 +32,36 @@ function PatientTable() {
 
         fetchPatients();
     }, []);
-       const toggleDropdown = (patientId) => {
-         setDropdownVisible((prev) => (prev === patientId ? null : patientId));
-       };
+    const toggleDropdown = (patientId) => {
+        setDropdownVisible((prev) => (prev === patientId ? null : patientId));
+    };
+
+    const handleDelete = async (patient) => {
+        setDropdownVisible(null);
+        Swal.fire({
+            title: `Are you sure to delete this record?`,
+            text: `You will not be able to recover this! ${patient?.name || ""}`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: `Yes, Delete!`,
+            cancelButtonText: `No, keep it!`,
+            confirmButtonColor: "#1E3B8B",
+            cancelButtonColor: "#FF0032",
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    const response = await axios.delete(`${baseUrl}/api/v1/patients/` + patient?.id);
+                    toast.success(response?.data?.message || "Patient information has been deleted successfully");
+                } catch (error) {
+                    console.error("Error deleting patient:", error);
+                    const errorMessage = error.response?.data?.message || "An unexpected error occurred";
+                    toast.error(errorMessage);
+                }
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                return;
+            }
+        });
+    };
 
     return (
         <>
@@ -110,8 +138,8 @@ function PatientTable() {
                                             <td className="p-4 text-sm text-gray-800">
                                                 <span
                                                     className={`w-[68px] block text-center py-1 border ${patient.status === "Active"
-                                                            ? "border-green-500 text-green-600"
-                                                            : "border-yellow-500 text-yellow-600"
+                                                        ? "border-green-500 text-green-600"
+                                                        : "border-yellow-500 text-yellow-600"
                                                         } rounded text-xs`}
                                                 >
                                                     {patient.status}
@@ -123,41 +151,37 @@ function PatientTable() {
                                             <td className="p-4 text-sm text-gray-800">
                                                 {patient.mobileNumber}
                                             </td>
-                                             <td className="relative text-center">
-                                            <button
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    toggleDropdown(patient.id);
-                                                }}
-                                                className="text-gray-500 text-lg hover:text-blue-600"
-                                            >
-                                                ⋮ 
-                                            </button>
-                                            {dropdownVisible === patient.id && (
-                                                <div className="absolute bg-white border rounded shadow-lg w-40 z-10">
-                                                    <ul>
-                                                        {/* <li
-                                                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                                                            onClick={() => alert(`Edit ${patient.name}`)}
-                                                        >
-                                                            Edit
-                                                        </li> */}
-                                                        <li
-                                                            className="px-4 py-2 hover:bg-gray-100 text-red-600 cursor-pointer flex my-auto"
-                                                            onClick={() => alert(`Delete ${patient.name}`)}
-                                                        >
-                                                           <FaTrash className='my-auto me-4'/>   <p className='text-lg '>Delete</p>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            )}
-                                        </td>
+                                            <td className="relative text-center">
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        toggleDropdown(patient.id);
+                                                    }}
+                                                    className="text-gray-500 text-lg hover:text-blue-600"
+                                                >
+                                                    ⋮
+                                                </button>
+                                                {dropdownVisible === patient.id && (
+                                                    <div className="absolute bg-white border rounded shadow-lg w-40 z-10">
+                                                        <ul>
+                                                            <li
+                                                                className="px-4 py-2 hover:bg-gray-100 text-red-600 cursor-pointer flex my-auto"
+                                                                onClick={() => handleDelete(patient)}
+                                                            >
+                                                                <FaTrash className="my-auto me-4" />{" "}
+                                                                <p className="text-lg ">Delete</p>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                )}
+                                            </td>
                                         </tr>
                                     ))
                                 )}
                             </tbody>
                         </table>
                     </div>
+
                 </SideNav>
             </div>
         </>
