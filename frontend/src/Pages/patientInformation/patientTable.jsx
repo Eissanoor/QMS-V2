@@ -10,13 +10,15 @@ import toast from 'react-hot-toast';
 import newRequest from '../../utils/newRequest';
 function PatientTable() {
     const [patients, setPatients] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    console.log("currentPage",currentPage);
     const [selectedPatientId, setSelectedPatientId] = useState(null);
     const [dropdownVisible, setDropdownVisible] = useState(null);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
-    const fetchPatients = async () => {
+    const fetchPatients = async (page) => {
         try {
-            const response = await newRequest.get(`/api/v1/patients`);
+            const response = await newRequest.get(`/api/v1/patients?page=${page}&limit=10`);
             setPatients(response?.data?.data?.data || []); 
         } catch (error) {
             console.error("Error fetching patients:", error);
@@ -25,8 +27,8 @@ function PatientTable() {
         }
     };
     useEffect(() => {
-        fetchPatients();
-    }, []);
+        fetchPatients(currentPage);
+    }, [currentPage]);
     const toggleDropdown = (patientId) => {
         setDropdownVisible((prev) => (prev === patientId ? null : patientId));
     };
@@ -47,7 +49,7 @@ function PatientTable() {
                 try {
                     const response = await newRequest.delete(`/api/v1/patients/` + patient?.id);
                     toast.success(response?.data?.message || "Patient information has been deleted successfully");   
-                    fetchPatients();                 
+                    fetchPatients(currentPage);                 
                 } catch (error) {
                     const errorMessage = error.response?.data?.message || "An unexpected error occurred";
                     toast.error(errorMessage);
@@ -58,6 +60,15 @@ function PatientTable() {
         });
     };
 
+    const handlePreviousPage = () => {
+        setCurrentPage((prev) => Math.max(prev - 1, 1));
+        setLoading(true);
+    };
+
+    const handleNextPage = () => {
+        setCurrentPage((prev) => prev + 1);
+        setLoading(true);
+    };
     return (
         <>
             <div className="font-[sans-serif] overflow-x-auto">
@@ -178,6 +189,20 @@ function PatientTable() {
                     </div>
 
                 </SideNav>
+            </div>
+            <div className="flex justify-center mt-4 mb-4" style={{ marginLeft: "1150px" }}>
+                <button
+                    onClick={handlePreviousPage}
+                    className="px-4 py-2 bg-green-500 text-white rounded mr-2"
+                >
+                    Previous Page
+                </button>
+                <button
+                    onClick={handleNextPage}
+                    className="px-4 py-2 bg-green-500 text-white rounded"
+                >
+                    Next Page
+                </button>
             </div>
         </>
     );
