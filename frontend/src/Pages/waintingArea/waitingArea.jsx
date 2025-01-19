@@ -8,6 +8,7 @@ import { baseUrl } from "../../utils/config";
 import AssignPopup from "./assignPopup";
 import toast from "react-hot-toast";
 import Spinner from "../../components/spinner/spinner";
+import newRequest from "../../utils/newRequest";
 const WaitingArea = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
@@ -83,38 +84,39 @@ const WaitingArea = () => {
     setVitalSigns({ ...VitalSigns, [e.target.name]: e.target.value });
   };
 
-  const handleSave = async () => {
-    const patientId = id;
-    const body = {
-      bp: VitalSigns.BP,
-      height: VitalSigns.Height,
-      temp: VitalSigns.TEMP,
-      spo2: VitalSigns.SPO2,
-      weight: VitalSigns.Weight,
-      hr: VitalSigns.HR,
-      rbs: VitalSigns.RBS,
-      rr: VitalSigns.RR,
-      timeVs: new Date().toISOString(),
-      allergies: Allergies === "Yes"
-    };
+ const handleSave = async () => {
+   setLoading(true);
+   const patientId = id;
+   const body = {
+     bp: VitalSigns.BP,
+     height: VitalSigns.Height,
+     temp: VitalSigns.TEMP,
+     spo2: VitalSigns.SPO2,
+     weight: VitalSigns.Weight,
+     hr: VitalSigns.HR,
+     rbs: VitalSigns.RBS,
+     rr: VitalSigns.RR,
+     timeVs: new Date().toISOString(),
+     allergies: Allergies === "Yes",
+   };
 
-    try {
-      const response = await fetch(`${baseUrl}/api/v1/patients/${patientId}/vital-sign`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body),
-      });
-      const data = await response.json();
-      toast.success(data?.message || "Vital sign created successfully data");
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Error");
-    }finally {
-      setLoading(false);
-    }
-  };
+   try {
+     const response = await newRequest.post(
+       `${baseUrl}/api/v1/patients/${patientId}/vital-sign`,
+       body
+     );
+     if (response.status >= 200) {
+       toast.success( response?.data?.message || "Vital sign created successfully");
+     } else {
+       throw new Error(response?.data?.message || "Unexpected error");
+     }
+   } catch (error) {
+     const errorMessage =error.response?.data?.message || "Failed to save vital sign";
+     toast.error(errorMessage);
+   } finally {
+     setLoading(false);
+   }
+ };
 
   const handleCallPatientToggle = async () => {
     const newCallPatientStatus = !callPatient;
@@ -146,223 +148,223 @@ const WaitingArea = () => {
     <div className="bg-gray-100">
       <SideNav>
         <div className="min-h-screen flex flex-col antialiased bg-white text-black">
-          {loading ? (
+          {/* {loading ? (
             <Spinner />
-          ) : (
-            <div className="container mx-auto p-6">
-              <div className="bg-green-50 shadow-md rounded-lg p-6">
-                <div className="flex justify-between items-center mb-4">
-                  <h5 className="text-green-700 font-bold text-xl">
-                    {patientData?.name}
-                  </h5>
-                  <p className="text-gray-600 text-sm">
-                    {new Date(patientData?.createdAt).toLocaleString()}
-                  </p>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">
-                      {t("Patient Name")}
-                    </label>
-                    <input
-                      type="text"
-                      value={PatientName}
-                      onChange={(e) => setPatientName(e.target.value)}
-                      placeholder={t("Enter patient name")}
-                      className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">
-                      {t("Mobile Number")}
-                    </label>
-                    <input
-                      type="text"
-                      value={MobileNumber}
-                      readOnly
-                      className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">
-                      {t("ID Number")}
-                    </label>
-                    <input
-                      type="text"
-                      value={IDNumber}
-                      onChange={(e) => setIDNumber(e.target.value)}
-                      placeholder={t("Enter ID number")}
-                      className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">
-                      {t("Nationality")}
-                    </label>
-                    <input
-                      type="text"
-                      value={Nationality}
-                      readOnly
-                      className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">
-                      {t("Age")}
-                    </label>
-                    <input
-                      type="text"
-                      value={Age}
-                      onChange={(e) => setAge(e.target.value)}
-                      placeholder={t("Enter age")}
-                      className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">
-                      {t("Sex")}
-                    </label>
-                    <input
-                      type="text"
-                      value={Sex}
-                      readOnly
-                      className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
-                    />
-                  </div>
-                  <div className="col-span-2">
-                    <label className="text-sm font-medium text-gray-700">
-                      {t("Chief Complaint")}
-                    </label>
-                    <input
-                      type="text"
-                      value={ChiefComplaint}
-                      onChange={(e) => setChiefComplaint(e.target.value)}
-                      placeholder={t("Describe the complaint")}
-                      className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-green-50 shadow-md rounded-lg p-6 mt-6">
-                <h5 className="text-green-700 font-bold text-xl mb-4">
-                  Vital Sign
+          ) : ( */}
+          <div className="container mx-auto p-6">
+            <div className="bg-green-50 shadow-md rounded-lg p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h5 className="text-green-700 font-bold text-xl">
+                  {patientData?.name}
                 </h5>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                  {[
-                    "BP",
-                    "HR",
-                    "TEMP",
-                    "RR",
-                    "SPO2",
-                    "RBS",
-                    "Height",
-                    "Weight",
-                  ].map((field) => (
-                    <div key={field}>
-                      <label className="text-sm font-medium text-gray-700">
-                        {t(field)}
-                      </label>
-                      <input
-                        type="text"
-                        name={field}
-                        value={VitalSigns[field]}
-                        onChange={handleVitalChange}
-                        placeholder={t(`Enter ${field}`)}
-                        className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
-                      />
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-6 flex items-center space-x-4">
-                  <span className="text-sm font-medium text-gray-700">
-                    {t("Allergies")}
-                  </span>
-                  <div className="flex items-center space-x-4">
-                    <label className="inline-flex items-center">
-                      <input
-                        type="radio"
-                        name="Allergies"
-                        value="Yes"
-                        checked={Allergies === "Yes"}
-                        onChange={(e) => setAllergies(e.target.value)}
-                        className="form-radio text-green-600"
-                      />
-                      <span className="ml-2 text-sm">{t("Yes")}</span>
-                    </label>
-                    <label className="inline-flex items-center">
-                      <input
-                        type="radio"
-                        name="Allergies"
-                        value="No"
-                        checked={Allergies === "No"}
-                        onChange={(e) => setAllergies(e.target.value)}
-                        className="form-radio text-green-600"
-                      />
-                      <span className="ml-2 text-sm">{t("No")}</span>
-                    </label>
-                    {Allergies === "Yes" && (
-                      <input
-                        type="text"
-                        placeholder={t("Specify")}
-                        className="p-2 border border-gray-300 rounded-lg"
-                      />
-                    )}
-                  </div>
-                </div>
+                <p className="text-gray-600 text-sm">
+                  {new Date(patientData?.createdAt).toLocaleString()}
+                </p>
               </div>
-
-              <div className="flex justify-between items-center mt-6">
-                <button
-                  className={`text-white px-6 py-2 rounded-lg hover:bg-yellow-500 ${
-                    VitalSigns.BP ? "" : "opacity-50 cursor-not-allowed"
-                  } ${
-                    callPatient
-                      ? "bg-red-500 hover:bg-red-600"
-                      : "bg-yellow-400 hover:bg-yellow-500"
-                  }`}
-                  disabled={VitalSigns.BP ? false : true}
-                  onClick={handleCallPatientToggle}
-                >
-                  {callPatient ? t("Cancel Call Patient") : t("Call Patient")}
-                </button>
-                <div className="flex space-x-4">
-                  <button
-                    className={`text-white px-6 py-2 rounded-lg hover:bg-blue-600 ${
-                      VitalSigns.BP ? "" : "opacity-50 cursor-not-allowed"
-                    } ${
-                      callPatient
-                        ? "bg-blue-500 hover:bg-blue-600"
-                        : "bg-yellow-400 hover:bg-yellow-500"
-                    }`}
-                    disabled={VitalSigns.BP ? false : true}
-                    onClick={handleOpen}
-                  >
-                    {t("Assign")}
-                  </button>
-                  <button
-                    className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600"
-                    onClick={handleSave}
-                  >
-                    {t("Save")}
-                  </button>
-                  <button
-                    className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600"
-                    onClick={openPopup}
-                  >
-                    {t("Re-Print")}
-                  </button>
-
-                  <button className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600">
-                    {t("Void")}
-                  </button>
-                  <button className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600">
-                    {t("Close")}
-                  </button>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="text-sm font-medium text-gray-700">
+                    {t("Patient Name")}
+                  </label>
+                  <input
+                    type="text"
+                    value={PatientName}
+                    onChange={(e) => setPatientName(e.target.value)}
+                    placeholder={t("Enter patient name")}
+                    className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">
+                    {t("Mobile Number")}
+                  </label>
+                  <input
+                    type="text"
+                    value={MobileNumber}
+                    readOnly
+                    className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">
+                    {t("ID Number")}
+                  </label>
+                  <input
+                    type="text"
+                    value={IDNumber}
+                    onChange={(e) => setIDNumber(e.target.value)}
+                    placeholder={t("Enter ID number")}
+                    className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">
+                    {t("Nationality")}
+                  </label>
+                  <input
+                    type="text"
+                    value={Nationality}
+                    readOnly
+                    className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">
+                    {t("Age")}
+                  </label>
+                  <input
+                    type="text"
+                    value={Age}
+                    onChange={(e) => setAge(e.target.value)}
+                    placeholder={t("Enter age")}
+                    className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">
+                    {t("Sex")}
+                  </label>
+                  <input
+                    type="text"
+                    value={Sex}
+                    readOnly
+                    className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                <div className="col-span-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    {t("Chief Complaint")}
+                  </label>
+                  <input
+                    type="text"
+                    value={ChiefComplaint}
+                    onChange={(e) => setChiefComplaint(e.target.value)}
+                    placeholder={t("Describe the complaint")}
+                    className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
+                  />
                 </div>
               </div>
             </div>
-          )}
+
+            <div className="bg-green-50 shadow-md rounded-lg p-6 mt-6">
+              <h5 className="text-green-700 font-bold text-xl mb-4">
+                Vital Sign
+              </h5>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                {[
+                  "BP",
+                  "HR",
+                  "TEMP",
+                  "RR",
+                  "SPO2",
+                  "RBS",
+                  "Height",
+                  "Weight",
+                ].map((field) => (
+                  <div key={field}>
+                    <label className="text-sm font-medium text-gray-700">
+                      {t(field)}
+                    </label>
+                    <input
+                      type="text"
+                      name={field}
+                      value={VitalSigns[field]}
+                      onChange={handleVitalChange}
+                      placeholder={t(`Enter ${field}`)}
+                      className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className="mt-6 flex items-center space-x-4">
+                <span className="text-sm font-medium text-gray-700">
+                  {t("Allergies")}
+                </span>
+                <div className="flex items-center space-x-4">
+                  <label className="inline-flex items-center">
+                    <input
+                      type="radio"
+                      name="Allergies"
+                      value="Yes"
+                      checked={Allergies === "Yes"}
+                      onChange={(e) => setAllergies(e.target.value)}
+                      className="form-radio text-green-600"
+                    />
+                    <span className="ml-2 text-sm">{t("Yes")}</span>
+                  </label>
+                  <label className="inline-flex items-center">
+                    <input
+                      type="radio"
+                      name="Allergies"
+                      value="No"
+                      checked={Allergies === "No"}
+                      onChange={(e) => setAllergies(e.target.value)}
+                      className="form-radio text-green-600"
+                    />
+                    <span className="ml-2 text-sm">{t("No")}</span>
+                  </label>
+                  {Allergies === "Yes" && (
+                    <input
+                      type="text"
+                      placeholder={t("Specify")}
+                      className="p-2 border border-gray-300 rounded-lg"
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center mt-6">
+              <button
+                className={`text-white px-6 py-2 rounded-lg hover:bg-yellow-500 ${
+                  VitalSigns.BP ? "" : "opacity-50 cursor-not-allowed"
+                } ${
+                  callPatient
+                    ? "bg-red-500 hover:bg-red-600"
+                    : "bg-yellow-400 hover:bg-yellow-500"
+                }`}
+                disabled={VitalSigns.BP ? false : true}
+                onClick={handleCallPatientToggle}
+              >
+                {callPatient ? t("Cancel Call Patient") : t("Call Patient")}
+              </button>
+              <div className="flex space-x-4">
+                <button
+                  className={`text-white px-6 py-2 rounded-lg hover:bg-blue-600 ${
+                    VitalSigns.BP ? "" : "opacity-50 cursor-not-allowed"
+                  } ${
+                    callPatient
+                      ? "bg-blue-500 hover:bg-blue-600"
+                      : "bg-yellow-400 hover:bg-yellow-500"
+                  }`}
+                  disabled={VitalSigns.BP ? false : true}
+                  onClick={handleOpen}
+                >
+                  {loading ? <Spinner /> : `${t("Assign")}`}
+                </button>
+                <button
+                  className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600"
+                  onClick={handleSave}
+                >
+                  {loading ? <Spinner /> : `${t("Save")}`}
+                </button>
+                <button
+                  className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600"
+                  onClick={openPopup}
+                >
+                  {t("Re-Print")}
+                </button>
+
+                <button className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600">
+                  {t("Void")}
+                </button>
+                <button className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600">
+                  {t("Close")}
+                </button>
+              </div>
+            </div>
+          </div>
+          {/* // )} */}
         </div>
       </SideNav>
       {showPopup && (

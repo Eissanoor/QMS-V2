@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { baseUrl } from "../../utils/config";
+import newRequest from '../../utils/newRequest';
+import toast from 'react-hot-toast';
 
 const AssignPopup = ({ onClose, patientId }) => {
     console.log(patientId);
-    
+
     const [isOpen, setIsOpen] = useState(true);
     const [departments, setDepartments] = useState([]);
     const [selectedDeptId, setSelectedDeptId] = useState(null);
@@ -20,22 +22,17 @@ const AssignPopup = ({ onClose, patientId }) => {
     }, []);
 
     const handleAssign = async () => {
-        const response = await fetch(`${baseUrl}/api/v1/patients/${patientId}/assign-department`, {
-            method: 'PATCH',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ departmentId: selectedDeptId }),
-        });
-
-        const data = await response.json();
-        if (data.success) {
-            console.log("Department assigned successfully");
-        } else {
-            console.error("Failed to assign department");
+        try {
+            const response = await newRequest.patch(
+                `${baseUrl}/api/v1/patients/${patientId}/assign-department`,
+                { departmentId: selectedDeptId }
+            );
+            toast.success(response?.data?.message || "Department assigned to patient successfully");
+            handleClose();
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || "Failed to assign department";
+            toast.error(errorMessage);
         }
-        handleClose();
     };
 
     const handleClose = () => {
@@ -50,7 +47,7 @@ const AssignPopup = ({ onClose, patientId }) => {
                     <div className="bg-white p-6 rounded shadow-lg w-80">
                         <h2 className="text-lg font-bold mb-4">Assign Location</h2>
                         <label className="block mb-2">Department Code</label>
-                        <select 
+                        <select
                             value={selectedDeptId}
                             onChange={(e) => setSelectedDeptId(e.target.value)}
                             className="border border-gray-300 p-2 w-full mb-4"
@@ -61,23 +58,23 @@ const AssignPopup = ({ onClose, patientId }) => {
                                 </option>
                             ))}
                         </select>
-                        
+
                         <div className="flex justify-between">
-                            <button 
-                                onClick={handleClose} 
+                            <button
+                                onClick={handleClose}
                                 className="bg-red-500 text-white px-4 py-2 rounded"
                             >
                                 Cancel
                             </button>
-                            <button 
+                            <button
                                 onClick={handleAssign}
                                 className="bg-green-500 text-white px-4 py-2 rounded"
                             >
                                 Assign
                             </button>
                         </div>
-                        <button 
-                            onClick={handleClose} 
+                        <button
+                            onClick={handleClose}
                             className="absolute top-2 right-2 text-gray-500"
                         >
                             &times;
