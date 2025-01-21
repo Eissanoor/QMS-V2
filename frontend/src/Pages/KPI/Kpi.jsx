@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import SideNav from "../../components/Sidebar/SideNav";
 import Patientsnumberchat from "./Patientsnumberchat";
 import Categorychat from "./Categorychat";
-
+import DepartmentData from "./departmentData";
+import EyeBall from "./eyeBall";
 const Kpi = () => {
      const dummyData = [
        { month: "January", GTIN: 100, GLN: 200, BrandName: 150 },
@@ -60,8 +61,15 @@ const Kpi = () => {
               <div className="grid grid-cols-2 md:grid-cols-2 gap-4 mt-6">
                 <div className="bg-primary rounded-md shadow-md">
                   <Patientsnumberchat data={dummyData} />
-                </div><div className="bg-primary rounded-md shadow-md">
+                </div>
+                <div className="bg-primary rounded-md shadow-md">
                   <Categorychat data={dummyData} />
+                </div>
+                <div className="bg-primary rounded-md shadow-md">
+                  <DepartmentData />
+                </div>
+                <div className="bg-primary rounded-md shadow-md">
+                  <EyeBall />
                 </div>
               </div>
             </div>
