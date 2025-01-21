@@ -40,43 +40,44 @@ const WaitingArea = () => {
   const [Nationality, setNationality] = useState("");
   const [patientData, setPatientData] = useState(null);
   const [callPatient, setCallPatient] = useState(false);
-  useEffect(() => {
-    const fetchPatientData = async () => {
-      try {
-        const response = await fetch(`${baseUrl}/api/v1/patients/${id}`);
-        const data = await response.json();
-        if (data.success) {
-          const patient = data.data;
-          setPdfUrl(patient?.ticket);
-          setPatientData(patient);
-          setPatientName(patient.name);
-          setIDNumber(patient.idNumber);
-          setAge(patient.age);
-          setChiefComplaint(patient.cheifComplaint);
-          setMobileNumber(patient.mobileNumber);
-          setSex(patient.sex);
-          setNationality(patient.nationality);
-          setCallPatient(patient.callPatient);
-          if (patient.vitalSigns.length > 0) {
-            const latestVitalSign = patient.vitalSigns[0];
-            setVitalSigns({
-              BP: latestVitalSign.bp,
-              HR: latestVitalSign.hr,
-              TEMP: latestVitalSign.temp,
-              RR: latestVitalSign.rr,
-              SPO2: latestVitalSign.spo2,
-              RBS: latestVitalSign.rbs,
-              Height: latestVitalSign.height,
-              Weight: latestVitalSign.weight,
-              TimeVS: latestVitalSign.timeVs,
-            });
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching patient data:", error);
-      }
-    };
 
+  const fetchPatientData = async () => {
+    try {
+      const response = await fetch(`${baseUrl}/api/v1/patients/${id}`);
+      const data = await response.json();
+      if (data.success) {
+        const patient = data.data;
+        setPdfUrl(patient?.ticket);
+        setPatientData(patient);
+        setPatientName(patient.name);
+        setIDNumber(patient.idNumber);
+        setAge(patient.age);
+        setChiefComplaint(patient.cheifComplaint);
+        setMobileNumber(patient.mobileNumber);
+        setSex(patient.sex);
+        setNationality(patient.nationality);
+        setCallPatient(patient.callPatient);
+        if (patient.vitalSigns.length > 0) {
+          const latestVitalSign = patient.vitalSigns[0];
+          setVitalSigns({
+            BP: latestVitalSign.bp,
+            HR: latestVitalSign.hr,
+            TEMP: latestVitalSign.temp,
+            RR: latestVitalSign.rr,
+            SPO2: latestVitalSign.spo2,
+            RBS: latestVitalSign.rbs,
+            Height: latestVitalSign.height,
+            Weight: latestVitalSign.weight,
+            TimeVS: latestVitalSign.timeVs,
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching patient data:", error);
+    }
+  };
+
+  useEffect(() => {
     fetchPatientData();
   }, []);
 
@@ -143,7 +144,7 @@ const WaitingArea = () => {
      toast.error(error.response?.data?.message || "Error");
     }
   };
-  const openPopup = () => {
+  const openPopup = async () => {
     setShowPopup(true);
   };
   const closePopup = () => {
@@ -406,7 +407,7 @@ const WaitingArea = () => {
           </div>
         </div>
       )}
-      {isOpen && <AssignPopup onClose={handleClose} patientId={id} />}
+      {isOpen && <AssignPopup onClose={handleClose} patientId={id} onAssignSuccess={fetchPatientData} />}
     </div>
   );
 };

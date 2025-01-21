@@ -3,13 +3,13 @@ import { baseUrl } from "../../utils/config";
 import newRequest from '../../utils/newRequest';
 import toast from 'react-hot-toast';
 
-const AssignPopup = ({ onClose, patientId }) => {
-    console.log(patientId);
+const AssignPopup = ({ onClose, patientId, onAssignSuccess }) => {
+    console.log("onAssignSuccess",onAssignSuccess);
 
     const [isOpen, setIsOpen] = useState(true);
     const [departments, setDepartments] = useState([]);
     const [selectedDeptId, setSelectedDeptId] = useState(null);
-
+    const [patientData, setPatientData] = useState(null);
     useEffect(() => {
         const fetchDepartments = async () => {
             const response = await fetch(`${baseUrl}/api/v1/departments/all`);
@@ -28,8 +28,11 @@ const AssignPopup = ({ onClose, patientId }) => {
                 { departmentId: selectedDeptId }
             );
             toast.success(response?.data?.message || "Department assigned to patient successfully");
-            handleClose();
-            window.location.reload();
+            setTimeout(() => {
+                onAssignSuccess();
+                handleClose();
+            }, 2000);
+        
         } catch (error) {
             const errorMessage = error.response?.data?.message || "Failed to assign department";
             toast.error(errorMessage);
@@ -48,11 +51,13 @@ const AssignPopup = ({ onClose, patientId }) => {
                     <div className="bg-white p-6 rounded shadow-lg w-80">
                         <h2 className="text-lg font-bold mb-4">Assign Location</h2>
                         <label className="block mb-2">Department Code</label>
+
                         <select
                             value={selectedDeptId}
                             onChange={(e) => setSelectedDeptId(e.target.value)}
                             className="border border-gray-300 p-2 w-full mb-4"
                         >
+                            <option value="">Select Department</option>
                             {departments.map(department => (
                                 <option key={department.tblDepartmentID} value={department.tblDepartmentID}>
                                     {department.deptcode}
