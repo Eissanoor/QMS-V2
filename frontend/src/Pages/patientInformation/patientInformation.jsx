@@ -7,12 +7,30 @@ import { baseUrl } from "../../utils/config";
 import Spinner from "../../components/spinner/spinner";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { countries } from 'countries-list';
+
+const countryList = Object.entries(countries).map(([code, country]) => ({
+    name: country.name,
+    code,
+}));
+
+const CountryDropdown = ({ value, onChange, t }) => (
+    <select value={value} onChange={onChange} className="w-full mt-2 p-3 border border-green-400 rounded-lg focus:ring-2 focus:ring-green-300">
+        <option>{t("Select Nationality")}</option>
+        {countryList.map((country) => (
+            <option key={country.name} value={country.name}>
+                {country.name}
+            </option>
+        ))}
+    </select>
+);
+
 const PatientInformation = () => {
   const { t, i18n } = useTranslation();
   const [PatientName, setPatientName] = useState("");
   const [IDNumber, setIDNumber] = useState("");
   const [Age, setAge] = useState("");
-  const [Nationality, setNationality] = useState("");
+  const [Nationality, setNationality] = useState("Saudi Arabia");
   const [Sex, setSex] = useState("");
   const [Status, setStatus] = useState("");
   const [MobileNumber, setMobileNumber] = useState("");
@@ -96,16 +114,11 @@ const PatientInformation = () => {
                   >
                     {t("Nationality")}
                   </label>
-                  <select
+                  <CountryDropdown
                     value={Nationality}
                     onChange={(e) => setNationality(e.target.value)}
-                    id="nationality"
-                    className="w-full mt-2 p-3 border border-green-400 rounded-lg focus:ring-2 focus:ring-green-300"
-                  >
-                    <option>{t("Select Nationality")}</option>
-                    <option>{t("Saudi Arabia")}</option>
-                    <option>{t("Other")}</option>
-                  </select>
+                    t={t}
+                  />
                 </div>
                 <div>
                   <label
