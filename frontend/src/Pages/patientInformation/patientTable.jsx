@@ -21,9 +21,9 @@ function PatientTable() {
     const [searchTerm, setSearchTerm] = useState("");
     const fetchPatients = async (page) => {
         try {
-            const response = await newRequest.get(`/api/v1/patients?page=${page}&limit=10`);
+            const response = await newRequest.get(`/api/v1/patients?page=${page}&limit=10${searchTerm ? `&search=${searchTerm}` : ''}`);
             setPatients(response?.data?.data?.data || []);
-            console.log("totalPages",response?.data?.pagination?.totalPages);
+            console.log("totalPages", response?.data?.pagination?.totalPages);
             setTotalPages(response?.data?.data?.pagination?.totalPages);
         } catch (error) {
             console.error("Error fetching patients:", error);
@@ -33,7 +33,7 @@ function PatientTable() {
     };
     useEffect(() => {
         fetchPatients(currentPage);
-    }, [currentPage]);
+    }, [currentPage, searchTerm]);
     const toggleDropdown = (patientId) => {
         setDropdownVisible((prev) => (prev === patientId ? null : patientId));
     };
