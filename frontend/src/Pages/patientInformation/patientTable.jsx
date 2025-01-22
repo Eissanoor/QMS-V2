@@ -26,7 +26,7 @@ function PatientTable() {
             setTotalPages(response?.data?.data?.pagination?.totalPages);
         } catch (error) {
             console.error("Error fetching patients:", error);
-        } finally {
+        } finally { 
             setLoading(false); 
         }
     };

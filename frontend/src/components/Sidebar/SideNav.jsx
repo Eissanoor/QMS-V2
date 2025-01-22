@@ -1,27 +1,28 @@
 import React, { useState, useEffect } from "react";
+import { Menu, X, UserRound, Users, MapPin, Building2, Building, BarChart3 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import Registration from "../../Images/Registration.png";
-import CentralWaitingArea from "../../Images/Central Waiting Area.png";
-import LocationAssignment from "../../Images/Location Assignment.png";
-import KPI from "../../Images/KPI.png";
-import Location from "../../Images/Location.png";
-import LocationWaitingArea from "../../Images/Location Waiting Area.png";
 
 function SideNav({ children }) {
   const { t, i18n } = useTranslation();
-  const [isOpen, setIsOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState(""); // Track active tab
-  const location = useLocation(); // Get current route
+  const [isOpen, setIsOpen] = useState(() => {
+    const savedState = localStorage.getItem('sidebarOpen');
+    return savedState ? JSON.parse(savedState) : true;
+  });
+  const [activeTab, setActiveTab] = useState("");
+  const [hoveredIcon, setHoveredIcon] = useState(null);
+  const location = useLocation();
 
-  // Update activeTab based on the current route
   useEffect(() => {
     setActiveTab(location.pathname);
   }, [location.pathname]);
 
-  // Determine the CSS class for tabs
+  useEffect(() => {
+    localStorage.setItem('sidebarOpen', JSON.stringify(isOpen));
+  }, [isOpen]);
+
   const getTabClass = (path) => {
-    return `flex items-center py-1 rounded ${
+    return `flex items-center py-1 rounded transition-all duration-300 relative group ${
       activeTab === path
         ? "bg-[#13BA8885] text-black"
         : "hover:bg-gray-100 text-gray-700"
@@ -32,24 +33,61 @@ function SideNav({ children }) {
     }`;
   };
 
+  const toggleSidebar = () => {
+    setIsOpen(prev => !prev);
+  };
+
+  const handleIconClick = (e) => {
+    if (!isOpen) {
+      e.preventDefault();
+      setIsOpen(true);
+    }
+  };
+
+  const renderIcon = (Icon, path) => (
+    <div
+      className="relative cursor-pointer"
+      onMouseEnter={() => !isOpen && setHoveredIcon(path)}
+      onMouseLeave={() => setHoveredIcon(null)}
+      onClick={handleIconClick}
+    >
+      <Icon className={`w-6 h-6 text-gray-600 transition-transform duration-200 ${
+        activeTab === path ? "transform scale-110" : ""
+      }`} />
+    </div>
+  );
+
   return (
     <>
       <div className="p-0 lg:h-screen">
         <div className="body-content">
           <div className="relative lg:block navbar-menu">
             <nav
-              className={`fixed top-0 transition-all bg-primary lg:mt-0 mt-16 bottom-0 flex flex-col shadow bg-primary-sidebar overflow-hidden z-50 ${
+              className={`fixed top-0 transition-all duration-300 ease-in-out bg-white lg:mt-0 mt-16 bottom-0 flex flex-col shadow-lg overflow-hidden z-50 ${
                 i18n.language === "ar" ? "right-0" : "left-0"
-              } ${isOpen ? "w-[280px]" : "w-[280px]"}`}
+              } ${isOpen ? "w-[280px]" : "w-[80px]"}`}
               id="sidenav"
             >
-              <div className="flex justify-center items-center w-full px-4 pt-4 pb-0 border-b border-gray-300">
-                <Link to="/">
-                  <h1 className="text-2xl mb-10">QMSv2.0</h1>
-                </Link>
+              <div className="flex items-center justify-between w-full px-4 pt-4 pb-4 border-b border-gray-200">
+                <div className={`transition-opacity duration-300 ${!isOpen ? 'opacity-0 w-0' : 'opacity-100'}`}>
+                  
+                    <h1 className="text-2xl font-bold text-gray-800">QMSv2.0</h1>
+                 
+                </div>
+                <button
+                  onClick={toggleSidebar}
+                  className="p-2 rounded-lg hover:bg-gray-100 transition-colors focus:outline-none cursor-pointer"
+                  aria-label={isOpen ? "Close sidebar" : "Open sidebar"}
+                >
+                  {isOpen ? (
+                    <X size={24} className="text-gray-600 cursor-pointer"  />
+                  ) : (
+                    <Menu size={24} className="text-gray-600 mx-auto cursor-pointer" />
+                  )}
+                </button>
               </div>
-              <div className="pb-6 mt-4 overflow-x-hidden overflow-y-auto">
-                <ul className="mb-8 text-sm">
+              <div className="flex-1 overflow-y-auto">
+                <ul className="p-4 space-y-4">
                   {/* Patient Information */}
                   <li>
                     <Link
@@ -57,18 +95,14 @@ function SideNav({ children }) {
                       className={getTabClass("/patient-table")}
                     >
                       <div
-                        className={`flex justify-center items-center gap-3 ${
-                          i18n.language === "ar"
-                            ? "flex-row-reverse"
-                            : "flex-row"
-                        }`}
+                        className={`flex items-center gap-3 transition-all duration-300 ${
+                          i18n.language === "ar" ? "flex-row-reverse" : "flex-row"
+                        } ${!isOpen && 'justify-center'}`}
                       >
-                        <img
-                          src={Registration}
-                          alt="logo"
-                          className="w-8 h-8 object-cover"
-                        />
-                        <span className="text-black font-medium text-lg">
+                        {renderIcon(UserRound, "/patient-table")}
+                        <span className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ${
+                          !isOpen && 'opacity-0 w-0 overflow-hidden'
+                        }`}>
                           {t("Patient Information")}
                         </span>
                       </div>
@@ -76,24 +110,20 @@ function SideNav({ children }) {
                   </li>
 
                   {/* Central/Waiting Area */}
-                  <li className="mt-3">
+                  <li>
                     <Link
                       to="/monitoring"
                       className={getTabClass("/monitoring")}
                     >
                       <div
-                        className={`flex justify-center items-center gap-3 ${
-                          i18n.language === "ar"
-                            ? "flex-row-reverse"
-                            : "flex-row"
-                        }`}
+                        className={`flex items-center gap-3 transition-all duration-300 ${
+                          i18n.language === "ar" ? "flex-row-reverse" : "flex-row"
+                        } ${!isOpen && 'justify-center'}`}
                       >
-                        <img
-                          src={CentralWaitingArea}
-                          alt="logo"
-                          className="w-8 h-8 object-cover"
-                        />
-                        <span className="text-black font-medium text-lg">
+                          {renderIcon(Users, "/monitoring")}
+                        <span className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ${
+                          !isOpen && 'opacity-0 w-0 overflow-hidden'
+                        }`}>
                           {t("Patient Monitoring")}
                         </span>
                       </div>
@@ -101,24 +131,20 @@ function SideNav({ children }) {
                   </li>
 
                   {/* Location Assignment */}
-                  <li className="mt-3">
+                  <li>
                     <Link
                       to="/location-assignment"
                       className={getTabClass("/location-assignment")}
                     >
                       <div
-                        className={`flex justify-center items-center gap-3 ${
-                          i18n.language === "ar"
-                            ? "flex-row-reverse"
-                            : "flex-row"
-                        }`}
+                        className={`flex items-center gap-3 transition-all duration-300 ${
+                          i18n.language === "ar" ? "flex-row-reverse" : "flex-row"
+                        } ${!isOpen && 'justify-center'}`}
                       >
-                        <img
-                          src={LocationAssignment}
-                          alt="logo"
-                          className="w-8 h-8 object-cover"
-                        />
-                        <span className="text-black font-medium text-lg">
+                        {renderIcon(MapPin, "/location-assignment")}
+                        <span className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ${
+                          !isOpen && 'opacity-0 w-0 overflow-hidden'
+                        }`}>
                           {t("Location Assignment")}
                         </span>
                       </div>
@@ -126,24 +152,20 @@ function SideNav({ children }) {
                   </li>
 
                   {/* Location Waiting Area */}
-                  <li className="mt-3">
+                  <li>
                     <Link
                       to="/location-waiting-area"
                       className={getTabClass("/location-waiting-area")}
                     >
                       <div
-                        className={`flex justify-center items-center gap-3 ${
-                          i18n.language === "ar"
-                            ? "flex-row-reverse"
-                            : "flex-row"
-                        }`}
+                        className={`flex items-center gap-3 transition-all duration-300 ${
+                          i18n.language === "ar" ? "flex-row-reverse" : "flex-row"
+                        } ${!isOpen && 'justify-center'}`}
                       >
-                        <img
-                          src={LocationWaitingArea}
-                          alt="logo"
-                          className="w-8 h-8 object-cover"
-                        />
-                        <span className="text-black font-medium text-lg">
+                        {renderIcon(Building2, "/location-waiting-area")}
+                        <span className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ${
+                          !isOpen && 'opacity-0 w-0 overflow-hidden'
+                        }`}>
                           {t("Location Waiting Area")}
                         </span>
                       </div>
@@ -151,21 +173,20 @@ function SideNav({ children }) {
                   </li>
 
                   {/* Location */}
-                  <li className="mt-3">
-                    <Link to="/location" className={getTabClass("/location")}>
+                  <li>
+                    <Link 
+                      to="/location" 
+                      className={getTabClass("/location")}
+                    >
                       <div
-                        className={`flex justify-center items-center gap-3 ${
-                          i18n.language === "ar"
-                            ? "flex-row-reverse"
-                            : "flex-row"
-                        }`}
+                        className={`flex items-center gap-3 transition-all duration-300 ${
+                          i18n.language === "ar" ? "flex-row-reverse" : "flex-row"
+                        } ${!isOpen && 'justify-center'}`}
                       >
-                        <img
-                          src={Location}
-                          alt="logo"
-                          className="w-8 h-8 object-cover"
-                        />
-                        <span className="text-black font-medium text-lg">
+                        {renderIcon(Building, "/location")}
+                        <span className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ${
+                          !isOpen && 'opacity-0 w-0 overflow-hidden'
+                        }`}>
                           {t("Location")}
                         </span>
                       </div>
@@ -173,21 +194,20 @@ function SideNav({ children }) {
                   </li>
 
                   {/* KPI */}
-                  <li className="mt-3">
-                    <Link to="/kpi" className={getTabClass("/kpi")}>
+                  <li>
+                    <Link 
+                      to="/kpi" 
+                      className={getTabClass("/kpi")}
+                    >
                       <div
-                        className={`flex justify-center items-center gap-3 ${
-                          i18n.language === "ar"
-                            ? "flex-row-reverse"
-                            : "flex-row"
-                        }`}
+                        className={`flex items-center gap-3 transition-all duration-300 ${
+                          i18n.language === "ar" ? "flex-row-reverse" : "flex-row"
+                        } ${!isOpen && 'justify-center'}`}
                       >
-                        <img
-                          src={KPI}
-                          alt="logo"
-                          className="w-8 h-8 object-cover"
-                        />
-                        <span className="text-black font-medium text-lg">
+                        {renderIcon(BarChart3, "/kpi")}
+                        <span className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ${
+                          !isOpen && 'opacity-0 w-0 overflow-hidden'
+                        }`}>
                           {t("KPI")}
                         </span>
                       </div>
@@ -201,20 +221,26 @@ function SideNav({ children }) {
 
         {/* Main content */}
         <div
-          className={`mx-auto transition-all content-wrapper ${
+          className={`mx-auto transition-all duration-300 content-wrapper ${
             isOpen
               ? `${i18n.language === "ar" ? "lg:mr-[280px]" : "lg:ml-[280px]"}`
-              : "lg:ml-[280px]"
+              : `${i18n.language === "ar" ? "lg:mr-[80px]" : "lg:ml-[80px]"}`
           }`}
           id="dash"
         >
-          <section className="sticky top-0 z-40 px-3 py-0 bg-primary shadow text-gray-100 lg:px-5">
+          <section className="sticky top-0 z-40 px-3 py-3 bg-white shadow-sm">
             <nav className="relative">
               <div
                 className={`flex justify-between items-center ${
                   i18n.language === "ar" ? "flex-row-reverse" : "flex-row"
                 }`}
-              ></div>
+              >
+                <h2 className="text-xl font-semibold text-gray-800">
+                  {t(location.pathname.substring(1).split("-").map(word => 
+                    word.charAt(0).toUpperCase() + word.slice(1)
+                  ).join(" ")) || "Dashboard"}
+                </h2>
+              </div>
             </nav>
           </section>
 
