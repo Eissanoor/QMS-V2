@@ -18,6 +18,7 @@ function PatientTable() {
     const [totalPages, setTotalPages] = useState(0);
     console.log("totalPages",totalPages);
     const navigate = useNavigate();
+    const [searchTerm, setSearchTerm] = useState("");
     const fetchPatients = async (page) => {
         try {
             const response = await newRequest.get(`/api/v1/patients?page=${page}&limit=10`);
@@ -95,6 +96,13 @@ function PatientTable() {
                         </div>
                     </div>
                     <div className="w-11/12 mx-auto">
+                        <input
+                            type="text"
+                            placeholder="Search patients..."
+                            className="w-80 border border-green-500 rounded px-3 py-2 "
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
                         <table className="min-w-full bg-white">
                             <thead className="whitespace-nowrap">
                                 <tr>
@@ -120,73 +128,80 @@ function PatientTable() {
                                 {loading ? (
                                     <Spinner />
                                 ) : (
-                                    patients.map((patient) => (
-                                        <tr
-                                            key={patient.id}
-                                            className={`odd:bg-blue-50 ${selectedPatientId === patient.id ? "bg-white" : ""
-                                                }`}
-                                            onClick={() => setSelectedPatientId(patient.id)}
-                                        >
-                                            <td className="pl-4 w-8">
-                                                <input
-                                                    id={`checkbox-${patient.id}`}
-                                                    type="checkbox"
-                                                    className="hidden peer"
-                                                />
-                                                <label
-                                                    htmlFor={`checkbox-${patient.id}`}
-                                                    className="relative flex items-center justify-center p-0.5 peer-checked:before:hidden before:block before:absolute before-w-full before-h-full before:bg-white w-5 h-5 cursor-pointer bg-white-500 border border-gray-400 rounded overflow-hidden"
-                                                >
-                                                    {selectedPatientId === patient.id && (
-                                                        <span>✔️</span>
+                                    patients
+                                        .filter((patient) =>
+                                            patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                            patient.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                            patient.age.toString().includes(searchTerm) ||
+                                            patient.mobileNumber.includes(searchTerm)
+                                        )
+                                        .map((patient) => (
+                                            <tr
+                                                key={patient.id}
+                                                className={`odd:bg-blue-50 ${selectedPatientId === patient.id ? "bg-white" : ""
+                                                    }`}
+                                                onClick={() => setSelectedPatientId(patient.id)}
+                                            >
+                                                <td className="pl-4 w-8">
+                                                    <input
+                                                        id={`checkbox-${patient.id}`}
+                                                        type="checkbox"
+                                                        className="hidden peer"
+                                                    />
+                                                    <label
+                                                        htmlFor={`checkbox-${patient.id}`}
+                                                        className="relative flex items-center justify-center p-0.5 peer-checked:before:hidden before:block before:absolute before-w-full before-h-full before:bg-white w-5 h-5 cursor-pointer bg-white-500 border border-gray-400 rounded overflow-hidden"
+                                                    >
+                                                        {selectedPatientId === patient.id && (
+                                                            <span>✔️</span>
+                                                        )}
+                                                    </label>
+                                                </td>
+                                                <td className="p-4 text-sm text-gray-800">
+                                                    {patient.name}
+                                                </td>
+                                                <td className="p-4 text-sm text-gray-800">
+                                                    <span
+                                                        className={`w-[68px] block text-center py-1 border ${patient.status === "Active"
+                                                            ? "border-green-500 text-green-600"
+                                                            : "border-yellow-500 text-yellow-600"
+                                                            } rounded text-xs`}
+                                                    >
+                                                        {patient.status}
+                                                    </span>
+                                                </td>
+                                                <td className="p-4 text-sm text-gray-800">
+                                                    {patient.age}
+                                                </td>
+                                                <td className="p-4 text-sm text-gray-800">
+                                                    {patient.mobileNumber}
+                                                </td>
+                                                <td className="relative text-center">
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            toggleDropdown(patient.id);
+                                                        }}
+                                                        className="text-gray-500 text-lg hover:text-blue-600"
+                                                    >
+                                                        ⋮
+                                                    </button>
+                                                    {dropdownVisible === patient.id && (
+                                                        <div className="absolute bg-white border rounded shadow-lg w-40 z-10">
+                                                            <ul>
+                                                                <li
+                                                                    className="px-4 py-2 hover:bg-gray-100 text-red-600 cursor-pointer flex my-auto"
+                                                                    onClick={() => handleDelete(patient)}
+                                                                >
+                                                                    <FaTrash className="my-auto me-4" />{" "}
+                                                                    <p className="text-lg ">Delete</p>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
                                                     )}
-                                                </label>
-                                            </td>
-                                            <td className="p-4 text-sm text-gray-800">
-                                                {patient.name}
-                                            </td>
-                                            <td className="p-4 text-sm text-gray-800">
-                                                <span
-                                                    className={`w-[68px] block text-center py-1 border ${patient.status === "Active"
-                                                        ? "border-green-500 text-green-600"
-                                                        : "border-yellow-500 text-yellow-600"
-                                                        } rounded text-xs`}
-                                                >
-                                                    {patient.status}
-                                                </span>
-                                            </td>
-                                            <td className="p-4 text-sm text-gray-800">
-                                                {patient.age}
-                                            </td>
-                                            <td className="p-4 text-sm text-gray-800">
-                                                {patient.mobileNumber}
-                                            </td>
-                                            <td className="relative text-center">
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        toggleDropdown(patient.id);
-                                                    }}
-                                                    className="text-gray-500 text-lg hover:text-blue-600"
-                                                >
-                                                    ⋮
-                                                </button>
-                                                {dropdownVisible === patient.id && (
-                                                    <div className="absolute bg-white border rounded shadow-lg w-40 z-10">
-                                                        <ul>
-                                                            <li
-                                                                className="px-4 py-2 hover:bg-gray-100 text-red-600 cursor-pointer flex my-auto"
-                                                                onClick={() => handleDelete(patient)}
-                                                            >
-                                                                <FaTrash className="my-auto me-4" />{" "}
-                                                                <p className="text-lg ">Delete</p>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                )}
-                                            </td>
-                                        </tr>
-                                    ))
+                                                </td>
+                                            </tr>
+                                        ))
                                 )}
                             </tbody>
                         </table>
