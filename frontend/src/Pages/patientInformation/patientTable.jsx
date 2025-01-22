@@ -15,11 +15,15 @@ function PatientTable() {
     const [selectedPatientId, setSelectedPatientId] = useState(null);
     const [dropdownVisible, setDropdownVisible] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [totalPages, setTotalPages] = useState(0);
+    console.log("totalPages",totalPages);
     const navigate = useNavigate();
     const fetchPatients = async (page) => {
         try {
             const response = await newRequest.get(`/api/v1/patients?page=${page}&limit=10`);
-            setPatients(response?.data?.data?.data || []); 
+            setPatients(response?.data?.data?.data || []);
+            console.log("totalPages",response?.data?.pagination?.totalPages);
+            setTotalPages(response?.data?.data?.pagination?.totalPages);
         } catch (error) {
             console.error("Error fetching patients:", error);
         } finally {
@@ -193,13 +197,15 @@ function PatientTable() {
             <div className="flex justify-center mt-4 mb-4" style={{ marginLeft: "1150px" }}>
                 <button
                     onClick={handlePreviousPage}
-                    className="px-4 py-2 bg-green-500 text-white rounded mr-2"
+                    className={`px-4 py-2 bg-green-500 text-white rounded mr-2 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    disabled={currentPage === 1}
                 >
                     Previous Page
                 </button>
                 <button
                     onClick={handleNextPage}
-                    className="px-4 py-2 bg-green-500 text-white rounded"
+                    className={`px-4 py-2 bg-green-500 text-white rounded ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    disabled={currentPage === totalPages}
                 >
                     Next Page
                 </button>
