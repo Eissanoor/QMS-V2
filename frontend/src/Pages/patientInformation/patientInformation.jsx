@@ -8,6 +8,8 @@ import Spinner from "../../components/spinner/spinner";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { countries } from 'countries-list';
+import Autocomplete from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
 
 const countryList = Object.entries(countries).map(([code, country]) => ({
     name: country.name,
@@ -15,14 +17,20 @@ const countryList = Object.entries(countries).map(([code, country]) => ({
 }));
 
 const CountryDropdown = ({ value, onChange, t }) => (
-    <select value={value} onChange={onChange} className="w-full mt-2 p-3 border border-green-400 rounded-lg focus:ring-2 focus:ring-green-300">
-        <option>{t("Select Nationality")}</option>
-        {countryList.map((country) => (
-            <option key={country.name} value={country.name}>
-                {country.name}
-            </option>
-        ))}
-    </select>
+    <Autocomplete
+        disablePortal
+        options={countryList.map(country => country.name)}
+        value={value}
+        onChange={(event, newValue) => onChange({ target: { value: newValue } })}
+        renderInput={(params) => (
+            <TextField 
+                {...params} 
+                label={t("Select Nationality")} 
+                className="w-full mt-2 p-3 border border-green-400 rounded-lg focus:ring-2 focus:ring-green-300"
+            />
+        )}
+        sx={{ width: '100%', mt: 2 }}
+    />
 );
 
 const PatientInformation = () => {
