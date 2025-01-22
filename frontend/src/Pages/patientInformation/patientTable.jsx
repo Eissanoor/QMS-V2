@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { baseUrl } from "../../utils/config";
-import SideNav from '../../components/Sidebar/SideNav';
-import Spinner from '../../components/spinner/spinner';
+import { useQuery } from 'react-query';
 import { FaTrash } from "react-icons/fa";
 import Swal from "sweetalert2";
 import toast from 'react-hot-toast';
+import SideNav from '../../components/Sidebar/SideNav';
+import Spinner from '../../components/spinner/spinner';
 import newRequest from '../../utils/newRequest';
+
+const fetchPatients = async () => {
+    const response = await newRequest.get(`/api/v1/patients`);
+    return response?.data?.data?.data || [];
+};
+
 function PatientTable() {
     const [patients, setPatients] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -59,8 +64,6 @@ function PatientTable() {
                     const errorMessage = error.response?.data?.message || "An unexpected error occurred";
                     toast.error(errorMessage);
                 }
-            } else if (result.dismiss === Swal.DismissReason.cancel) {
-                return;
             }
         });
     };
