@@ -85,9 +85,16 @@ function PatientTable() {
         <SideNav>
           <div className="w-11/12 mx-auto">
             <div className="flex items-center mb-4 justify-between w-full">
-              <h3 className="text-2xl font-bold text-left mt-10">
+              {/* <h3 className="text-2xl font-bold text-left mt-10">
                 Patients Informaation
-              </h3>
+              </h3> */}
+              <input
+                type="text"
+                placeholder="Search patients..."
+                className="w-80 border border-green-500 rounded px-3 py-2 "
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
               <div className="font-[sans-serif] space-x-4 space-y-4 text-center mt-10">
                 <button
                   type="button"
@@ -98,13 +105,7 @@ function PatientTable() {
                 </button>
               </div>
             </div>
-            <input
-              type="text"
-              placeholder="Search patients..."
-              className="w-80 border border-green-500 rounded px-3 py-2 "
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+
             <div className="max-h-[500px] sm:max-h-[300px] md:max-h-[450px] lg:max-h-[500px] overflow-y-scroll border border-gray-300 rounded-md mt-4">
               <table className="min-w-full bg-white  overflow-y-scroll">
                 <thead className="whitespace-nowrap">
@@ -146,8 +147,9 @@ function PatientTable() {
                       .map((patient) => (
                         <tr
                           key={patient.id}
-                          className={`odd:bg-blue-50 ${selectedPatientId === patient.id ? "bg-white" : ""
-                            }`}
+                          className={`odd:bg-blue-50 ${
+                            selectedPatientId === patient.id ? "bg-white" : ""
+                          }`}
                           onClick={() => setSelectedPatientId(patient.id)}
                         >
                           <td className="pl-4 w-8">
@@ -170,10 +172,11 @@ function PatientTable() {
                           </td>
                           <td className="p-4 text-sm text-gray-800">
                             <span
-                              className={`w-[68px] block text-center py-1 border ${patient.status === "Active"
+                              className={`w-[68px] block text-center py-1 border ${
+                                patient.status === "Active"
                                   ? "border-green-500 text-green-600"
                                   : "border-yellow-500 text-yellow-600"
-                                } rounded text-xs`}
+                              } rounded text-xs`}
                             >
                               {patient.status}
                             </span>
@@ -224,18 +227,20 @@ function PatientTable() {
             <div className="flex justify-end mb-4 mt-6">
               <button
                 onClick={handlePreviousPage}
-                className={`px-4 py-2 bg-green-500 text-white rounded mr-2 ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
-                  }`}
+                className={`px-4 py-2 bg-green-500 text-white rounded mr-2 ${
+                  currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
+                }`}
                 disabled={currentPage === 1}
               >
                 Previous Page
               </button>
               <button
                 onClick={handleNextPage}
-                className={`px-4 py-2 bg-green-500 text-white rounded ${currentPage === totalPages
+                className={`px-4 py-2 bg-green-500 text-white rounded ${
+                  currentPage === totalPages
                     ? "opacity-50 cursor-not-allowed"
                     : ""
-                  }`}
+                }`}
                 disabled={currentPage === totalPages}
               >
                 Next Page

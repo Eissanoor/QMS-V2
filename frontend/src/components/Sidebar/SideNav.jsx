@@ -8,7 +8,11 @@ import LocationAssignment from "../../Images/Location Assignment.png";
 import KPI from "../../Images/KPI.png";
 import Location from "../../Images/Location.png";
 import LocationWaitingArea from "../../Images/Location Waiting Area.png";
-
+import MasterData from "../../Images/masterdata.png";
+import Usersicon from "../../Images/users.png";
+import TVscreeen from "../../Images/TV screen.jpg";
+import Rolesicon from "../../Images/Roles.png";
+import Department from "../../Images/Department.png";
 function SideNav({ children }) {
   const { t, i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(() => {
@@ -76,7 +80,7 @@ function SideNav({ children }) {
                   >
                     <img
                       src={Registration}
-                      alt="Patient Information"
+                      alt="Registered Patients"
                       className="w-6 h-6"
                     />
                     <span
@@ -84,7 +88,7 @@ function SideNav({ children }) {
                         !isOpen && "opacity-0 w-0 overflow-hidden"
                       }`}
                     >
-                      {t("Patient Information")}
+                      {t("Registered Patients")}
                     </span>
                   </Link>
                 </li>
@@ -92,7 +96,7 @@ function SideNav({ children }) {
                   <Link to="/monitoring" className={getTabClass("/monitoring")}>
                     <img
                       src={CentralWaitingArea}
-                      alt="Patient Monitoring"
+                      alt="Triage Waiting List"
                       className="w-6 h-6"
                     />
                     <span
@@ -100,7 +104,7 @@ function SideNav({ children }) {
                         !isOpen && "opacity-0 w-0 overflow-hidden"
                       }`}
                     >
-                      {t("Patient Monitoring")}
+                      {t("Triage Waiting List")}
                     </span>
                   </Link>
                 </li>
@@ -119,7 +123,7 @@ function SideNav({ children }) {
                         !isOpen && "opacity-0 w-0 overflow-hidden"
                       }`}
                     >
-                      {t("Location Assignment")}
+                      {t("Department Waiting List")}
                     </span>
                   </Link>
                 </li>
@@ -129,7 +133,7 @@ function SideNav({ children }) {
                     className={getTabClass("/location-waiting-area")}
                   >
                     <img
-                      src={LocationWaitingArea}
+                      src={MasterData}
                       alt="Location Waiting Area"
                       className="w-6 h-6"
                     />
@@ -138,7 +142,7 @@ function SideNav({ children }) {
                         !isOpen && "opacity-0 w-0 overflow-hidden"
                       }`}
                     >
-                      {t("Location Waiting Area")}
+                      {t("MasterData")}
                     </span>
                   </Link>
                 </li>
@@ -151,6 +155,54 @@ function SideNav({ children }) {
                       }`}
                     >
                       {t("Location")}
+                    </span>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/location" className={getTabClass("/location")}>
+                    <img src={Usersicon} alt="Location" className="w-6 h-6" />
+                    <span
+                      className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${
+                        !isOpen && "opacity-0 w-0 overflow-hidden"
+                      }`}
+                    >
+                      {t("Users")}
+                    </span>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/location" className={getTabClass("/location")}>
+                    <img src={Rolesicon} alt="Location" className="w-6 h-6" />
+                    <span
+                      className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${
+                        !isOpen && "opacity-0 w-0 overflow-hidden"
+                      }`}
+                    >
+                      {t("Roles")}
+                    </span>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/location" className={getTabClass("/location")}>
+                    <img src={Department} alt="Location" className="w-6 h-6" />
+                    <span
+                      className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${
+                        !isOpen && "opacity-0 w-0 overflow-hidden"
+                      }`}
+                    >
+                      {t("Department")}
+                    </span>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/location" className={getTabClass("/location")}>
+                    <img src={TVscreeen} alt="Location" className="w-6 h-6" />
+                    <span
+                      className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${
+                        !isOpen && "opacity-0 w-0 overflow-hidden"
+                      }`}
+                    >
+                      {t("TV Screen")}
                     </span>
                   </Link>
                 </li>
