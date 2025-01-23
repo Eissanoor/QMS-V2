@@ -215,10 +215,10 @@ function SideNav({ children }) {
                       </Link>
                     </li>
                     <li>
-                      <Link to="/location" className={getTabClass("/location")}>
+                      <Link to="/Department" className={getTabClass("/Department")}>
                         <img
                           src={Department}
-                          alt="Location"
+                          alt="Department"
                           className="w-6 h-6"
                         />
                         <span
