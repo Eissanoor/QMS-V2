@@ -46,6 +46,7 @@ const PatientInformation = () => {
   const [ticket, setTicket] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
   const [pdfUrl, setPdfUrl] = useState(null);
+  const [pdfBlobUrl, setPdfBlobUrl] = useState(null);
   const [loading, setLoading] = useState(false);
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -75,6 +76,9 @@ const PatientInformation = () => {
         const { data } = response.data;
         setTicket(`${baseUrl}/${data.ticket}`);
         setPdfUrl(data.ticket);
+        const pdfResponse = await axios.get(`${baseUrl}/${data.ticket}`, { responseType: 'blob' });
+        const blobUrl = URL.createObjectURL(pdfResponse.data);
+        setPdfBlobUrl(blobUrl);
         setShowPopup(true);
         toast.success("Successfully submitted patient data!");
       }
@@ -87,6 +91,14 @@ const PatientInformation = () => {
 
   const closePopup = () => {
     setShowPopup(false);
+  };
+
+  const printTicket = () => {
+    const iframe = document.getElementById('pdfFrame');
+    if (iframe) {
+        iframe.contentWindow.focus();
+        iframe.contentWindow.print();
+    }
   };
 
   return (
@@ -274,18 +286,22 @@ const PatientInformation = () => {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg">
             <h2 className="text-lg font-bold">Ticket Information</h2>
-            {pdfUrl ? (
+            {pdfBlobUrl ? (
               <iframe
-                src={`${baseUrl}/${pdfUrl}`}
+                src={pdfBlobUrl}
                 width="100%"
                 height="600px"
                 title="PDF Document"
+                id="pdfFrame"
               />
             ) : (
               <p>No PDF available</p>
             )}
             <button onClick={closePopup} className="mt-4 bg-red-500 text-white px-4 py-2 rounded">
               Close
+            </button>
+            <button onClick={printTicket} className="mt-4 ml-40 bg-blue-500 text-white px-4 py-2 rounded">
+              Print
             </button>
           </div>
         </div>
