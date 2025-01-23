@@ -52,7 +52,7 @@ function SideNav({ children }) {
             id="sidenav"
           >
             <div
-              className={`flex items-center w-full px-4 pt-4 pb-4 border-b border-gray-200 justify-center `}
+                className={`flex items-center w-full px-4 pt-4 pb-4 border-b border-gray-200 justify-center `}
             >
               <div
                 className={`transition-opacity duration-300 justify-center ${!isOpen ? "opacity-0 w-0" : "opacity-100"
