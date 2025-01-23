@@ -333,14 +333,12 @@ const WaitingArea = () => {
 
             <div className="flex justify-between items-center mt-6">
               <button
-                className={`text-white px-6 py-2 rounded-lg hover:bg-yellow-500 ${
-                  VitalSigns.BP ? "" : "opacity-50 cursor-not-allowed"
-                } ${
+                className={`text-white px-6 py-2 rounded-lg hover:bg-yellow-500  ${
                   callPatient
                     ? "bg-red-500 hover:bg-red-600"
                     : "bg-yellow-400 hover:bg-yellow-500"
                 }`}
-                disabled={VitalSigns.BP ? false : true}
+               
                 onClick={handleCallPatientToggle}
               >
                 {callPatient ? t("Cancel Call Patient") : t("Call Patient")}
@@ -354,7 +352,7 @@ const WaitingArea = () => {
                       ? "bg-blue-500 hover:bg-blue-600"
                       : "bg-yellow-400 hover:bg-yellow-500"
                   }`}
-                  disabled={VitalSigns.BP ? false : true}
+                 
                   onClick={handleOpen}
                 >
                   {loading ? <Spinner /> : `${t("Assign")}`}

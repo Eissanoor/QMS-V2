@@ -7,6 +7,7 @@ import CentralWaitingArea from "../../Images/Central Waiting Area.png";
 import LocationAssignment from "../../Images/Location Assignment.png";
 import KPI from "../../Images/KPI.png";
 import Location from "../../Images/Location.png";
+import logo from "../../Images/logo.png";
 import LocationWaitingArea from "../../Images/Location Waiting Area.png";
 import MasterData from "../../Images/masterdata.png";
 import Usersicon from "../../Images/users.png";
@@ -54,22 +55,19 @@ function SideNav({ children }) {
             id="sidenav"
           >
             <div
-              className={`flex items-center justify-center w-full px-4 pt-4 pb-4 border-b border-gray-200 `}
+                className={`flex items-center w-full px-4 pt-4 pb-4 border-b border-gray-200 justify-center `}
             >
               <div
-                className={`transition-opacity duration-300 cursor-pointer ${
-                  !isOpen ? "opacity-0 w-0" : "opacity-100"
-                }`}
-                onClick={() => navigate("/patient-table")}
+                className={`transition-opacity duration-300 justify-center ${!isOpen ? "opacity-0 w-0" : "opacity-100"
+                  }`}
               >
-                <img src={LOGO} className="h-auto w-36 rounded-md" alt="" />
+                <img src={logo} alt="logo" className="w-12 h-12" />
               </div>
               <div
-                className={`transition-opacity duration-300 ${
-                  isOpen ? "opacity-0 w-0" : "opacity-100"
-                }`}
+                className={`transition-opacity duration-300  ${isOpen ? "opacity-0 w-0" : "opacity-100"
+                  }`}
               >
-                <h1 className="text-sm font-bold text-gray-800">QMSv2.0</h1>
+                 <img src={logo} alt="logo" className="w-10 h-10 " />
               </div>
             </div>
 
