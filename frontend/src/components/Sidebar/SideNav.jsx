@@ -192,8 +192,8 @@ function SideNav({ children }) {
                     </li>
                   </ul>
                 )}
-                <li onClick={() => navigate("/location")} className={getTabClass("/location")}>
-                  <img src={TVscreeen} alt="Location" className="w-6 h-6" />
+                <li onClick={() => navigate("/patient-display")} className={getTabClass("/patient-display")}>
+                  <img src={TVscreeen} alt="patient-display" className="w-6 h-6" />
                   <span
                     className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${!isOpen && "opacity-0 w-0 overflow-hidden"
                       }`}
