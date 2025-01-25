@@ -18,6 +18,7 @@ import UpdatePatientInformation from "./Pages/patientInformation/UpdatePatientIn
 import Department from "./Pages/Department/Department.jsx";
 import Users from "./Pages/MasterData/Users/Users.jsx";
 import Roless from "./Pages/MasterData/Roles/Roless.jsx";
+import Beds from "./Pages/MasterData/Beds/Beds.jsx";
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -57,6 +58,7 @@ const App = () => {
                   <Route path="/Department" element={<Department />} />
                   <Route path="/users" element={<Users />} />
                   <Route path="/Roles" element={<Roless />} />
+                  <Route path="/Beds" element={<Beds />} />
                 </Routes>
               </QueryClientProvider>
             </BrowserRouter>

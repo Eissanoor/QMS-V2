@@ -14,6 +14,7 @@ import Usersicon from "../../Images/users.png";
 import TVscreeen from "../../Images/TV screen.jpg";
 import Rolesicon from "../../Images/Roles.png";
 import Department from "../../Images/Department.png";
+import Beds from "../../Images/Beds.jpg";
 function SideNav({ children }) {
   const { t, i18n } = useTranslation();
   const [Masterdatashow, setMasterdatashow] = useState(false);
@@ -126,7 +127,7 @@ function SideNav({ children }) {
                   </span>
                 </li>
                 <div
-                  className="flex px-3"
+                  className="flex px-3 cursor-pointer"
                   onClick={() => setMasterdatashow(!Masterdatashow)}
                 >
                   <img
@@ -192,6 +193,19 @@ function SideNav({ children }) {
                         }`}
                       >
                         {t("Roles")}
+                      </span>
+                    </li>
+                    <li
+                      onClick={() => navigate("/Beds")}
+                      className={getTabClass("/Beds")}
+                    >
+                      <img src={Beds} alt="Beds" className="w-6 h-6" />
+                      <span
+                        className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${
+                          !isOpen && "opacity-0 w-0 overflow-hidden"
+                        }`}
+                      >
+                        {t("Beds")}
                       </span>
                     </li>
                     <li
