@@ -1,37 +1,51 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { baseUrl } from "../../utils/config";
 import Spinner from "../../components/spinner/spinner";
+import newRequest from "../../utils/newRequest";
+import { useQuery } from "react-query";
 
 const PatientDisplay = () => {
-  const [patients, setPatients] = useState([]);
+  // const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
 
 
-  useEffect(() => {
-    const fetchPatients = async () => {
-      try {
-        const response = await axios.get(`${baseUrl}/api/v1/patients/called`);
-        if (response.data.success) {
-          setPatients(response?.data?.data || []);
-        }
-      } catch (error) {
-        console.error("Error fetching patients:", error);
-      } finally {
-        setLoading(false);
-      }
+  // useEffect(() => {
+  //   const fetchPatients = async () => {
+  //     try {
+  //       const response = await newRequest.get(`/api/v1/patients/called`);
+  //       if (response.data.success) {
+  //         setPatients(response?.data?.data || []);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching patients:", error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
 
-    };
+  //   };
 
-    fetchPatients();
-  }, []);
+  //   fetchPatients();
+  // }, []);
+
+    const { isLoading, data: patients = [], error } = useQuery("fetchAllMegaMenus", async () => {
+    try {
+      const response = await newRequest.get("/api/v1/patients/called");
+      return response?.data?.data || [];
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  });
+
+
 
   return (
     <div className="flex h-screen bg-blue-400">
       {/* Sidebar for subsequent patient cards */}
       <div className="w-1/4 bg-green-500 p-4 flex flex-col gap-4">
-        {loading ? (
+        {isLoading ? (
           <Spinner />
+        ) : error ? (
+          ""
         ) : (
           patients.slice(1).map((patient) => {
             const departmentName = patient.department
@@ -73,8 +87,10 @@ const PatientDisplay = () => {
 
       {/* Main display for the first patient */}
       <div className="flex-1 flex items-center justify-center ">
-        {loading ? (
+        {isLoading ? (
           <Spinner />
+        ) : error ? (
+          ""
         ) : (
           patients.length > 0 && (
             <div className="bg-white p-10 rounded-2xl shadow-lg border-4  items-center justify-center border-red-600 w-3/4 ">
