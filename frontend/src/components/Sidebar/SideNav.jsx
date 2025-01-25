@@ -151,10 +151,10 @@ function SideNav({ children }) {
                         {t("Location")}
                       </span>
                     </li>
-                    <li onClick={() => navigate("/location")} className={getTabClass("/location")}>
+                    <li onClick={() => navigate("/users")} className={getTabClass("/users")}>
                       <img
                         src={Usersicon}
-                        alt="Location"
+                        alt="users"
                         className="w-6 h-6"
                       />
                       <span

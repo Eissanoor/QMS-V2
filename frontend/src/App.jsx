@@ -16,6 +16,7 @@ import PatientMonitoring from "./Pages/LocationWaitingArea/monitoring.jsx";
 import PatientDisplay from "./Pages/patientDisplay/patientDisplay.jsx";
 import UpdatePatientInformation from "./Pages/patientInformation/UpdatePatientInformation.jsx";
 import Department from "./Pages/Department/Department.jsx";
+import Users from "./Pages/MasterData/Users/Users.jsx";
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -40,6 +41,7 @@ const App = () => {
                   <Route path="/monitoring" element={<PatientMonitoring />} />
                   <Route path="/patient-display" element={<PatientDisplay />} />
                   <Route path="/Department" element={<Department />} />
+                  <Route path="/users" element={<Users />} />
                 </Routes>
               </QueryClientProvider>
             </BrowserRouter>
