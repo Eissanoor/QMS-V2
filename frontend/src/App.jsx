@@ -19,6 +19,7 @@ import Department from "./Pages/Department/Department.jsx";
 import Users from "./Pages/MasterData/Users/Users.jsx";
 import Roless from "./Pages/MasterData/Roles/Roless.jsx";
 import Beds from "./Pages/MasterData/Beds/Beds.jsx";
+import Servingss from "./Pages/Serving/Servingss.jsx";
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -40,7 +41,9 @@ const App = () => {
                     element={<UpdatePatientInformation />}
                   />
                   <Route path="/patient-table" element={<PatientTable />} />
+                  <Route path="/monitoring" element={<PatientMonitoring />} />
                   <Route path="/waiting-area/:id" element={<WaitingArea />} />
+                  <Route path="/Servings/:id" element={<Servingss />} />
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route
                     path="/location-assignment"
@@ -52,7 +55,6 @@ const App = () => {
                   />
                   <Route path="/location" element={<Locationpage />} />
                   <Route path="/kpi" element={<Kpi />} />
-                  <Route path="/monitoring" element={<PatientMonitoring />} />
                   <Route path="/patient-display" element={<PatientDisplay />} />
                   {/* Master Data */}
                   <Route path="/Department" element={<Department />} />

@@ -103,17 +103,12 @@ const WaitingArea = () => {
 
    try {
      const response = await newRequest.post(
-       `${baseUrl}/api/v1/patients/${patientId}/vital-sign`,
+       `/api/v1/patients/${patientId}/vital-sign`,
        body,
-       {
-         headers: {
-           "Content-Type": "application/json",
-           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-         },
-       }
      );
      if (response.status >= 200) {
        toast.success( response?.data?.message || "Vital sign created successfully");
+       fetchPatientData()
      } else {
        throw new Error(response?.data?.message || "Unexpected error");
      }
@@ -140,6 +135,7 @@ const WaitingArea = () => {
 
       const data = await response.json();
      toast.success(data?.message || "Patient call status toggled successfully");
+      fetchPatientData();
     } catch (error) {
      toast.error(error.response?.data?.message || "Error");
     }

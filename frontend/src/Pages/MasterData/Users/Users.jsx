@@ -64,7 +64,6 @@ function Users() {
             });
             setUserdata(response?.data?.data?.users || []);
             setPagination(response.data.data.pagination);
-            console.log(response?.data?.data?.users, "data");
         } catch (error) {
             console.error("Error fetching User:", error);
         } finally {

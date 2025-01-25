@@ -4,7 +4,7 @@ import newRequest from '../../utils/newRequest';
 import toast from 'react-hot-toast';
 
 const AssignPopup = ({ onClose, patientId, onAssignSuccess }) => {
-    console.log("onAssignSuccess",onAssignSuccess);
+    console.log("onAssignSuccess", onAssignSuccess);
 
     const [isOpen, setIsOpen] = useState(true);
     const [departments, setDepartments] = useState([]);
@@ -24,15 +24,13 @@ const AssignPopup = ({ onClose, patientId, onAssignSuccess }) => {
     const handleAssign = async () => {
         try {
             const response = await newRequest.patch(
-                `${baseUrl}/api/v1/patients/${patientId}/assign-department`,
+                `/api/v1/patients/${patientId}/assign-department`,
                 { departmentId: selectedDeptId }
             );
             toast.success(response?.data?.message || "Department assigned to patient successfully");
-            setTimeout(() => {
-                onAssignSuccess();
-                handleClose();
-            }, 2000);
-        
+            onAssignSuccess();
+            handleClose();
+
         } catch (error) {
             const errorMessage = error.response?.data?.message || "Failed to assign department";
             toast.error(errorMessage);
