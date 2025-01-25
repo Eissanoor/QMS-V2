@@ -11,7 +11,6 @@ import toast from "react-hot-toast";
 
 const AssignRoles = ({ isVisible, setVisibility, selectdatauser, refreshDepartments }) => {
   const [selectRoles, setselectRoles] = useState([]);
-  const [Nationality, setNationality] = useState("Saudi Arabia");
   const { t } = useTranslation();
   const modalRef = useRef(null);
 
@@ -29,6 +28,16 @@ const AssignRoles = ({ isVisible, setVisibility, selectdatauser, refreshDepartme
 
     fetchDepartments();
   }, []);
+
+   const handleSelectAll = (event) => {
+     const isChecked = event.target.checked;
+     setselectRoles((prevRoles) =>
+       prevRoles.map((role) => ({
+         ...role,
+         selected: isChecked,
+       }))
+     );
+   };
 
   const userroleadd = async () => {
     const selectedRoleIds = selectRoles
@@ -122,6 +131,21 @@ const AssignRoles = ({ isVisible, setVisibility, selectdatauser, refreshDepartme
               />
             </div>
           </div>
+
+            <div>
+              {/* Select All Checkbox */}
+              <div className="flex items-center gap-2 mt-2">
+                <input
+                  type="checkbox"
+                  id="selectAll"
+                  onChange={handleSelectAll}
+                  checked={selectRoles.every((role) => role.selected)}
+                />
+                <label htmlFor="selectAll" className="text-sm">
+                  {t("Select All")}
+                </label>
+              </div>
+              </div>
 
           {/* Action Buttons */}
           <div className="flex justify-end gap-4 mt-6">
