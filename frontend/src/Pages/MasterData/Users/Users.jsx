@@ -15,12 +15,15 @@ import {
     DropdownMenu,
     DropdownItem,
 } from "@nextui-org/react";
-import { FaSearch, FaPlus, FaEye, FaTrash, FaEdit, FaUserPlus } from "react-icons/fa";
+import { FaSearch,  FaTrash, FaUserPlus } from "react-icons/fa";
 import SideNav from "../../../components/Sidebar/SideNav";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
 import newRequest from "../../../utils/newRequest";
 import AssignRoles from "./AssignRoles";
+import { IoPersonRemove } from "react-icons/io5";
+import Removeassignrole from "./Removeassignrole";
+
 
 export const VerticalDotsIcon = ({ size = 24, width, height, ...props }) => {
     return (
@@ -50,6 +53,8 @@ function Users() {
     const [search, setSearch] = useState("");
     const [UserAssignRoles, setUserAssignRoles] = useState(false);
     const [selectedUsers, setselectedUsers] = useState(null);
+    const [removeUserAssignRoles, setremoveUserAssignRoles] = useState(false)
+    const [removeselectedUsers, setremoveselectedUsers] = useState(null);
 
     const fetchUsers = async () => {
         setLoading(true);
@@ -95,10 +100,15 @@ function Users() {
         });
     };
 
-    const handleedit = (department) => {
+    const handleAssignrole = (department) => {
         setselectedUsers(department);
         setUserAssignRoles(true);
     };
+
+     const handleAssignroleremove = (roles) => {
+       setremoveselectedUsers(roles);
+       setremoveUserAssignRoles(true);
+     };
 
     const columns = [
         { name: "NAME", uid: "name" },
@@ -135,9 +145,17 @@ function Users() {
                                     key="Assign"
                                     className="py-1 px-3 flex items-center gap-2 hover:bg-gray-400 rounded-md transition-all duration-200"
                                     startContent={<FaUserPlus className="text-gray-600" />}
-                                    onClick={() => handleedit(Roles)}
+                                    onClick={() => handleAssignrole(Roles)}
                                 >
                                     Assign Role
+                                </DropdownItem>
+                                  <DropdownItem
+                                    key="Assign"
+                                    className="py-1 px-3 flex items-center gap-2 hover:bg-gray-400 rounded-md transition-all duration-200"
+                                    startContent={<IoPersonRemove className="text-gray-600" />}
+                                    onClick={() => handleAssignroleremove(Roles)}
+                                >
+                                  Remove Assign Role
                                 </DropdownItem>
                                 <DropdownItem
                                     key="delete"
@@ -242,6 +260,14 @@ function Users() {
                     setVisibility={() => setUserAssignRoles(false)}
                     refreshDepartments={fetchUsers}
                     selectdatauser={selectedUsers}
+                />
+            )}
+             {removeUserAssignRoles && (
+                <Removeassignrole
+                    isVisible={removeUserAssignRoles}
+                    setVisibility={() => setremoveUserAssignRoles(false)}
+                    refreshuser={fetchUsers}
+                    selectdatauser={removeselectedUsers}
                 />
             )}
         </SideNav>
