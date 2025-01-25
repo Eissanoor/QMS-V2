@@ -48,22 +48,25 @@ function SideNav({ children }) {
       <div className="p-0 lg:h-screen">
         <div className="body-content ">
           <nav
-            className={`fixed top-0 transition-all duration-300 ease-in-out bg-white lg:mt-0 mt-16 bottom-0 flex flex-col shadow-lg overflow-hidden z-50 ${i18n.language === "ar" ? "right-0" : "left-0"
-              } ${isOpen ? "w-[280px]" : "w-[80px]"}`}
+            className={`fixed top-0 transition-all duration-300 ease-in-out bg-white lg:mt-0 mt-16 bottom-0 flex flex-col shadow-lg overflow-hidden z-50 ${
+              i18n.language === "ar" ? "right-0" : "left-0"
+            } ${isOpen ? "w-[280px]" : "w-[80px]"}`}
             id="sidenav"
           >
             <div
               className={`flex items-center w-full px-4 pt-4 pb-4 border-b border-gray-200 justify-center `}
             >
               <div
-                className={`transition-opacity duration-300 justify-center ${!isOpen ? "opacity-0 w-0" : "opacity-100"
-                  }`}
+                className={`transition-opacity duration-300 justify-center ${
+                  !isOpen ? "opacity-0 w-0" : "opacity-100"
+                }`}
               >
                 <img src={logo} alt="logo" className="w-12 h-12" />
               </div>
               <div
-                className={`transition-opacity duration-300  ${isOpen ? "opacity-0 w-0" : "opacity-100"
-                  }`}
+                className={`transition-opacity duration-300  ${
+                  isOpen ? "opacity-0 w-0" : "opacity-100"
+                }`}
               >
                 <img src={logo} alt="logo" className="w-10 h-10 " />
               </div>
@@ -71,41 +74,53 @@ function SideNav({ children }) {
 
             <div className="flex-1 overflow-y-auto">
               <ul className="p-4 space-y-4">
-                <li onClick={() => navigate("/patient-table")} className={getTabClass("/patient-table")}>
+                <li
+                  onClick={() => navigate("/patient-table")}
+                  className={getTabClass("/patient-table")}
+                >
                   <img
                     src={Registration}
                     alt="Registered Patients"
                     className="w-6 h-6"
                   />
                   <span
-                    className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${!isOpen && "opacity-0 w-0 overflow-hidden"
-                      }`}
+                    className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${
+                      !isOpen && "opacity-0 w-0 overflow-hidden"
+                    }`}
                   >
                     {t("Registered Patients")}
                   </span>
                 </li>
-                <li onClick={() => navigate("/monitoring")} className={getTabClass("/monitoring")}>
+                <li
+                  onClick={() => navigate("/monitoring")}
+                  className={getTabClass("/monitoring")}
+                >
                   <img
                     src={CentralWaitingArea}
                     alt="Triage Waiting List"
                     className="w-6 h-6"
                   />
                   <span
-                    className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${!isOpen && "opacity-0 w-0 overflow-hidden"
-                      }`}
+                    className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${
+                      !isOpen && "opacity-0 w-0 overflow-hidden"
+                    }`}
                   >
                     {t("Triage Waiting List")}
                   </span>
                 </li>
-                <li onClick={() => navigate("/location-assignment")} className={getTabClass("/location-assignment")}>
+                <li
+                  onClick={() => navigate("/location-assignment")}
+                  className={getTabClass("/location-assignment")}
+                >
                   <img
                     src={LocationAssignment}
                     alt="Location Assignment"
                     className="w-6 h-6"
                   />
                   <span
-                    className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${!isOpen && "opacity-0 w-0 overflow-hidden"
-                      }`}
+                    className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${
+                      !isOpen && "opacity-0 w-0 overflow-hidden"
+                    }`}
                   >
                     {t("Department Waiting List")}
                   </span>
@@ -120,14 +135,16 @@ function SideNav({ children }) {
                     className="w-6 h-6"
                   />
                   <span
-                    className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${!isOpen && "opacity-0 w-0 overflow-hidden"
-                      }`}
+                    className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${
+                      !isOpen && "opacity-0 w-0 overflow-hidden"
+                    }`}
                   >
                     {t("MasterData")}
                   </span>
                   <div
-                    className={`${i18n.language === "ar" ? "mr-auto ml-2" : "ml-auto mr-2"
-                      }`}
+                    className={`${
+                      i18n.language === "ar" ? "mr-auto ml-2" : "ml-auto mr-2"
+                    }`}
                   >
                     {Masterdatashow ? (
                       <i className="fas fa-solid fa-chevron-up"></i>
@@ -138,74 +155,90 @@ function SideNav({ children }) {
                 </div>
                 {Masterdatashow && (
                   <ul className="ms-3 space-y-3">
-                    <li onClick={() => navigate("/location")} className={getTabClass("/location")}>
-                      <img
-                        src={Location}
-                        alt="Location"
-                        className="w-6 h-6"
-                      />
+                    <li
+                      onClick={() => navigate("/location")}
+                      className={getTabClass("/location")}
+                    >
+                      <img src={Location} alt="Location" className="w-6 h-6" />
                       <span
-                        className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${!isOpen && "opacity-0 w-0 overflow-hidden"
-                          }`}
+                        className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${
+                          !isOpen && "opacity-0 w-0 overflow-hidden"
+                        }`}
                       >
                         {t("Location")}
                       </span>
                     </li>
-                    <li onClick={() => navigate("/users")} className={getTabClass("/users")}>
-                      <img
-                        src={Usersicon}
-                        alt="users"
-                        className="w-6 h-6"
-                      />
+                    <li
+                      onClick={() => navigate("/users")}
+                      className={getTabClass("/users")}
+                    >
+                      <img src={Usersicon} alt="users" className="w-6 h-6" />
                       <span
-                        className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${!isOpen && "opacity-0 w-0 overflow-hidden"
-                          }`}
+                        className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${
+                          !isOpen && "opacity-0 w-0 overflow-hidden"
+                        }`}
                       >
                         {t("Users")}
                       </span>
                     </li>
-                    <li onClick={() => navigate("/location")} className={getTabClass("/location")}>
-                      <img
-                        src={Rolesicon}
-                        alt="Location"
-                        className="w-6 h-6"
-                      />
+                    <li
+                      onClick={() => navigate("/Roles")}
+                      className={getTabClass("/Roles")}
+                    >
+                      <img src={Rolesicon} alt="Roles" className="w-6 h-6" />
                       <span
-                        className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${!isOpen && "opacity-0 w-0 overflow-hidden"
-                          }`}
+                        className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${
+                          !isOpen && "opacity-0 w-0 overflow-hidden"
+                        }`}
                       >
                         {t("Roles")}
                       </span>
                     </li>
-                    <li onClick={() => navigate("/Department")} className={getTabClass("/Department")}>
+                    <li
+                      onClick={() => navigate("/Department")}
+                      className={getTabClass("/Department")}
+                    >
                       <img
                         src={Department}
                         alt="Department"
                         className="w-6 h-6"
                       />
                       <span
-                        className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${!isOpen && "opacity-0 w-0 overflow-hidden"
-                          }`}
+                        className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${
+                          !isOpen && "opacity-0 w-0 overflow-hidden"
+                        }`}
                       >
                         {t("Department")}
                       </span>
                     </li>
                   </ul>
                 )}
-                <li onClick={() => navigate("/patient-display")} className={getTabClass("/patient-display")}>
-                  <img src={TVscreeen} alt="patient-display" className="w-6 h-6" />
+                <li
+                  onClick={() => navigate("/patient-display")}
+                  className={getTabClass("/patient-display")}
+                >
+                  <img
+                    src={TVscreeen}
+                    alt="patient-display"
+                    className="w-6 h-6"
+                  />
                   <span
-                    className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${!isOpen && "opacity-0 w-0 overflow-hidden"
-                      }`}
+                    className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${
+                      !isOpen && "opacity-0 w-0 overflow-hidden"
+                    }`}
                   >
                     {t("TV Screen")}
                   </span>
                 </li>
-                <li onClick={() => navigate("/kpi")} className={getTabClass("/kpi")}>
+                <li
+                  onClick={() => navigate("/kpi")}
+                  className={getTabClass("/kpi")}
+                >
                   <img src={KPI} alt="KPI" className="w-6 h-6" />
                   <span
-                    className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${!isOpen && "opacity-0 w-0 overflow-hidden"
-                      }`}
+                    className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${
+                      !isOpen && "opacity-0 w-0 overflow-hidden"
+                    }`}
                   >
                     {t("KPI")}
                   </span>
@@ -215,8 +248,9 @@ function SideNav({ children }) {
           </nav>
         </div>
         <div
-          className={`mx-auto transition-all duration-300 content-wrapper ${isOpen ? "lg:ml-[280px]" : "lg:ml-[80px]"
-            }`}
+          className={`mx-auto transition-all duration-300 content-wrapper ${
+            isOpen ? "lg:ml-[280px]" : "lg:ml-[80px]"
+          }`}
         >
           <section className="sticky top-0 z-40 px-3 py-3 bg-white shadow-sm flex my-auto">
             <button

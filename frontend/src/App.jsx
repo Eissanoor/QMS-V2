@@ -17,6 +17,7 @@ import PatientDisplay from "./Pages/patientDisplay/patientDisplay.jsx";
 import UpdatePatientInformation from "./Pages/patientInformation/UpdatePatientInformation.jsx";
 import Department from "./Pages/Department/Department.jsx";
 import Users from "./Pages/MasterData/Users/Users.jsx";
+import Roless from "./Pages/MasterData/Roles/Roless.jsx";
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -29,19 +30,33 @@ const App = () => {
               <QueryClientProvider client={queryClient}>
                 <Routes>
                   <Route path="/" element={<Login />} />
-                  <Route path="/patient-information" element={<PatientInformation />}/>
-                  <Route path="/update/patient-information/:Id" element={<UpdatePatientInformation />}/>
+                  <Route
+                    path="/patient-information"
+                    element={<PatientInformation />}
+                  />
+                  <Route
+                    path="/update/patient-information/:Id"
+                    element={<UpdatePatientInformation />}
+                  />
                   <Route path="/patient-table" element={<PatientTable />} />
                   <Route path="/waiting-area/:id" element={<WaitingArea />} />
                   <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/location-assignment" element={<LocationAssignment />}/>
-                  <Route path="/location-waiting-area" element={<LocationWaitingArea />}/>
+                  <Route
+                    path="/location-assignment"
+                    element={<LocationAssignment />}
+                  />
+                  <Route
+                    path="/location-waiting-area"
+                    element={<LocationWaitingArea />}
+                  />
                   <Route path="/location" element={<Locationpage />} />
                   <Route path="/kpi" element={<Kpi />} />
                   <Route path="/monitoring" element={<PatientMonitoring />} />
                   <Route path="/patient-display" element={<PatientDisplay />} />
+                  {/* Master Data */}
                   <Route path="/Department" element={<Department />} />
                   <Route path="/users" element={<Users />} />
+                  <Route path="/Roles" element={<Roless />} />
                 </Routes>
               </QueryClientProvider>
             </BrowserRouter>
