@@ -17,20 +17,25 @@ const countryList = Object.entries(countries).map(([code, country]) => ({
 }));
 
 const CountryDropdown = ({ value, onChange, t }) => (
-    <Autocomplete
-        disablePortal
-        options={countryList.map(country => country.name)}
-        value={value}
-        onChange={(event, newValue) => onChange({ target: { value: newValue } })}
-        renderInput={(params) => (
-            <TextField 
-                {...params} 
-                label={t("Select Nationality")} 
-                className="w-full mt-2 p-3 border border-green-400 rounded-lg focus:ring-2 focus:ring-green-300"
-            />
-        )}
-        sx={{ width: '100%', mt: 2 }}
-    />
+  <Autocomplete
+    disablePortal
+    options={countryList.map((country) => country.name)}
+    value={value}
+    onChange={(event, newValue) => onChange({ target: { value: newValue } })}
+    renderInput={(params) => (
+      <TextField
+        {...params}
+        sx={{
+          width: "100%",
+          "& .MuiInputBase-root": {
+            border: "1px solid #34D399",
+            borderRadius: "8px",
+          },
+        }}
+      />
+    )}
+    sx={{ width: "100%", mt: 1 }}
+  />
 );
 
 const PatientInformation = () => {
