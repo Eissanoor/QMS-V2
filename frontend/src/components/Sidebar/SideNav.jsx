@@ -15,6 +15,7 @@ import TVscreeen from "../../Images/TV screen.jpg";
 import Rolesicon from "../../Images/Roles.png";
 import Department from "../../Images/Department.png";
 import Beds from "../../Images/Beds.jpg";
+import logout from "../../Images/logout.png";
 import newRequest from "../../utils/newRequest";
 function SideNav({ children }) {
   const { t, i18n } = useTranslation();
@@ -217,6 +218,19 @@ function SideNav({ children }) {
                     )}
                   </li>
                 ))}
+                 <li onClick={() => navigate("/")} className="flex mt-10  cursor-pointer" >
+                  <img
+                    src={logout}
+                    alt="Registered Patients"
+                    className="w-6 h-6"
+                  />
+                  <span
+                    className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${!isOpen && "opacity-0 w-0 overflow-hidden"
+                      }`}
+                  >
+                    {t("Log-out")}
+                  </span>
+                </li>
               </ul>
               {/* <ul className="p-4 space-y-4"> */}
               {/* <li
