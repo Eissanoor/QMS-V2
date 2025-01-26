@@ -27,6 +27,7 @@ const LocationWaitingArea = () => {
         age: "",
         mobileNumber: "",
         chiefComplaint: "",
+        beginTime:""
     });
     const [assignedTo, setAssignedTo] = useState("");
     const [departmentName, setDepartmentName] = useState("");
@@ -54,7 +55,9 @@ const LocationWaitingArea = () => {
                     age: data.data.age,
                     mobileNumber: data.data.mobileNumber,
                     chiefComplaint: data.data.cheifComplaint,
+                    beginTime: data.data.beginTime ? formatDateTime(data.data.beginTime) : "",
                 });
+               
                 setVitalSigns({
                     BP: data.data.vitalSigns[0].bp,
                     HR: data.data.vitalSigns[0].hr,
@@ -68,15 +71,39 @@ const LocationWaitingArea = () => {
                 });
                 setAssignedTo(data.data.user.name);
                 setDepartmentName(data.data.department.deptname);
+                console.log("begin time ", patientData.beginTime || "")
             }
         } catch (error) {
             console.error("Error fetching patient data:", error);
         }
     };
-
     useEffect(() => {
-        fetchPatientData();
-    }, []);
+      fetchPatientData();
+  }, []);
+    const handleBeginClick = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await fetch(`${baseUrl}/api/v1/patients/${id}/begin-time`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                },
+                // Replace with actual userId if needed
+            });
+            const data = await response.json();
+            if (data.success) {
+                // Call fetchPatientData again to refresh the data
+                fetchPatientData();
+            } else {
+                console.error("Error in API response:", data.message);
+            }
+        } catch (error) {
+            console.error("Error calling begin-time API:", error);
+        }
+    };
+
+    
 
     return (
       <>
@@ -324,13 +351,17 @@ const LocationWaitingArea = () => {
                       <input
                         type="text"
                         placeholder="Enter Start"
+                        value={patientData.beginTime || ""}
                         className="w-full border border-green-500 rounded px-3 py-2"
                       />
                     </div>
 
                     {/* Buttons */}
                     <div className="flex space-x-2 mt-7">
-                      <button className="bg-[#33D805] text-white font-semibold py-2 px-10 rounded hover:bg-yellow-600">
+                      <button 
+                        className="bg-[#33D805] text-white font-semibold py-2 px-10 rounded hover:bg-yellow-600"
+                        onClick={handleBeginClick}
+                      >
                         Begin
                       </button>
                       <button className="bg-red-500 text-white font-semibold py-2 px-10 rounded hover:bg-blue-600">
