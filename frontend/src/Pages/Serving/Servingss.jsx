@@ -11,511 +11,588 @@ import AssignPopup from "../waintingArea/assignPopup";
 import { useNavigate } from 'react-router-dom';
 const Servingss = () => {
   const navigate = useNavigate();
-    const [isOpen, setIsOpen] = useState(false);
-    const [showPopup, setShowPopup] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [pdfUrl, setPdfUrl] = useState(null);
-    const handleOpen = () => setIsOpen(true);
-    const handleClose = () => setIsOpen(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [loadingbed, setloadingbed] = useState(false);
+  const [loadingbegintime, setloadingbegintime] = useState(false);
+  const [loadingendtime, setloadingendtime] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState(null);
+  const handleOpen = () => setIsOpen(true);
+  const handleClose = () => setIsOpen(false);
 
-    const { t } = useTranslation();
-    const { id } = useParams();
-    const [PatientName, setPatientName] = useState("");
-    const [IDNumber, setIDNumber] = useState("");
-    const [Age, setAge] = useState("");
-    const [ChiefComplaint, setChiefComplaint] = useState("");
-    const [Availablebed, setAvailablebed] = useState([]);
-    const [Allergies, setAllergies] = useState("No");
-    const [VitalSigns, setVitalSigns] = useState({
-        BP: "",
-        HR: "",
-        TEMP: "",
-        RR: "",
-        SPO2: "",
-        RBS: "",
-        Height: "",
-        Weight: "",
-        TimeVS: "",
-    });
-    const [MobileNumber, setMobileNumber] = useState("");
-    const [Sex, setSex] = useState("");
-    const [Nationality, setNationality] = useState("");
-    const [patientData, setPatientData] = useState(null);
-    const [callPatient, setCallPatient] = useState(false);
-    const [bednumber, setbednumber] = useState('')
+  const { t } = useTranslation();
+  const { id } = useParams();
+  const [PatientName, setPatientName] = useState("");
+  const [IDNumber, setIDNumber] = useState("");
+  const [Age, setAge] = useState("");
+  const [ChiefComplaint, setChiefComplaint] = useState("");
+  const [Availablebed, setAvailablebed] = useState([]);
+  const [Allergies, setAllergies] = useState("No");
+  const [VitalSigns, setVitalSigns] = useState({
+    BP: "",
+    HR: "",
+    TEMP: "",
+    RR: "",
+    SPO2: "",
+    RBS: "",
+    Height: "",
+    Weight: "",
+    TimeVS: "",
+  });
+  const [MobileNumber, setMobileNumber] = useState("");
+  const [Sex, setSex] = useState("");
+  const [Nationality, setNationality] = useState("");
+  const [patientData, setPatientData] = useState(null);
+  const [callPatient, setCallPatient] = useState(false);
+  const [bednumber, setbednumber] = useState('')
 
   const [startTime, setStartTime] = useState("");
   const formatDateTime = (dateTime) => {
     const date = new Date(dateTime);
     const options = { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true };
     return date.toLocaleString('en-GB', options).replace(',', '');
-};
-    const fetchPatientData = async () => {
-        try {
-            const response = await fetch(`${baseUrl}/api/v1/patients/${id}`);
-            const data = await response.json();
-            if (data.success) {
-                const patient = data.data;
-                setPdfUrl(patient?.ticket);
-                setPatientData(patient);
-                setPatientName(patient.name);
-                setIDNumber(patient.idNumber);
-                setAge(patient.age);
-                setChiefComplaint(patient.cheifComplaint);
-                setMobileNumber(patient.mobileNumber);
-                setSex(patient.sex);
-                setNationality(patient.nationality);
-                setCallPatient(patient.callPatient);
-                setbednumber(patient?.bedId || "");
-                if (patient.beginTime) {
-                    setStartTime(formatDateTime(patient.beginTime));
-                }
-                if (patient.vitalSigns.length > 0) {
-                    const latestVitalSign = patient.vitalSigns[0];
-                    setVitalSigns({
-                        BP: latestVitalSign.bp,
-                        HR: latestVitalSign.hr,
-                        TEMP: latestVitalSign.temp,
-                        RR: latestVitalSign.rr,
-                        SPO2: latestVitalSign.spo2,
-                        RBS: latestVitalSign.rbs,
-                        Height: latestVitalSign.height,
-                        Weight: latestVitalSign.weight,
-                        TimeVS: latestVitalSign.timeVs,
-                    });
-                }
-            }
-        } catch (error) {
-            console.error("Error fetching patient data:", error);
+  };
+  const fetchPatientData = async () => {
+    try {
+      const response = await fetch(`${baseUrl}/api/v1/patients/${id}`);
+      const data = await response.json();
+      if (data.success) {
+        const patient = data.data;
+        setPdfUrl(patient?.ticket);
+        setPatientData(patient);
+        setPatientName(patient.name);
+        setIDNumber(patient.idNumber);
+        setAge(patient.age);
+        setChiefComplaint(patient.cheifComplaint);
+        setMobileNumber(patient.mobileNumber);
+        setSex(patient.sex);
+        setNationality(patient.nationality);
+        setCallPatient(patient.callPatient);
+        setbednumber(patient?.bedId || "");
+        if (patient.beginTime) {
+          setStartTime(formatDateTime(patient.beginTime));
         }
+        if (patient.vitalSigns.length > 0) {
+          const latestVitalSign = patient.vitalSigns[0];
+          setVitalSigns({
+            BP: latestVitalSign.bp,
+            HR: latestVitalSign.hr,
+            TEMP: latestVitalSign.temp,
+            RR: latestVitalSign.rr,
+            SPO2: latestVitalSign.spo2,
+            RBS: latestVitalSign.rbs,
+            Height: latestVitalSign.height,
+            Weight: latestVitalSign.weight,
+            TimeVS: latestVitalSign.timeVs,
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching patient data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPatientData();
+  }, []);
+
+  const handleVitalChange = (e) => {
+    setVitalSigns({ ...VitalSigns, [e.target.name]: e.target.value });
+  };
+
+  const handleSave = async () => {
+    setLoading(true);
+    const patientId = id;
+    const body = {
+      bp: VitalSigns.BP,
+      height: VitalSigns.Height,
+      temp: VitalSigns.TEMP,
+      spo2: VitalSigns.SPO2,
+      weight: VitalSigns.Weight,
+      hr: VitalSigns.HR,
+      rbs: VitalSigns.RBS,
+      rr: VitalSigns.RR,
+      timeVs: new Date().toISOString(),
+      allergies: Allergies === "Yes",
     };
 
-    useEffect(() => {
+    try {
+      const response = await newRequest.post(
+        `${baseUrl}/api/v1/patients/${patientId}/vital-sign`,
+        body,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        }
+      );
+      if (response.status >= 200) {
+        toast.success(response?.data?.message || "Vital sign created successfully");
+      } else {
+        throw new Error(response?.data?.message || "Unexpected error");
+      }
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || "Failed to save vital sign";
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCallPatientToggle = async () => {
+    const newCallPatientStatus = !callPatient;
+    setCallPatient(newCallPatientStatus);
+
+    try {
+      const response = await fetch(`${baseUrl}/api/v1/patients/${id}/toggle-call`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ callPatient: newCallPatientStatus }),
+      });
+
+      const data = await response.json();
+      toast.success(data?.message || "Patient call status toggled successfully");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Error");
+    }
+  };
+  const openPopup = async () => {
+    setShowPopup(true);
+  };
+  const closePopup = () => {
+    setShowPopup(false);
+  };
+
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        const response = await newRequest.get(`/api/v1/beds/all`);
+        setAvailablebed(response?.data?.data || []);
+      } catch (error) {
+        console.error("Error fetching departments:", error);
+      }
+    };
+
+    fetchDepartments();
+  }, []);
+
+  const Assignbed = async () => {
+    setloadingbed(true)
+    try {
+      const response = await newRequest.patch(
+        `/api/v1/patients/${id}/assign-bed`,
+        {
+          bedId: bednumber,
+        }
+      );
+      if (response.status >= 200) {
+        toast.success(response?.data?.message || "successfully Assign Bed");
         fetchPatientData();
-    }, []);
+      } else {
+        throw new Error(response?.data?.message || "Unexpected error");
+      }
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || "Failed to assign roles";
+      toast.error(errorMessage);
+    } finally {
+      setloadingbed(false);
+    }
+  };
 
-    const handleVitalChange = (e) => {
-        setVitalSigns({ ...VitalSigns, [e.target.name]: e.target.value });
-    };
+  const handleBeginClick = async () => {
+    setloadingbegintime(true)
+    try {
+      const response = await newRequest.patch(`/api/v1/patients/${id}/begin-time`);
+      const data = response;
+      if (response.status == 200) {
+        toast.success(response?.data?.message || "successfully begin Time");
+        fetchPatientData();
+      } else {
+        console.error("Error in API response:", data.message);
+      }
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || "Error calling begin-time API";
+      toast.error(errorMessage);
+    } finally {
+      setloadingbegintime(false);
+    }
+  };
 
-    const handleSave = async () => {
-        setLoading(true);
-        const patientId = id;
-        const body = {
-            bp: VitalSigns.BP,
-            height: VitalSigns.Height,
-            temp: VitalSigns.TEMP,
-            spo2: VitalSigns.SPO2,
-            weight: VitalSigns.Weight,
-            hr: VitalSigns.HR,
-            rbs: VitalSigns.RBS,
-            rr: VitalSigns.RR,
-            timeVs: new Date().toISOString(),
-            allergies: Allergies === "Yes",
-        };
+  const handleEndClick = async () => {
+    setloadingendtime(true);
+    try {
+      const response = await newRequest.patch(
+        `/api/v1/patients/${id}/end-time`
+      );
+      const data = response;
+      if (response.status == 200) {
+        toast.success(data?.message || "End time set successfully");
+        fetchPatientData();
+        navigate("/monitoring");
+      } else {
+        const errorMessage =
+          data?.data?.message || "Error calling end-time API";
+        toast.error(errorMessage);
+      }
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || "Error calling end-time API";
+      toast.error(errorMessage);
+    } finally {
+      setloadingendtime(false);
+    }
+  };
 
-        try {
-            const response = await newRequest.post(
-                `${baseUrl}/api/v1/patients/${patientId}/vital-sign`,
-                body,
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-                    },
-                }
-            );
-            if (response.status >= 200) {
-                toast.success(response?.data?.message || "Vital sign created successfully");
-            } else {
-                throw new Error(response?.data?.message || "Unexpected error");
-            }
-        } catch (error) {
-            const errorMessage = error.response?.data?.message || "Failed to save vital sign";
-            toast.error(errorMessage);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleCallPatientToggle = async () => {
-        const newCallPatientStatus = !callPatient;
-        setCallPatient(newCallPatientStatus);
-
-        try {
-            const response = await fetch(`${baseUrl}/api/v1/patients/${id}/toggle-call`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ callPatient: newCallPatientStatus }),
-            });
-
-            const data = await response.json();
-            toast.success(data?.message || "Patient call status toggled successfully");
-        } catch (error) {
-            toast.error(error.response?.data?.message || "Error");
-        }
-    };
-    const openPopup = async () => {
-        setShowPopup(true);
-    };
-    const closePopup = () => {
-        setShowPopup(false);
-    };
-
-    useEffect(() => {
-        const fetchDepartments = async () => {
-            try {
-                const response = await newRequest.get(`/api/v1/beds/all`);
-                setAvailablebed(response?.data?.data || []);
-            } catch (error) {
-                console.error("Error fetching departments:", error);
-            }
-        };
-
-        fetchDepartments();
-    }, []);
-
-     const Assignbed = async () => {
-       try {
-         const response = await newRequest.patch(
-           `/api/v1/patients/${id}/assign-bed`,
-           {
-             bedId:bednumber
-           }
-         );
-         if (response.status >= 200) {
-           toast.success(
-             response?.data?.message || "successfully Assign Bed"
-           );
-           fetchPatientData()
-         } else {
-           throw new Error(response?.data?.message || "Unexpected error");
-         }
-       } catch (error) {
-         const errorMessage =
-           error.response?.data?.message || "Failed to assign roles";
-         toast.error(errorMessage);
-       }
-     };
-
-      const handleBeginClick = async () => {
-        console.log("Response Status1:");
-        
-        try {
-            const response = await fetch(`${baseUrl}/api/v1/patients/${id}/begin-time`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-                },
-                // Replace with actual userId if needed
-            });
-
-            console.log("Response Status:", response.status); // Log the response status
-
-            const data = await response.json();
-            if (data.success) {
-                console.log("API call successful:", data); // Log the successful response
-                fetchPatientData(); // Refresh patient data
-            } else {
-                console.error("Error in API response:", data.message);
-            }
-        } catch (error) {
-            console.error("Error calling begin-time API:", error);
-        } // Set the state with current date/time
-      };
-
-       
-
-    const handleEndClick = async () => {
-        try {
-            const response = await fetch(`${baseUrl}/api/v1/patients/${id}/end-time`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-                },
-            });
-
-            const data = await response.json();
-            if (data.success) {
-                toast.success(data?.message || "End time set successfully");
-                fetchPatientData(); // Refresh patient data
-            navigate('/monitoring');
-            } else {
-                console.error("Error in API response:", data.message);
-            }
-        } catch (error) {
-            console.error("Error calling end-time API:", error);
-        }
-    };
-
-    return (
-      <SideNav>
-        <div className="min-h-screen bg-green-100 p-8">
-          <div className="min-h-screen flex flex-col antialiased text-black">
-            {/* {loading ? (
+  return (
+    <SideNav>
+      <div className="min-h-screen bg-green-100 p-8">
+        <div className="min-h-screen flex flex-col antialiased text-black">
+          {/* {loading ? (
             <Spinner />
           ) : ( */}
-            <div className="container mx-auto p-6">
-              <div className="bg-white shadow-lg rounded-lg p-6">
-                <div className="flex justify-between items-center mb-4">
-                  <h5 className="text-green-700 font-bold text-xl">
-                    {patientData?.name}
-                  </h5>
-                  <p className="text-gray-600 text-sm">
-                    {new Date(patientData?.createdAt).toLocaleString()}
-                  </p>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">
-                      {t("Patient Name")}
-                    </label>
-                    <input
-                      type="text"
-                      value={PatientName}
-                      onChange={(e) => setPatientName(e.target.value)}
-                      placeholder={t("Enter patient name")}
-                      className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">
-                      {t("Mobile Number")}
-                    </label>
-                    <input
-                      type="text"
-                      value={MobileNumber}
-                      readOnly
-                      className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">
-                      {t("ID Number")}
-                    </label>
-                    <input
-                      type="text"
-                      value={IDNumber}
-                      onChange={(e) => setIDNumber(e.target.value)}
-                      placeholder={t("Enter ID number")}
-                      className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">
-                      {t("Nationality")}
-                    </label>
-                    <input
-                      type="text"
-                      value={Nationality}
-                      readOnly
-                      className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">
-                      {t("Age")}
-                    </label>
-                    <input
-                      type="text"
-                      value={Age}
-                      onChange={(e) => setAge(e.target.value)}
-                      placeholder={t("Enter age")}
-                      className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">
-                      {t("Sex")}
-                    </label>
-                    <input
-                      type="text"
-                      value={Sex}
-                      readOnly
-                      className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
-                    />
-                  </div>
-                  <div className="col-span-2">
-                    <label className="text-sm font-medium text-gray-700">
-                      {t("Chief Complaint")}
-                    </label>
-                    <input
-                      type="text"
-                      value={ChiefComplaint}
-                      onChange={(e) => setChiefComplaint(e.target.value)}
-                      placeholder={t("Describe the complaint")}
-                      className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white shadow-lg rounded-lg p-6 mt-6">
-                <h5 className="text-green-700 font-bold text-xl mb-4">
-                  Vital Sign
+          <div className="container mx-auto p-6">
+            <div className="bg-white shadow-lg rounded-lg p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h5 className="text-green-700 font-bold text-xl">
+                  {patientData?.name}
                 </h5>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                  {[
-                    "BP",
-                    "HR",
-                    "TEMP",
-                    "RR",
-                    "SPO2",
-                    "RBS",
-                    "Height",
-                    "Weight",
-                  ].map((field) => (
-                    <div key={field}>
-                      <label className="text-sm font-medium text-gray-700">
-                        {t(field)}
-                      </label>
-                      <input
-                        type="text"
-                        name={field}
-                        value={VitalSigns[field]}
-                        onChange={handleVitalChange}
-                        placeholder={t(`Enter ${field}`)}
-                        className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
-                      />
-                    </div>
-                  ))}
+                <p className="text-gray-600 text-sm">
+                  {new Date(patientData?.createdAt).toLocaleString()}
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="text-sm font-medium text-gray-700">
+                    {t("Patient Name")}
+                  </label>
+                  <input
+                    type="text"
+                    value={PatientName}
+                    onChange={(e) => setPatientName(e.target.value)}
+                    placeholder={t("Enter patient name")}
+                    className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">
+                    {t("Mobile Number")}
+                  </label>
+                  <input
+                    type="text"
+                    value={MobileNumber}
+                    readOnly
+                    className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">
+                    {t("ID Number")}
+                  </label>
+                  <input
+                    type="text"
+                    value={IDNumber}
+                    onChange={(e) => setIDNumber(e.target.value)}
+                    placeholder={t("Enter ID number")}
+                    className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">
+                    {t("Nationality")}
+                  </label>
+                  <input
+                    type="text"
+                    value={Nationality}
+                    readOnly
+                    className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">
+                    {t("Age")}
+                  </label>
+                  <input
+                    type="text"
+                    value={Age}
+                    onChange={(e) => setAge(e.target.value)}
+                    placeholder={t("Enter age")}
+                    className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">
+                    {t("Sex")}
+                  </label>
+                  <input
+                    type="text"
+                    value={Sex}
+                    readOnly
+                    className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                <div className="col-span-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    {t("Chief Complaint")}
+                  </label>
+                  <input
+                    type="text"
+                    value={ChiefComplaint}
+                    onChange={(e) => setChiefComplaint(e.target.value)}
+                    placeholder={t("Describe the complaint")}
+                    className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
+                  />
                 </div>
               </div>
+            </div>
 
-              <div className="bg-white shadow-lg rounded-lg p-6 mt-6">
-                <div className="flex w-full justify-between items-center my-auto">
-                  {/* First Section */}
-                  <div className="mt-6 flex items-center space-x-4 my-auto">
-                    <span className="text-md font-medium text-Allergies">
-                      Allergies
-                    </span>
-                    <div className="flex items-center space-x-4">
-                      <label className="inline-flex items-center">
-                        <input
-                          type="radio"
-                          name="Allergies"
-                          value="Yes"
-                          checked={Allergies === "Yes"}
-                          onChange={(e) => setAllergies(e.target.value)}
-                          className="form-radio peer hidden"
-                        />
-                        <span className="w-4 h-4 border-4 border-black rounded-full flex items-center justify-center">
-                          <span
-                            className={`w-2.5 h-2.5 rounded-full ${
-                              Allergies === "Yes"
-                                ? "bg-[#EC5B01]"
-                                : "bg-transparent"
-                            }`}
-                          ></span>
-                        </span>
-                        <span className="ml-2 text-sm">Yes</span>
-                      </label>
-                      <label className="inline-flex items-center">
-                        <input
-                          type="radio"
-                          name="Allergies"
-                          value="No"
-                          checked={Allergies === "No"}
-                          onChange={(e) => setAllergies(e.target.value)}
-                          className="form-radio peer hidden"
-                        />
-                        <span className="w-4 h-4 border-4 border-black rounded-full flex items-center justify-center">
-                          <span
-                            className={`w-2.5 h-2.5 rounded-full ${
-                              Allergies === "No"
-                                ? "bg-[#EC5B01]"
-                                : "bg-transparent"
-                            }`}
-                          ></span>
-                        </span>
-                        <span className="ml-2 text-sm">No</span>
-                      </label>
-                      {Allergies === "Yes" && (
-                        <div>
-                          <label className="block text-green-700 font-semibold mb-2">
-                            Specify
-                          </label>
-                          <input
-                            type="text"
-                            placeholder="Specify"
-                            className="p-2 border border-green-500 rounded-lg"
-                          />
-                        </div>
-                      )}
-                    </div>
+            <div className="bg-white shadow-lg rounded-lg p-6 mt-6">
+              <h5 className="text-green-700 font-bold text-xl mb-4">
+                Vital Sign
+              </h5>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                {[
+                  "BP",
+                  "HR",
+                  "TEMP",
+                  "RR",
+                  "SPO2",
+                  "RBS",
+                  "Height",
+                  "Weight",
+                ].map((field) => (
+                  <div key={field}>
+                    <label className="text-sm font-medium text-gray-700">
+                      {t(field)}
+                    </label>
+                    <input
+                      type="text"
+                      name={field}
+                      value={VitalSigns[field]}
+                      onChange={handleVitalChange}
+                      placeholder={t(`Enter ${field}`)}
+                      className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
+                    />
                   </div>
+                ))}
+              </div>
+            </div>
 
-                  {/* Second Section */}
-                  <div className="flex items-center justify-end w-full space-x-4">
-                    {/* Input Field */}
-                    <div className="flex flex-col items-start">
-                      <label className="block text-green-700 font-semibold mb-2">
-                        Start
-                      </label>
+            <div className="bg-white shadow-lg rounded-lg p-6 mt-6">
+              <div className="flex w-full justify-between items-center my-auto">
+                {/* First Section */}
+                <div className="mt-6 flex items-center space-x-4 my-auto">
+                  <span className="text-md font-medium text-Allergies">
+                    Allergies
+                  </span>
+                  <div className="flex items-center space-x-4">
+                    <label className="inline-flex items-center">
                       <input
-                        type="text"
-                        value={startTime || ""}
-                        readOnly
-                        placeholder="Enter Start"
-                        className="w-full border border-green-500 rounded px-3 py-2"
+                        type="radio"
+                        name="Allergies"
+                        value="Yes"
+                        checked={Allergies === "Yes"}
+                        onChange={(e) => setAllergies(e.target.value)}
+                        className="form-radio peer hidden"
                       />
-                    </div>
-
-                    {/* Buttons */}
-                    <div className="flex space-x-2 mt-7">
-                      <button className="bg-[#33D805] text-white font-semibold py-2 px-10 rounded hover:bg-yellow-600" onClick={handleBeginClick}>
-                        Begin
-                      </button>
-                      <button className="bg-red-500 text-white font-semibold py-2 px-10 rounded hover:bg-blue-600" onClick={handleEndClick}>
-                        End
-                      </button>
-                    </div>
+                      <span className="w-4 h-4 border-4 border-black rounded-full flex items-center justify-center">
+                        <span
+                          className={`w-2.5 h-2.5 rounded-full ${Allergies === "Yes"
+                              ? "bg-[#EC5B01]"
+                              : "bg-transparent"
+                            }`}
+                        ></span>
+                      </span>
+                      <span className="ml-2 text-sm">Yes</span>
+                    </label>
+                    <label className="inline-flex items-center">
+                      <input
+                        type="radio"
+                        name="Allergies"
+                        value="No"
+                        checked={Allergies === "No"}
+                        onChange={(e) => setAllergies(e.target.value)}
+                        className="form-radio peer hidden"
+                      />
+                      <span className="w-4 h-4 border-4 border-black rounded-full flex items-center justify-center">
+                        <span
+                          className={`w-2.5 h-2.5 rounded-full ${Allergies === "No"
+                              ? "bg-[#EC5B01]"
+                              : "bg-transparent"
+                            }`}
+                        ></span>
+                      </span>
+                      <span className="ml-2 text-sm">No</span>
+                    </label>
+                    {Allergies === "Yes" && (
+                      <div>
+                        <label className="block text-green-700 font-semibold mb-2">
+                          Specify
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="Specify"
+                          className="p-2 border border-green-500 rounded-lg"
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
-                {/* Assigned TO: */}
-                <div className="mt-4">
-                  <h2 className="text-green-700 font-bold text-lg mb-2">
-                    Assigned TO:{" "}
-                    <span className="text-[#2113BA]">
-                      {" "}
-                      <strong className="text-blue-700">
-                        {patientData?.department?.deptname}
-                      </strong>
-                    </span>
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
-                    {/* Select Element */}
-                    <div className="col-span-1">
-                      <label className="block text-gray-700 font-semibold mb-2">
-                        Bed Number
-                      </label>
-                      <select
-                        className="w-full border border-green-500 rounded px-3 py-2"
-                        value={bednumber}
-                        onChange={(e) => setbednumber(e.target.value)}
-                      >
-                        <option>Select Bed</option>
-                        {Availablebed.map((beds) => (
-                          <option key={beds.id} value={beds.id}>
-                            {beds.bedNumber}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="col-span my-auto">
-                      <button
-                        className={`text-white px-6 py-2 mt-8 rounded-lg bg-yellow-400 hover:bg-yellow-500`}
-                        onClick={Assignbed}
-                      >
-                        Assign Bed
-                      </button>
-                    </div>
-                    {/* Input Element */}
-                    {/* <div className="col-span-3">
+
+                {/* Second Section */}
+                <div className="flex items-center justify-end w-full space-x-4">
+                  {/* Input Field */}
+                  <div className="flex flex-col items-start">
+                    <label className="block text-green-700 font-semibold mb-2">
+                      Start
+                    </label>
+                    <input
+                      type="text"
+                      value={startTime || ""}
+                      readOnly
+                      placeholder="Enter Start"
+                      className="w-full border border-green-500 rounded px-3 py-2"
+                    />
+                  </div>
+
+                  {/* Buttons */}
+                  <div className="flex space-x-2 mt-7">
+                    <button
+                      className="bg-[#33D805] text-white font-semibold py-2 px-10 rounded hover:bg-yellow-600"
+                      onClick={handleBeginClick}
+                    >
+                      {loadingbegintime ? (
+                        <div className="flex items-center gap-2">
+                          <svg
+                            className="animate-spin h-5 w-5 text-white"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8v8z"
+                            ></path>
+                          </svg>
+                          {t("Begin...")}
+                        </div>
+                      ) : (
+                        t("Begin")
+                      )}
+                    </button>
+                    <button
+                      className="bg-red-500 text-white font-semibold py-2 px-10 rounded hover:bg-blue-600"
+                      onClick={handleEndClick}
+                    >
+                      {loadingendtime ? (
+                        <div className="flex items-center gap-2">
+                          <svg
+                            className="animate-spin h-5 w-5 text-white"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8v8z"
+                            ></path>
+                          </svg>
+                          {t("End...")}
+                        </div>
+                      ) : (
+                        t("End")
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+              {/* Assigned TO: */}
+              <div className="mt-4">
+                <h2 className="text-green-700 font-bold text-lg mb-2">
+                  Assigned TO:{" "}
+                  <span className="text-[#2113BA]">
+                    {" "}
+                    <strong className="text-blue-700">
+                      {patientData?.department?.deptname}
+                    </strong>
+                  </span>
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
+                  {/* Select Element */}
+                  <div className="col-span-1">
+                    <label className="block text-gray-700 font-semibold mb-2">
+                      Bed Number
+                    </label>
+                    <select
+                      className="w-full border border-green-500 rounded px-3 py-2"
+                      value={bednumber}
+                      onChange={(e) => setbednumber(e.target.value)}
+                    >
+                      <option>Select Bed</option>
+                      {Availablebed.map((beds) => (
+                        <option key={beds.id} value={beds.id}>
+                          {beds.bedNumber}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="col-span my-auto">
+                    <button
+                      className={`text-white px-6 py-2 mt-8 rounded-lg bg-yellow-400 hover:bg-yellow-500`}
+                      onClick={Assignbed}
+                    >
+                      {loadingbed ? (
+                        <div className="flex items-center gap-2">
+                          <svg
+                            className="animate-spin h-5 w-5 text-white"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8v8z"
+                            ></path>
+                          </svg>
+                          {t("Assign Bed...")}
+                        </div>
+                      ) : (
+                        t("Assign Bed")
+                      )}
+                    </button>
+                  </div>
+                  {/* Input Element */}
+                  {/* <div className="col-span-3">
                                         <label className="block text-gray-700 font-semibold mb-2">
                                             To Remarks
                                         </label>
@@ -525,94 +602,91 @@ const Servingss = () => {
                                             className="w-full border border-green-500 rounded px-3 py-2"
                                         />
                                     </div> */}
-                  </div>
                 </div>
               </div>
+            </div>
 
-              <div className="flex justify-between items-center mt-6">
-                <button
-                  className={`text-white px-6 py-2 rounded-lg cursor-not-allowed hover:bg-yellow-500  ${
-                    callPatient
-                      ? "bg-red-500 hover:bg-red-600"
-                      : "bg-yellow-400 hover:bg-yellow-500"
+            <div className="flex justify-between items-center mt-6">
+              <button
+                className={`text-white px-6 py-2 rounded-lg cursor-not-allowed hover:bg-yellow-500  ${callPatient
+                    ? "bg-red-500 hover:bg-red-600"
+                    : "bg-yellow-400 hover:bg-yellow-500"
                   }`}
-                  onClick={handleCallPatientToggle}
+                onClick={handleCallPatientToggle}
+                disabled
+              >
+                {callPatient ? t("Cancel Call Patient") : t("Call Patient")}
+              </button>
+              <div className="flex space-x-4">
+                <button
+                  className={`text-white px-6 py-2 rounded-lg hover:bg-blue-600 cursor-not-allowed ${VitalSigns.BP ? "" : "opacity-50 cursor-not-allowed"
+                    } ${callPatient
+                      ? "bg-blue-500 hover:bg-blue-600"
+                      : "bg-yellow-400 hover:bg-yellow-500"
+                    }`}
+                  onClick={handleOpen}
                   disabled
                 >
-                  {callPatient ? t("Cancel Call Patient") : t("Call Patient")}
+                  {loading ? <Spinner /> : `${t("Assign")}`}
                 </button>
-                <div className="flex space-x-4">
-                  <button
-                    className={`text-white px-6 py-2 rounded-lg hover:bg-blue-600 cursor-not-allowed ${
-                      VitalSigns.BP ? "" : "opacity-50 cursor-not-allowed"
-                    } ${
-                      callPatient
-                        ? "bg-blue-500 hover:bg-blue-600"
-                        : "bg-yellow-400 hover:bg-yellow-500"
-                    }`}
-                    onClick={handleOpen}
-                    disabled
-                  >
-                    {loading ? <Spinner /> : `${t("Assign")}`}
-                  </button>
-                  <button
-                    className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600"
-                    onClick={handleSave}
-                  >
-                    {loading ? <Spinner /> : `${t("Save")}`}
-                  </button>
-                  <button
-                    className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600"
-                    onClick={openPopup}
-                  >
-                    {t("Re-Print")}
-                  </button>
-
-                  <button className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600">
-                    {t("Void")}
-                  </button>
-                  <button className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600">
-                    {t("Close")}
-                  </button>
-                </div>
-              </div>
-            </div>
-            {/* // )} */}
-          </div>
-
-          {showPopup && (
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-              <div className="bg-white p-6 rounded-lg shadow-lg">
-                <h2 className="text-lg font-bold">Ticket Information</h2>
-                {pdfUrl ? (
-                  <iframe
-                    src={`${baseUrl}/${pdfUrl}`}
-                    width="100%"
-                    height="600px"
-                    title="PDF Document"
-                  />
-                ) : (
-                  <p>No PDF available</p>
-                )}
                 <button
-                  onClick={closePopup}
-                  className="mt-4 bg-red-500 text-white px-4 py-2 rounded"
+                  className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600"
+                  onClick={handleSave}
                 >
-                  Close
+                  {loading ? <Spinner /> : `${t("Save")}`}
+                </button>
+                <button
+                  className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600"
+                  onClick={openPopup}
+                >
+                  {t("Re-Print")}
+                </button>
+
+                <button className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600">
+                  {t("Void")}
+                </button>
+                <button className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600">
+                  {t("Close")}
                 </button>
               </div>
             </div>
-          )}
-          {isOpen && (
-            <AssignPopup
-              onClose={handleClose}
-              patientId={id}
-              onAssignSuccess={fetchPatientData}
-            />
-          )}
+          </div>
+          {/* // )} */}
         </div>
-      </SideNav>
-    );
+
+        {showPopup && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg">
+              <h2 className="text-lg font-bold">Ticket Information</h2>
+              {pdfUrl ? (
+                <iframe
+                  src={`${baseUrl}/${pdfUrl}`}
+                  width="100%"
+                  height="600px"
+                  title="PDF Document"
+                />
+              ) : (
+                <p>No PDF available</p>
+              )}
+              <button
+                onClick={closePopup}
+                className="mt-4 bg-red-500 text-white px-4 py-2 rounded"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+        {isOpen && (
+          <AssignPopup
+            onClose={handleClose}
+            patientId={id}
+            onAssignSuccess={fetchPatientData}
+          />
+        )}
+      </div>
+    </SideNav>
+  );
 };
 
 export default Servingss;

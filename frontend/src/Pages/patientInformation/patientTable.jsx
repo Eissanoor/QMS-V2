@@ -17,7 +17,6 @@ const fetchPatients = async () => {
 function PatientTable() {
   const [patients, setPatients] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  console.log("currentPage", currentPage);
   const [selectedPatientId, setSelectedPatientId] = useState(null);
   const [dropdownVisible, setDropdownVisible] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -84,7 +83,7 @@ function PatientTable() {
       <div className="font-[sans-serif] ">
         <SideNav>
           <div className="w-11/12 mx-auto">
-            <div className="flex items-center mb-4 justify-between w-full">
+            <div className="flex items-center mb-4 justify-between w-full mt-10">
               {/* <h3 className="text-2xl font-bold text-left mt-10">
                 Patients Informaation
               </h3> */}
@@ -95,7 +94,7 @@ function PatientTable() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-              <div className="font-[sans-serif] space-x-4 space-y-4 text-center mt-10">
+              <div className="font-[sans-serif] space-x-4 space-y-4 text-center ">
                 <button
                   type="button"
                   className=" px-5 py-2.5 rounded-lg text-sm tracking-wider font-medium border border-green-700 outline-none bg-transparent hover:bg-green-700 text-green-700 hover:text-white transition-all duration-300"

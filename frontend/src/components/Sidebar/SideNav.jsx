@@ -17,10 +17,11 @@ import Department from "../../Images/Department.png";
 import Beds from "../../Images/Beds.jpg";
 import logout from "../../Images/logout.png";
 import newRequest from "../../utils/newRequest";
+import { useQuery } from "react-query";
 function SideNav({ children }) {
   const { t, i18n } = useTranslation();
   const [Masterdatashow, setMasterdatashow] = useState(false);
-  const [userRoles, setUserRoles] = useState([]);
+  // const [userRoles, setUserRoles] = useState([]);
   const [activeTab, setActiveTab] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
@@ -131,20 +132,31 @@ function SideNav({ children }) {
   ];
 
 
+  const accessuserdata = JSON.parse(localStorage.getItem("userdata"));
   const fetchAllRoles = async () => {
-    const accessuserdata = JSON.parse(localStorage.getItem("userdata"));
     try {
       const response = await newRequest.get(`/api/v1/user/${accessuserdata?.user?.id || ""}`);
       console.log(response.data.data, "User Data");
-      setUserRoles(response.data.data.roles.map((role) => role.name));
+      // setUserRoles(response.data.data.roles.map((role) => role.name));
     } catch (error) {
       console.error("Error fetching Role:", error);
     }
   };
 
-  useEffect(() => {
-    fetchAllRoles();
-  }, []);
+  // useEffect(() => {
+  //   fetchAllRoles();
+  // }, []);
+
+
+  const { isLoading, data: userRoles = [], error } = useQuery("fetchAllsidebarrole", async () => {
+    try {
+      const response = await newRequest.get(`/api/v1/user/${accessuserdata?.user?.id || ""}`);
+      return response.data.data.roles.map((role) => role.name);
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  });
 
 
   return (
@@ -176,49 +188,54 @@ function SideNav({ children }) {
             <div className="flex-1 overflow-y-auto">
               <ul className="p-4 space-y-6">
                 {sidebarItems.map((item, index) => (
-                  <li key={index} className="my-2">
-                    <div
-                      className="flex px-3 cursor-pointer my-2"
-                      onClick={() => {
-                        if (item.subItems) {
-                          setMasterdatashow(!Masterdatashow);
-                        } else {
-                          navigate(item.path);
-                        }
-                      }}
-                    >
-                      {item.icon}
-                      <span
-                        className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${!isOpen && "opacity-0 w-0 overflow-hidden"}`}
+                  userRoles.includes(item.requiredRole) ? (
+                    <li key={index} className="my-2">
+                      <div
+                        // className="flex px-3 cursor-pointer my-2"
+                        className={`flex items-center py-1 rounded transition-all duration-300 relative group cursor-pointer ${activeTab === item.path ? "bg-[#13BA8885] text-black" : "hover:bg-gray-100 text-gray-700"
+                          } ${i18n.language === "ar" ? "pr-3 pl-4 justify-end" : "pl-3 pr-4 justify-start"
+                          }`}
+                        onClick={() => {
+                          if (item.subItems) {
+                            setMasterdatashow(!Masterdatashow);
+                          } else {
+                            navigate(item.path);
+                          }
+                        }}
                       >
-                        {item.label}
-                      </span>
-                      {item.subItems && (
-                        <div className={`${i18n.language === "ar" ? "mr-auto ml-2" : "ml-auto mr-2"}`}>
-                          {Masterdatashow ? (
-                            <i className="fas fa-chevron-up"></i>
-                          ) : (
-                            <i className="fas fa-chevron-down"></i>
-                          )}
-                        </div>
-                      )}
-                    </div>
+                        {item.icon}
+                        <span
+                          className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${!isOpen && "opacity-0 w-0 overflow-hidden"}`}
+                        >
+                          {item.label}
+                        </span>
+                        {item.subItems && (
+                          <div className={`${i18n.language === "ar" ? "mr-auto ml-2" : "ml-auto mr-2"}`}>
+                            {Masterdatashow ? (
+                              <i className="fas fa-chevron-up"></i>
+                            ) : (
+                              <i className="fas fa-chevron-down"></i>
+                            )}
+                          </div>
+                        )}
+                      </div>
 
-                    {item.subItems && Masterdatashow && (
-                      <ul className="ms-3 space-y-3">
-                        {item.subItems.map((subItem, subIndex) => (
-                          <li key={subIndex} onClick={() => navigate(subItem.path)} className={getTabClass(subItem.path)}>
-                            {subItem.icon}
-                            <span className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 mt-2 ${!isOpen && "opacity-0 w-0 overflow-hidden"}`}>
-                              {subItem.label}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </li>
+                      {item.subItems && Masterdatashow && (
+                        <ul className="ms-3 space-y-3">
+                          {item.subItems.map((subItem, subIndex) => (
+                            <li key={subIndex} onClick={() => navigate(subItem.path)} className={getTabClass(subItem.path)}>
+                              {subItem.icon}
+                              <span className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 mt-2 ${!isOpen && "opacity-0 w-0 overflow-hidden"}`}>
+                                {subItem.label}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </li>
+                  ) : null
                 ))}
-                 <li onClick={() => navigate("/")} className="flex mt-10  cursor-pointer" >
+                <li onClick={() => navigate("/")} className="flex mt-10  cursor-pointer" >
                   <img
                     src={logout}
                     alt="Registered Patients"
