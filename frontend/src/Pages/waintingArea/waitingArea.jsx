@@ -9,6 +9,7 @@ import AssignPopup from "./assignPopup";
 import toast from "react-hot-toast";
 import Spinner from "../../components/spinner/spinner";
 import newRequest from "../../utils/newRequest";
+import { useQuery } from "react-query";
 const WaitingArea = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
@@ -45,80 +46,91 @@ const WaitingArea = () => {
     try {
       const response = await fetch(`${baseUrl}/api/v1/patients/${id}`);
       const data = await response.json();
-      if (data.success) {
-        const patient = data.data;
-        setPdfUrl(patient?.ticket);
-        setPatientData(patient);
-        setPatientName(patient.name);
-        setIDNumber(patient.idNumber);
-        setAge(patient.age);
-        setChiefComplaint(patient.cheifComplaint);
-        setMobileNumber(patient.mobileNumber);
-        setSex(patient.sex);
-        setNationality(patient.nationality);
-        setCallPatient(patient.callPatient);
-        if (patient.vitalSigns.length > 0) {
-          const latestVitalSign = patient.vitalSigns[0];
-          setVitalSigns({
-            BP: latestVitalSign.bp,
-            HR: latestVitalSign.hr,
-            TEMP: latestVitalSign.temp,
-            RR: latestVitalSign.rr,
-            SPO2: latestVitalSign.spo2,
-            RBS: latestVitalSign.rbs,
-            Height: latestVitalSign.height,
-            Weight: latestVitalSign.weight,
-            TimeVS: latestVitalSign.timeVs,
-          });
-        }
-      }
     } catch (error) {
       console.error("Error fetching patient data:", error);
     }
   };
 
+  const { isLoading, data, error ,refetch } = useQuery("fetchAllMegaMenus", async () => {
+    try {
+      const response = await newRequest.get(`${baseUrl}/api/v1/patients/${id}`);
+      return response?.data?.data || {};
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  });
+
   useEffect(() => {
-    fetchPatientData();
-  }, []);
+    if (data) {
+      const patient = data; // `data` contains the patient object directly, no need to access `data.data`
+      setPdfUrl(patient?.ticket);
+      setPatientData(patient);
+      setPatientName(patient.name);
+      setIDNumber(patient.idNumber);
+      setAge(patient.age);
+      setChiefComplaint(patient.cheifComplaint);
+      setMobileNumber(patient.mobileNumber);
+      setSex(patient.sex);
+      setNationality(patient.nationality);
+      setCallPatient(patient.callPatient);
+
+      if (patient.vitalSigns?.length > 0) {
+        const latestVitalSign = patient.vitalSigns[0];
+        setVitalSigns({
+          BP: latestVitalSign.bp,
+          HR: latestVitalSign.hr,
+          TEMP: latestVitalSign.temp,
+          RR: latestVitalSign.rr,
+          SPO2: latestVitalSign.spo2,
+          RBS: latestVitalSign.rbs,
+          Height: latestVitalSign.height,
+          Weight: latestVitalSign.weight,
+          TimeVS: latestVitalSign.timeVs,
+        });
+      }
+    }
+  }, [data]);
 
   const handleVitalChange = (e) => {
     setVitalSigns({ ...VitalSigns, [e.target.name]: e.target.value });
   };
 
- const handleSave = async () => {
-   setLoading(true);
-   const patientId = id;
-   const body = {
-     bp: VitalSigns.BP,
-     height: VitalSigns.Height,
-     temp: VitalSigns.TEMP,
-     spo2: VitalSigns.SPO2,
-     weight: VitalSigns.Weight,
-     hr: VitalSigns.HR,
-     rbs: VitalSigns.RBS,
-     rr: VitalSigns.RR,
-     timeVs: new Date().toISOString(),
-     allergies: Allergies === "Yes",
-   };
+  const handleSave = async () => {
+    setLoading(true);
+    const patientId = id;
+    const body = {
+      bp: VitalSigns.BP,
+      height: VitalSigns.Height,
+      temp: VitalSigns.TEMP,
+      spo2: VitalSigns.SPO2,
+      weight: VitalSigns.Weight,
+      hr: VitalSigns.HR,
+      rbs: VitalSigns.RBS,
+      rr: VitalSigns.RR,
+      timeVs: new Date().toISOString(),
+      allergies: Allergies === "Yes",
+    };
 
-   try {
-     const response = await newRequest.post(
-       `/api/v1/patients/${patientId}/vital-sign`,
-       body,
-     );
-     if (response.status >= 200) {
-       toast.success( response?.data?.message || "Vital sign created successfully");
-       fetchPatientData()
-     } else {
-       throw new Error(response?.data?.message || "Unexpected error");
-     }
-   } catch (error) {
-     const errorMessage =error.response?.data?.message || "Failed to save vital sign";
-     toast.error(errorMessage);
-   } finally {
-     setLoading(false);
-   }
- };
+    try {
+      const response = await newRequest.post(
+        `/api/v1/patients/${patientId}/vital-sign`,
+        body,
+      );
+      if (response.status >= 200) {
+        toast.success(response?.data?.message || "Vital sign created successfully");
+        // fetchPatientData()
+        refetch()
+      } else {
+        throw new Error(response?.data?.message || "Unexpected error");
+      }
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || "Failed to save vital sign";
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleCallPatientToggle = async () => {
     const newCallPatientStatus = !callPatient;
@@ -134,10 +146,11 @@ const WaitingArea = () => {
       });
 
       const data = await response.json();
-     toast.success(data?.message || "Patient call status toggled successfully");
-      fetchPatientData();
+      toast.success(data?.message || "Patient call status toggled successfully");
+      // fetchPatientData();
+      refetch()
     } catch (error) {
-     toast.error(error.response?.data?.message || "Error");
+      toast.error(error.response?.data?.message || "Error");
     }
   };
   const openPopup = async () => {
@@ -314,41 +327,38 @@ const WaitingArea = () => {
                     />
                   )}
                 </div>
-                
+
               </div>
               <div className="mt-6 flex items-center space-x-4">
-                
+
                 {patientData?.department && patientData?.department?.deptname !== "TR" && (
-                   <span className="text-sm font-medium text-green-700">
-                   {t("Assigned To  ")}
-                  <strong className="text-blue-700">{patientData?.department?.deptname}</strong>
-                 </span>
+                  <span className="text-sm font-medium text-green-700">
+                    {t("Assigned To  ")}
+                    <strong className="text-blue-700">{patientData?.department?.deptname}</strong>
+                  </span>
                 )}
               </div>
             </div>
 
             <div className="flex justify-between items-center mt-6">
               <button
-                className={`text-white px-6 py-2 rounded-lg hover:bg-yellow-500  ${
-                  callPatient
+                className={`text-white px-6 py-2 rounded-lg hover:bg-yellow-500  ${callPatient
                     ? "bg-red-500 hover:bg-red-600"
                     : "bg-yellow-400 hover:bg-yellow-500"
-                }`}
-               
+                  }`}
+
                 onClick={handleCallPatientToggle}
               >
                 {callPatient ? t("Cancel Call Patient") : t("Call Patient")}
               </button>
               <div className="flex space-x-4">
                 <button
-                  className={`text-white px-6 py-2 rounded-lg hover:bg-blue-600 ${
-                    VitalSigns.BP ? "" : "opacity-50 cursor-not-allowed"
-                  } ${
-                    callPatient
+                  className={`text-white px-6 py-2 rounded-lg hover:bg-blue-600 ${VitalSigns.BP ? "" : "opacity-50 cursor-not-allowed"
+                    } ${callPatient
                       ? "bg-blue-500 hover:bg-blue-600"
                       : "bg-yellow-400 hover:bg-yellow-500"
-                  }`}
-                 
+                    }`}
+
                   onClick={handleOpen}
                 >
                   {loading ? <Spinner /> : `${t("Assign")}`}

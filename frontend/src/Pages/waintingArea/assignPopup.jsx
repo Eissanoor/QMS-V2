@@ -3,13 +3,10 @@ import { baseUrl } from "../../utils/config";
 import newRequest from '../../utils/newRequest';
 import toast from 'react-hot-toast';
 
-const AssignPopup = ({ onClose, patientId, onAssignSuccess }) => {
-    console.log("onAssignSuccess", onAssignSuccess);
-
+const AssignPopup = ({ onClose, patientId,onAssignSuccess }) => {
     const [isOpen, setIsOpen] = useState(true);
     const [departments, setDepartments] = useState([]);
     const [selectedDeptId, setSelectedDeptId] = useState(null);
-    const [patientData, setPatientData] = useState(null);
     useEffect(() => {
         const fetchDepartments = async () => {
             const response = await fetch(`${baseUrl}/api/v1/departments/all`);
