@@ -77,11 +77,10 @@ const LocationWaitingArea = () => {
             console.error("Error fetching patient data:", error);
         }
     };
-    useEffect(() => {
-      fetchPatientData();
-  }, []);
-    const handleBeginClick = async (e) => {
-        e.preventDefault();
+   
+    const handleBeginClick = async () => {
+      console.log("Response Status1:");
+        
         try {
             const response = await fetch(`${baseUrl}/api/v1/patients/${id}/begin-time`, {
                 method: 'PATCH',
@@ -91,10 +90,13 @@ const LocationWaitingArea = () => {
                 },
                 // Replace with actual userId if needed
             });
+
+            console.log("Response Status:", response.status); // Log the response status
+
             const data = await response.json();
             if (data.success) {
-                // Call fetchPatientData again to refresh the data
-                fetchPatientData();
+                console.log("API call successful:", data); // Log the successful response
+                fetchPatientData(); // Refresh patient data
             } else {
                 console.error("Error in API response:", data.message);
             }
@@ -102,7 +104,9 @@ const LocationWaitingArea = () => {
             console.error("Error calling begin-time API:", error);
         }
     };
-
+    useEffect(() => {
+      fetchPatientData();
+  }, []);
     
 
     return (
@@ -351,7 +355,7 @@ const LocationWaitingArea = () => {
                       <input
                         type="text"
                         placeholder="Enter Start"
-                        value={patientData.beginTime || ""}
+                        // value={patientData.beginTime || ""}
                         className="w-full border border-green-500 rounded px-3 py-2"
                       />
                     </div>
@@ -359,6 +363,7 @@ const LocationWaitingArea = () => {
                     {/* Buttons */}
                     <div className="flex space-x-2 mt-7">
                       <button 
+                        type="button"
                         className="bg-[#33D805] text-white font-semibold py-2 px-10 rounded hover:bg-yellow-600"
                         onClick={handleBeginClick}
                       >
