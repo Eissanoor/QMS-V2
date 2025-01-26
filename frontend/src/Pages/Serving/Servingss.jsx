@@ -8,7 +8,9 @@ import toast from "react-hot-toast";
 import Spinner from "../../components/spinner/spinner";
 import newRequest from "../../utils/newRequest";
 import AssignPopup from "../waintingArea/assignPopup";
+import { useNavigate } from 'react-router-dom';
 const Servingss = () => {
+  const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -41,8 +43,13 @@ const Servingss = () => {
     const [patientData, setPatientData] = useState(null);
     const [callPatient, setCallPatient] = useState(false);
     const [bednumber, setbednumber] = useState('')
-  const [startTime, setStartTime] = useState("");
 
+  const [startTime, setStartTime] = useState("");
+  const formatDateTime = (dateTime) => {
+    const date = new Date(dateTime);
+    const options = { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true };
+    return date.toLocaleString('en-GB', options).replace(',', '');
+};
     const fetchPatientData = async () => {
         try {
             const response = await fetch(`${baseUrl}/api/v1/patients/${id}`);
@@ -60,6 +67,9 @@ const Servingss = () => {
                 setNationality(patient.nationality);
                 setCallPatient(patient.callPatient);
                 setbednumber(patient?.bedId || "");
+                if (patient.beginTime) {
+                    setStartTime(formatDateTime(patient.beginTime));
+                }
                 if (patient.vitalSigns.length > 0) {
                     const latestVitalSign = patient.vitalSigns[0];
                     setVitalSigns({
@@ -190,27 +200,57 @@ const Servingss = () => {
        }
      };
 
-      const handleBeginClick = () => {
-        const currentDateTime = new Date().toLocaleString(); // Get current date and time
-        setStartTime(currentDateTime); // Set the state with current date/time
+      const handleBeginClick = async () => {
+        console.log("Response Status1:");
+        
+        try {
+            const response = await fetch(`${baseUrl}/api/v1/patients/${id}/begin-time`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                },
+                // Replace with actual userId if needed
+            });
+
+            console.log("Response Status:", response.status); // Log the response status
+
+            const data = await response.json();
+            if (data.success) {
+                console.log("API call successful:", data); // Log the successful response
+                fetchPatientData(); // Refresh patient data
+            } else {
+                console.error("Error in API response:", data.message);
+            }
+        } catch (error) {
+            console.error("Error calling begin-time API:", error);
+        } // Set the state with current date/time
       };
 
-       const Begintime = async () => {
-         try {
-           const response = await newRequest.patch( `/api/v1/patients/${id}/begin-time`, );
-           if (response.status >= 200) {
-             toast.success(
-               response?.data?.message || "successfully Assign Bed"
-             );
-             fetchPatientData();
-           } else {
-             throw new Error(response?.data?.message || "Unexpected error");
-           }
-         } catch (error) {
-           const errorMessage =error.response?.data?.message || "Failed to assign roles";
-           toast.error(errorMessage);
-         }
-       };
+       
+
+    const handleEndClick = async () => {
+        try {
+            const response = await fetch(`${baseUrl}/api/v1/patients/${id}/end-time`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                },
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                toast.success(data?.message || "End time set successfully");
+                fetchPatientData(); // Refresh patient data
+            navigate('/monitoring');
+            } else {
+                console.error("Error in API response:", data.message);
+            }
+        } catch (error) {
+            console.error("Error calling end-time API:", error);
+        }
+    };
 
     return (
       <SideNav>
@@ -418,7 +458,7 @@ const Servingss = () => {
                       </label>
                       <input
                         type="text"
-                        value={startTime}
+                        value={startTime || ""}
                         readOnly
                         placeholder="Enter Start"
                         className="w-full border border-green-500 rounded px-3 py-2"
@@ -430,7 +470,7 @@ const Servingss = () => {
                       <button className="bg-[#33D805] text-white font-semibold py-2 px-10 rounded hover:bg-yellow-600" onClick={handleBeginClick}>
                         Begin
                       </button>
-                      <button className="bg-red-500 text-white font-semibold py-2 px-10 rounded hover:bg-blue-600">
+                      <button className="bg-red-500 text-white font-semibold py-2 px-10 rounded hover:bg-blue-600" onClick={handleEndClick}>
                         End
                       </button>
                     </div>

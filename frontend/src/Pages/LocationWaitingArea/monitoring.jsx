@@ -116,7 +116,7 @@ const PatientMonitoring = () => {
               onClick={() => navigate(`/Servings/${patient.id}`)}
             >
               <strong className="text-gray-700 mt-2">{patient.department ? patient.department?.deptname : "TR"?? "TR"}</strong>
-              <h3 className="text-green-600 font-bold">{patient.ticketNumber}</h3>
+              <h3 className="text-blue-600 font-bold">{patient.ticketNumber}</h3>
               <p className="text-black-700 mt-2">{patient.name}</p>
             </div>
           ))}
