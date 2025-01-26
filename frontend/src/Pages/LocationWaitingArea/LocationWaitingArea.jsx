@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import SideNav from "../../components/Sidebar/SideNav";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import { baseUrl } from "../../utils/config";
 
 const LocationWaitingArea = () => {
+    const { id } = useParams();
     const [Allergies, setAllergies] = useState("No");
     const [VitalSigns, setVitalSigns] = useState({
         BP: "",
@@ -16,10 +19,59 @@ const LocationWaitingArea = () => {
         Weight: "",
         TimeVS: "",
     });
+    const [patientData, setPatientData] = useState({
+        name: "",
+        nationality: "Select Nationality",
+        sex: "",
+        idNumber: "",
+        age: "",
+        mobileNumber: "",
+        chiefComplaint: "",
+    });
+    const [assignedTo, setAssignedTo] = useState("");
+    const [departmentName, setDepartmentName] = useState("");
 
     const handleVitalChange = (e) => {
         setVitalSigns({ ...VitalSigns, [e.target.name]: e.target.value });
     };
+
+    const fetchPatientData = async () => {
+        try {
+            const response = await fetch(`${baseUrl}/api/v1/patients/${id}`);
+            const data = await response.json();
+            if (data.success) {
+                setPatientData({
+                    name: data.data.name,
+                    nationality: data.data.nationality,
+                    sex: data.data.sex,
+                    idNumber: data.data.idNumber,
+                    age: data.data.age,
+                    mobileNumber: data.data.mobileNumber,
+                    chiefComplaint: data.data.cheifComplaint,
+                });
+                setVitalSigns({
+                    BP: data.data.vitalSigns[0].bp,
+                    HR: data.data.vitalSigns[0].hr,
+                    TEMP: data.data.vitalSigns[0].temp,
+                    RR: data.data.vitalSigns[0].rr,
+                    SPO2: data.data.vitalSigns[0].spo2,
+                    RBS: data.data.vitalSigns[0].rbs,
+                    Height: data.data.vitalSigns[0].height,
+                    Weight: data.data.vitalSigns[0].weight,
+                    TimeVS: data.data.vitalSigns[0].timeVs,
+                });
+                setAssignedTo(data.data.user.name);
+                setDepartmentName(data.data.department.deptname);
+            }
+        } catch (error) {
+            console.error("Error fetching patient data:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchPatientData();
+    }, []);
+
     return (
       <>
         <SideNav>
@@ -43,6 +95,8 @@ const LocationWaitingArea = () => {
                     <input
                       type="text"
                       placeholder="Enter Patient Name"
+                      value={patientData.name}
+                      onChange={(e) => setPatientData({ ...patientData, name: e.target.value })}
                       className="w-full border border-green-500 rounded px-3 py-2"
                     />
                   </div>
@@ -50,7 +104,11 @@ const LocationWaitingArea = () => {
                     <label className="block text-gray-700 font-semibold mb-2">
                       Nationality
                     </label>
-                    <select className="w-full border border-green-500 rounded px-3 py-2">
+                    <select
+                      value={patientData.nationality}
+                      onChange={(e) => setPatientData({ ...patientData, nationality: e.target.value })}
+                      className="w-full border border-green-500 rounded px-3 py-2"
+                    >
                       <option value="Saudi">Saudi</option>
                     </select>
                   </div>
@@ -58,11 +116,12 @@ const LocationWaitingArea = () => {
                     <label className="block text-gray-700 font-semibold mb-2">
                       Mobile Number
                     </label>
-
                     <PhoneInput
                       international
                       country={"sa"}
                       defaultCountry={"sa"}
+                      value={patientData.mobileNumber}
+                      onChange={(value) => setPatientData({ ...patientData, mobileNumber: value })}
                       inputProps={{
                         id: "mobileNumber",
                         placeholder: "Enter mobile number",
@@ -87,6 +146,8 @@ const LocationWaitingArea = () => {
                     <input
                       type="text"
                       placeholder="Enter ID Number"
+                      value={patientData.idNumber}
+                      onChange={(e) => setPatientData({ ...patientData, idNumber: e.target.value })}
                       className="w-full border border-green-500 rounded px-3 py-2"
                     />
                   </div>
@@ -100,6 +161,8 @@ const LocationWaitingArea = () => {
                     <input
                       type="text"
                       placeholder="Enter Age"
+                      value={patientData.age}
+                      onChange={(e) => setPatientData({ ...patientData, age: e.target.value })}
                       className="w-full border border-green-500 rounded px-3 py-2"
                     />
                   </div>
@@ -110,6 +173,8 @@ const LocationWaitingArea = () => {
                     <input
                       type="text"
                       placeholder="Enter Sex"
+                      value={patientData.sex}
+                      onChange={(e) => setPatientData({ ...patientData, sex: e.target.value })}
                       className="w-full border border-green-500 rounded px-3 py-2"
                     />
                   </div>
@@ -120,6 +185,8 @@ const LocationWaitingArea = () => {
                     <input
                       type="text"
                       placeholder="Enter Chief Complaint"
+                      value={patientData.chiefComplaint}
+                      onChange={(e) => setPatientData({ ...patientData, chiefComplaint: e.target.value })}
                       className="w-full border border-green-500 rounded px-3 py-2"
                     />
                   </div>
@@ -140,6 +207,8 @@ const LocationWaitingArea = () => {
                   <textarea
                     id="chiefComplaint"
                     placeholder="Describe the complaint"
+                    value={patientData.chiefComplaint}
+                    onChange={(e) => setPatientData({ ...patientData, chiefComplaint: e.target.value })}
                     className="w-full mt-2 p-3 border border-green-400 rounded-lg focus:ring-2 focus:ring-green-300"
                   ></textarea>
                 </div>
@@ -267,8 +336,9 @@ const LocationWaitingArea = () => {
                 {/* Assigned TO: */}
                 <div className="mt-4">
                   <h2 className="text-green-700 font-bold text-lg mb-2">
-                    Assigned TO: <span className="text-[#2113BA]">ACU</span>
+                    Assigned TO: <span className="text-[#2113BA]">{departmentName}</span>
                   </h2>
+                 
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
                     {/* Select Element */}
                     <div className="col-span-1">

@@ -33,7 +33,7 @@ const App = () => {
                   <Route path="/waiting-area/:id" element={<WaitingArea />} />  
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/location-assignment" element={<LocationAssignment />} />
-                  <Route path="/location-waiting-area" element={<LocationWaitingArea />} />
+                  <Route path="/location-waiting-area/:id" element={<LocationWaitingArea />} />
                   <Route path="/location" element={<Locationpage />} />
                   <Route path="/kpi" element={<Kpi />} />
                   <Route path="/monitoring" element={<PatientMonitoring />} />
