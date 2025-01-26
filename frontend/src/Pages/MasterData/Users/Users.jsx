@@ -124,11 +124,18 @@ function Users() {
                 return <span>{Roles.email || ""}</span>;
             case "role":
                 return (
-                    <span className="border-green-500 text-green-600 border rounded-lg px-3 py-1">
-                        {Roles.roles && Roles.roles.length > 0
-                            ? Roles.roles.map((role) => role.name).join(", ")
-                            : "No Role Assigned"}
-                    </span>
+                  <span
+                    className="border-green-500 text-green-600 border rounded-lg px-3 py-1"
+                    title={
+                      Roles.roles && Roles.roles.length > 0
+                        ? Roles.roles.map((role) => role.name).join(", ")
+                        : "No Role Assigned"
+                    }
+                  >
+                    {Roles.roles && Roles.roles.length > 0
+                      ? Roles.roles.map((role) => role.name).join(", ")
+                      : "No Role Assigned"}
+                  </span>
                 );
             case "actions":
                 return (
