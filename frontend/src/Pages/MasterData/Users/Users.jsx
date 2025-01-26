@@ -76,6 +76,8 @@ function Users() {
     }, [page, search]);
 
     const handleDelete = async (User) => {
+        console.log(User, "User");
+        
         Swal.fire({
             title: `Are you sure to delete this record?`,
             text: `You will not be able to recover this! ${User?.name || ""}`,
@@ -167,9 +169,9 @@ function Users() {
                                     key="delete"
                                     className="py-1 px-3 hover:bg-gray-400 rounded-md text-red-600 transition-all duration-200"
                                     startContent={<FaTrash className="text-red-600" />}
-                                    onClick={() => handleDelete(department)}
+                                    onClick={() => handleDelete(Roles)}
                                 >
-                                    Roles Delete
+                                     Delete
                                 </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
