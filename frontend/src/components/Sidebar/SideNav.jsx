@@ -15,16 +15,19 @@ import TVscreeen from "../../Images/TV screen.jpg";
 import Rolesicon from "../../Images/Roles.png";
 import Department from "../../Images/Department.png";
 import Beds from "../../Images/Beds.jpg";
+import newRequest from "../../utils/newRequest";
 function SideNav({ children }) {
   const { t, i18n } = useTranslation();
   const [Masterdatashow, setMasterdatashow] = useState(false);
+  const [userRoles, setUserRoles] = useState([]);
+  const [activeTab, setActiveTab] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
   const [isOpen, setIsOpen] = useState(() => {
     const savedState = localStorage.getItem("sidebarOpen");
     return savedState ? JSON.parse(savedState) : true;
   });
-  const [activeTab, setActiveTab] = useState("");
-  const location = useLocation();
+
 
   useEffect(() => {
     setActiveTab(location.pathname);
@@ -44,38 +47,179 @@ function SideNav({ children }) {
     setIsOpen((prev) => !prev);
   };
 
+  const sidebarItems = [
+    {
+      label: `${t("Registered Patients")}`,
+      path: "/patient-table",
+      icon: (
+        <img src={Registration} alt="Registered Patients" className="w-6 h-6" />
+      ),
+      requiredRole: "Registered Patients",
+    },
+    {
+      label: `${t("Triage Waiting List")}`,
+      path: "/monitoring",
+      icon: (
+        <img
+          src={CentralWaitingArea}
+          alt="Triage Waiting List"
+          className="w-6 h-6"
+        />
+      ),
+      requiredRole: "Triage Waiting List",
+    },
+    {
+      label: `${t("Location Assignment")}`,
+      path: "/location-assignment",
+      icon: (
+        <img
+          src={LocationAssignment}
+          alt="Location Assignment"
+          className="w-6 h-6"
+        />
+      ),
+      requiredRole: "Location Assignment",
+    },
+    {
+      label: `${t("MasterData")}`,
+      path: "#",
+      icon: (
+        <img src={MasterData} alt="Location Waiting Area" className="w-6 h-6" />
+      ),
+      requiredRole: "MasterData",
+      subItems: [
+        // {
+        //   label: `${t("Location")}`,
+        //   path: "/location",
+        //   icon: <img src={Location} alt="Location" className="w-6 h-6" />,
+        // },
+        {
+          label: `${t("Users")}`,
+          path: "/users",
+          icon: <img src={Usersicon} alt="Users" className="w-6 h-6" />,
+        },
+        {
+          label: `${t("Roles")}`,
+          path: "/Roles",
+          icon: <img src={Rolesicon} alt="Roles" className="w-6 h-6" />,
+        },
+        {
+          label: `${t("Beds")}`,
+          path: "/Beds",
+          icon: <img src={Beds} alt="Beds" className="w-6 h-6" />,
+        },
+        {
+          label: `${t("Department")}`,
+          path: "/Department",
+          icon: <img src={Department} alt="Department" className="w-6 h-6" />,
+        },
+      ],
+    },
+    {
+      label: `${t("TV Screen")}`,
+      path: "/patient-display",
+      icon: <img src={TVscreeen} alt="TV Screen" className="w-6 h-6" />,
+      requiredRole: "TV Screen",
+    },
+    {
+      label: `${t("KPI")}`,
+      path: "/kpi",
+      icon: <img src={KPI} alt="KPI" className="w-6 h-6" />,
+      requiredRole: "KPI",
+    },
+  ];
+
+
+  const fetchAllRoles = async () => {
+    const accessuserdata = JSON.parse(localStorage.getItem("userdata"));
+    try {
+      const response = await newRequest.get(`/api/v1/user/${accessuserdata?.user?.id || ""}`);
+      console.log(response.data.data, "User Data");
+      setUserRoles(response.data.data.roles.map((role) => role.name));
+    } catch (error) {
+      console.error("Error fetching Role:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllRoles();
+  }, []);
+
+
   return (
     <>
       <div className="p-0 lg:h-screen">
         <div className="body-content ">
           <nav
-            className={`fixed top-0 transition-all duration-300 ease-in-out bg-white lg:mt-0 mt-16 bottom-0 flex flex-col shadow-lg overflow-hidden z-50 ${
-              i18n.language === "ar" ? "right-0" : "left-0"
-            } ${isOpen ? "w-[280px]" : "w-[80px]"}`}
+            className={`fixed top-0 transition-all duration-300 ease-in-out bg-white lg:mt-0 mt-16 bottom-0 flex flex-col shadow-lg overflow-hidden z-50 ${i18n.language === "ar" ? "right-0" : "left-0"
+              } ${isOpen ? "w-[280px]" : "w-[80px]"}`}
             id="sidenav"
           >
             <div
               className={`flex items-center w-full px-4 pt-4 pb-4 border-b border-gray-200 justify-center `}
             >
               <div
-                className={`transition-opacity duration-300 justify-center ${
-                  !isOpen ? "opacity-0 w-0" : "opacity-100"
-                }`}
+                className={`transition-opacity duration-300 justify-center ${!isOpen ? "opacity-0 w-0" : "opacity-100"
+                  }`}
               >
                 <img src={logo} alt="logo" className="w-12 h-12" />
               </div>
               <div
-                className={`transition-opacity duration-300  ${
-                  isOpen ? "opacity-0 w-0" : "opacity-100"
-                }`}
+                className={`transition-opacity duration-300  ${isOpen ? "opacity-0 w-0" : "opacity-100"
+                  }`}
               >
                 <img src={logo} alt="logo" className="w-10 h-10 " />
               </div>
             </div>
 
             <div className="flex-1 overflow-y-auto">
-              <ul className="p-4 space-y-4">
-                <li
+              <ul className="p-4 space-y-6">
+                {sidebarItems.map((item, index) => (
+                  <li key={index} className="my-2">
+                    <div
+                      className="flex px-3 cursor-pointer my-2"
+                      onClick={() => {
+                        if (item.subItems) {
+                          setMasterdatashow(!Masterdatashow);
+                        } else {
+                          navigate(item.path);
+                        }
+                      }}
+                    >
+                      {item.icon}
+                      <span
+                        className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${!isOpen && "opacity-0 w-0 overflow-hidden"}`}
+                      >
+                        {item.label}
+                      </span>
+                      {item.subItems && (
+                        <div className={`${i18n.language === "ar" ? "mr-auto ml-2" : "ml-auto mr-2"}`}>
+                          {Masterdatashow ? (
+                            <i className="fas fa-chevron-up"></i>
+                          ) : (
+                            <i className="fas fa-chevron-down"></i>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    {item.subItems && Masterdatashow && (
+                      <ul className="ms-3 space-y-3">
+                        {item.subItems.map((subItem, subIndex) => (
+                          <li key={subIndex} onClick={() => navigate(subItem.path)} className={getTabClass(subItem.path)}>
+                            {subItem.icon}
+                            <span className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 mt-2 ${!isOpen && "opacity-0 w-0 overflow-hidden"}`}>
+                              {subItem.label}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                ))}
+              </ul>
+              {/* <ul className="p-4 space-y-4"> */}
+              {/* <li
                   onClick={() => navigate("/patient-table")}
                   className={getTabClass("/patient-table")}
                 >
@@ -85,9 +229,8 @@ function SideNav({ children }) {
                     className="w-6 h-6"
                   />
                   <span
-                    className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${
-                      !isOpen && "opacity-0 w-0 overflow-hidden"
-                    }`}
+                    className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${!isOpen && "opacity-0 w-0 overflow-hidden"
+                      }`}
                   >
                     {t("Registered Patients")}
                   </span>
@@ -102,14 +245,13 @@ function SideNav({ children }) {
                     className="w-6 h-6"
                   />
                   <span
-                    className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${
-                      !isOpen && "opacity-0 w-0 overflow-hidden"
-                    }`}
+                    className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${!isOpen && "opacity-0 w-0 overflow-hidden"
+                      }`}
                   >
                     {t("Triage Waiting List")}
                   </span>
-                </li>
-                <li
+                </li> */}
+              {/* <li
                   onClick={() => navigate("/location-assignment")}
                   className={getTabClass("/location-assignment")}
                 >
@@ -119,14 +261,13 @@ function SideNav({ children }) {
                     className="w-6 h-6"
                   />
                   <span
-                    className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${
-                      !isOpen && "opacity-0 w-0 overflow-hidden"
-                    }`}
+                    className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${!isOpen && "opacity-0 w-0 overflow-hidden"
+                      }`}
                   >
                     {t("Department Waiting List")}
                   </span>
-                </li>
-                <div
+                </li> */}
+              {/* <div
                   className="flex px-3 cursor-pointer"
                   onClick={() => setMasterdatashow(!Masterdatashow)}
                 >
@@ -136,16 +277,14 @@ function SideNav({ children }) {
                     className="w-6 h-6"
                   />
                   <span
-                    className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${
-                      !isOpen && "opacity-0 w-0 overflow-hidden"
-                    }`}
+                    className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${!isOpen && "opacity-0 w-0 overflow-hidden"
+                      }`}
                   >
                     {t("MasterData")}
                   </span>
                   <div
-                    className={`${
-                      i18n.language === "ar" ? "mr-auto ml-2" : "ml-auto mr-2"
-                    }`}
+                    className={`${i18n.language === "ar" ? "mr-auto ml-2" : "ml-auto mr-2"
+                      }`}
                   >
                     {Masterdatashow ? (
                       <i className="fas fa-solid fa-chevron-up"></i>
@@ -162,9 +301,8 @@ function SideNav({ children }) {
                     >
                       <img src={Location} alt="Location" className="w-6 h-6" />
                       <span
-                        className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${
-                          !isOpen && "opacity-0 w-0 overflow-hidden"
-                        }`}
+                        className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${!isOpen && "opacity-0 w-0 overflow-hidden"
+                          }`}
                       >
                         {t("Location")}
                       </span>
@@ -175,9 +313,8 @@ function SideNav({ children }) {
                     >
                       <img src={Usersicon} alt="users" className="w-6 h-6" />
                       <span
-                        className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${
-                          !isOpen && "opacity-0 w-0 overflow-hidden"
-                        }`}
+                        className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${!isOpen && "opacity-0 w-0 overflow-hidden"
+                          }`}
                       >
                         {t("Users")}
                       </span>
@@ -188,9 +325,8 @@ function SideNav({ children }) {
                     >
                       <img src={Rolesicon} alt="Roles" className="w-6 h-6" />
                       <span
-                        className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${
-                          !isOpen && "opacity-0 w-0 overflow-hidden"
-                        }`}
+                        className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${!isOpen && "opacity-0 w-0 overflow-hidden"
+                          }`}
                       >
                         {t("Roles")}
                       </span>
@@ -201,9 +337,8 @@ function SideNav({ children }) {
                     >
                       <img src={Beds} alt="Beds" className="w-6 h-6" />
                       <span
-                        className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${
-                          !isOpen && "opacity-0 w-0 overflow-hidden"
-                        }`}
+                        className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${!isOpen && "opacity-0 w-0 overflow-hidden"
+                          }`}
                       >
                         {t("Beds")}
                       </span>
@@ -218,16 +353,15 @@ function SideNav({ children }) {
                         className="w-6 h-6"
                       />
                       <span
-                        className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${
-                          !isOpen && "opacity-0 w-0 overflow-hidden"
-                        }`}
+                        className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${!isOpen && "opacity-0 w-0 overflow-hidden"
+                          }`}
                       >
                         {t("Department")}
                       </span>
                     </li>
                   </ul>
-                )}
-                <li
+                )} */}
+              {/* <li
                   onClick={() => navigate("/patient-display")}
                   className={getTabClass("/patient-display")}
                 >
@@ -237,9 +371,8 @@ function SideNav({ children }) {
                     className="w-6 h-6"
                   />
                   <span
-                    className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${
-                      !isOpen && "opacity-0 w-0 overflow-hidden"
-                    }`}
+                    className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${!isOpen && "opacity-0 w-0 overflow-hidden"
+                      }`}
                   >
                     {t("TV Screen")}
                   </span>
@@ -250,21 +383,19 @@ function SideNav({ children }) {
                 >
                   <img src={KPI} alt="KPI" className="w-6 h-6" />
                   <span
-                    className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${
-                      !isOpen && "opacity-0 w-0 overflow-hidden"
-                    }`}
+                    className={`font-medium text-gray-700 whitespace-nowrap transition-all duration-300 ms-3 ${!isOpen && "opacity-0 w-0 overflow-hidden"
+                      }`}
                   >
                     {t("KPI")}
                   </span>
-                </li>
-              </ul>
+                </li> */}
+              {/* </ul> */}
             </div>
           </nav>
         </div>
         <div
-          className={`mx-auto transition-all duration-300 content-wrapper ${
-            isOpen ? "lg:ml-[280px]" : "lg:ml-[80px]"
-          }`}
+          className={`mx-auto transition-all duration-300 content-wrapper ${isOpen ? "lg:ml-[280px]" : "lg:ml-[80px]"
+            }`}
         >
           <section className="sticky top-0 z-40 px-3 py-3 bg-white shadow-sm flex my-auto">
             <button

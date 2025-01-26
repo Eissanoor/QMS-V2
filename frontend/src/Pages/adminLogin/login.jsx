@@ -26,6 +26,8 @@ const Login = () => {
        if (response.status === 200) {
          const { accessToken } = response.data.data.user;
          localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("userdata", JSON.stringify(response?.data?.data));
+
          toast.success("Successfully logged in!");
          navigate("/patient-table");
        }
