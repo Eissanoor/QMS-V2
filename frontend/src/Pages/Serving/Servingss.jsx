@@ -225,22 +225,29 @@ const Servingss = () => {
         } // Set the state with current date/time
       };
 
-       const Begintime = async () => {
-         try {
-           const response = await newRequest.patch( `/api/v1/patients/${id}/begin-time`, );
-           if (response.status >= 200) {
-             toast.success(
-               response?.data?.message || "successfully Assign Bed"
-             );
-             fetchPatientData();
-           } else {
-             throw new Error(response?.data?.message || "Unexpected error");
-           }
-         } catch (error) {
-           const errorMessage =error.response?.data?.message || "Failed to assign roles";
-           toast.error(errorMessage);
-         }
-       };
+       
+
+    const handleEndClick = async () => {
+        try {
+            const response = await fetch(`${baseUrl}/api/v1/patients/${id}/end-time`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                },
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                toast.success(data?.message || "End time set successfully");
+                fetchPatientData(); // Refresh patient data
+            } else {
+                console.error("Error in API response:", data.message);
+            }
+        } catch (error) {
+            console.error("Error calling end-time API:", error);
+        }
+    };
 
     return (
       <SideNav>
@@ -460,7 +467,7 @@ const Servingss = () => {
                       <button className="bg-[#33D805] text-white font-semibold py-2 px-10 rounded hover:bg-yellow-600" onClick={handleBeginClick}>
                         Begin
                       </button>
-                      <button className="bg-red-500 text-white font-semibold py-2 px-10 rounded hover:bg-blue-600">
+                      <button className="bg-red-500 text-white font-semibold py-2 px-10 rounded hover:bg-blue-600" onClick={handleEndClick}>
                         End
                       </button>
                     </div>
