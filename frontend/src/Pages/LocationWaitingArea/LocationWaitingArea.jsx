@@ -35,6 +35,12 @@ const LocationWaitingArea = () => {
         setVitalSigns({ ...VitalSigns, [e.target.name]: e.target.value });
     };
 
+    const formatDateTime = (dateTime) => {
+        const date = new Date(dateTime);
+        const options = { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true };
+        return date.toLocaleString('en-GB', options).replace(',', '');
+    };
+
     const fetchPatientData = async () => {
         try {
             const response = await fetch(`${baseUrl}/api/v1/patients/${id}`);
@@ -58,7 +64,7 @@ const LocationWaitingArea = () => {
                     RBS: data.data.vitalSigns[0].rbs,
                     Height: data.data.vitalSigns[0].height,
                     Weight: data.data.vitalSigns[0].weight,
-                    TimeVS: data.data.vitalSigns[0].timeVs,
+                    TimeVS: formatDateTime(data.data.vitalSigns[0].timeVs),
                 });
                 setAssignedTo(data.data.user.name);
                 setDepartmentName(data.data.department.deptname);
