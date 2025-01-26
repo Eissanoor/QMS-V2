@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import {
   LineChart,
   Line,
@@ -8,32 +9,49 @@ import {
   Tooltip,
   ResponsiveContainer
 } from 'recharts';
-
-// Generate sample data - in real app, this would come from your API/database
-const generateData = () => {
-  const data = [];
-  for (let i = 0; i < 200; i++) {
-    data.push({
-      patient: i + 1,
-      time: Math.random() * 30 + Math.sin(i / 10) * 10 + 5
-    });
-  }
-  return data;
-};
-
-const data = generateData();
+import newRequest from '../../utils/newRequest';
 
 const EyeBall = () => {
+  const [chartData, setChartData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [totalPatientsdata, settotalPatientsdata] = useState("");
+
+  useEffect(() => {
+    const fetchChartData = async () => {
+      try {
+        const response = await newRequest.get("/api/v1/kpi/eyeball-to-triage",);
+        if (response.data.success && response.data.data.timeData) {
+          const formattedData = response.data.data.timeData.map(
+            (item, index) => ({
+              patient: index + 1,
+              time: item.timeToTriage > 0 ? item.timeToTriage : 0,
+            })
+          );
+          setChartData(formattedData);
+          settotalPatientsdata(response?.data?.data?.stats);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchChartData();
+  }, []);
+
   return (
-   
-      <div className="bg-green rounded-lg shadow-lg p-6 w-full max-w-5xl">
-        <h2 className="text-2xl font-semibold text-center  text-gray-800">
-          Time from Eyeball to TRIAGE
-        </h2>
-        <div className="h-[400px]">
+    <div className="bg-green rounded-lg shadow-lg p-6 w-full max-w-5xl">
+      <h2 className="text-2xl font-semibold text-center text-gray-800">
+        Time from Eyeball to TRIAGE
+      </h2>
+      <div className="h-[400px]">
+        {loading ? (
+          <p className="text-center text-gray-500">Loading...</p>
+        ) : (
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
-              data={data}
+              data={chartData}
               margin={{
                 top: 10,
                 right: 30,
@@ -44,31 +62,31 @@ const EyeBall = () => {
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis
                 dataKey="patient"
-                label={{ 
-                  value: 'Patient (n)', 
-                  position: 'bottom',
-                  offset: 0
+                label={{
+                  value: `Patient (${totalPatientsdata?.totalPatients || "n"})`,
+                  position: "bottom",
+                  offset: 0,
                 }}
                 tick={{ fontSize: 12 }}
               />
               <YAxis
-                label={{ 
-                  value: 'Time (minutes)', 
-                  angle: -90, 
-                  position: 'insideLeft',
-                  offset: 10
+                label={{
+                  value: "Time (minutes)",
+                  angle: -90,
+                  position: "insideLeft",
+                  offset: 10,
                 }}
-                domain={[0, 50]}
+                domain={[0, "auto"]}
                 tick={{ fontSize: 12 }}
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: 'white',
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '0.375rem',
-                  padding: '0.5rem',
+                  backgroundColor: "white",
+                  border: "1px solid #e5e7eb",
+                  borderRadius: "0.375rem",
+                  padding: "0.5rem",
                 }}
-                formatter={(value) => [`${value.toFixed(1)} minutes`, 'Time']}
+                formatter={(value) => [`${value} minutes`, "Time"]}
                 labelFormatter={(value) => `Patient ${value}`}
               />
               <Line
@@ -80,10 +98,10 @@ const EyeBall = () => {
               />
             </LineChart>
           </ResponsiveContainer>
-        </div>
+        )}
       </div>
-    
+    </div>
   );
-}
+};
 
 export default EyeBall;

@@ -1,26 +1,70 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import CloseIcon from "@mui/icons-material/Close";
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
+import newRequest from "../../utils/newRequest";
+import { countries } from "countries-list";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
+
+const countryList = Object.entries(countries).map(([code, country]) => ({
+  name: country.name,
+  code,
+}));
+
+const CountryDropdown = ({ value, onChange, t }) => (
+  <Autocomplete
+    disablePortal
+    options={countryList.map(country => country.name)}
+    value={value}
+    onChange={(event, newValue) => onChange({ target: { value: newValue } })}
+    renderInput={(params) => (
+      <TextField
+        {...params}
+        label={t("Select Nationality")}
+        className="w-full mt-2 p-3 border border-green-400 rounded-lg focus:ring-2 focus:ring-green-300"
+      />
+    )}
+    sx={{ width: '100%', mt: 2 }}
+  />
+);
+
 
 const AssignLocation = ({ isVisible, setVisibility }) => {
+
+  const [selectdepartments, setselectdepartments] = useState([]);
+  const [selectedDeptId, setSelectedDeptId] = useState(null);
+  const [Nationality, setNationality] = useState("Saudi Arabia");
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const modalRef = useRef(null); // Reference to the modal container
+  const modalRef = useRef(null);
 
-  if (!isVisible) return null; // Return null if not visible
-
+  if (!isVisible) return null;
   const handleFullscreen = () => {
     if (modalRef.current) {
       if (!document.fullscreenElement) {
-        modalRef.current.requestFullscreen(); // Make the modal fullscreen
+        modalRef.current.requestFullscreen();
       } else {
-        document.exitFullscreen(); // Exit fullscreen
+        document.exitFullscreen();
       }
     }
   };
+
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        const response = await newRequest.get(`/api/v1/departments/all`);
+        console.log(response?.data?.data, "response");
+        setselectdepartments(response?.data?.data || []);
+      } catch (error) {
+        console.error("Error fetching departments:", error);
+      }
+    };
+
+    fetchDepartments();
+  }, []);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -54,11 +98,22 @@ const AssignLocation = ({ isVisible, setVisibility }) => {
               <label className="block text-gray-700 font-semibold mb-2">
                 Department Code
               </label>
-              <input
-                type="text"
-                placeholder="Enter Department Code"
-                className="w-full border border-green-500 rounded px-3 py-2"
-              />
+              <select
+                id="Location"
+                className="w-full mt-2 p-3 border border-green-400 rounded-lg focus:ring-2 focus:ring-green-300"
+                value={selectedDeptId}
+                onChange={(e) => setSelectedDeptId(e.target.value)}
+              >
+                <option>{t("Select Department Code")}</option>
+                {selectdepartments.map((department) => (
+                  <option
+                    key={department.tblDepartmentID}
+                    value={department.tblDepartmentID}
+                  >
+                    {department.deptcode}
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
               <label className="block text-gray-700 font-semibold mb-2">
@@ -77,12 +132,11 @@ const AssignLocation = ({ isVisible, setVisibility }) => {
               >
                 {t("Location")}
               </label>
-              <select
-                id="Location"
-                className="w-full mt-2 p-3 border border-green-400 rounded-lg focus:ring-2 focus:ring-green-300"
-              >
-                <option>{t("Select Location")}</option>
-              </select>
+              <CountryDropdown
+                value={Nationality}
+                onChange={(e) => setNationality(e.target.value)}
+                t={t}
+              />
             </div>
           </div>
 
