@@ -8,7 +8,9 @@ import toast from "react-hot-toast";
 import Spinner from "../../components/spinner/spinner";
 import newRequest from "../../utils/newRequest";
 import AssignPopup from "../waintingArea/assignPopup";
+import { useNavigate } from 'react-router-dom';
 const Servingss = () => {
+  const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -241,6 +243,7 @@ const Servingss = () => {
             if (data.success) {
                 toast.success(data?.message || "End time set successfully");
                 fetchPatientData(); // Refresh patient data
+            navigate('/monitoring');
             } else {
                 console.error("Error in API response:", data.message);
             }
