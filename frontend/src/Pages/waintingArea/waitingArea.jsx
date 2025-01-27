@@ -65,7 +65,6 @@ const WaitingArea = () => {
       setSex(patient.sex);
       setNationality(patient.nationality);
       setCallPatient(patient.callPatient);
-
       if (patient.vitalSigns?.length > 0) {
         const latestVitalSign = patient.vitalSigns[0];
         setVitalSigns({
@@ -144,6 +143,7 @@ const WaitingArea = () => {
   };
   const openPopup = async () => {
     setShowPopup(true);
+    refetch()
   };
   const closePopup = () => {
     setShowPopup(false);

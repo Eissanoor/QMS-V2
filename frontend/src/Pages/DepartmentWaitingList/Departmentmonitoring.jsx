@@ -13,21 +13,22 @@ const Departmentmonitoring = () => {
     const { id } = useParams();
     // Fetch data from API
     useEffect(() => {
-        const fetchPatients = async () => {
-            try {
-                setLoading(true);
-                const response = await newRequest.get(`/api/v1/patients/by-department?depid=${id}`,);
-                console.log(response.data.data, "response.data.data");
-                // setNowServing(response.data.data.inProgress || []);
-            } catch (err) {
-                setError("Error fetching data: " + err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
+      const fetchPatients = async () => {
+        try {
+          setLoading(true);
+          const response = await newRequest.get(
+            `/api/v1/patients/by-department?deptId=${id}`
+          );
+          setNowServing(response.data.data || []);
+        } catch (err) {
+          setError("Error fetching data: " + err.message);
+        } finally {
+          setLoading(false);
+        }
+      };
 
-        fetchPatients();
-    }, []);
+      fetchPatients();
+    }, [id]);
 
     return (
         <>
@@ -54,7 +55,7 @@ const Departmentmonitoring = () => {
                     {/* Now Serving Section */}
                     <div className="mt-6 bg-white p-4 rounded-lg shadow-md">
                         <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-blue-700 text-xl font-bold">DEPARTMENT </h2>
+                            <h2 className="text-blue-700 text-xl font-bold">DEPARTMENT</h2>
                             <div className="flex items-center space-x-4">
                                 <span className="text-gray-700 font-medium">
                                     Number of Patients
