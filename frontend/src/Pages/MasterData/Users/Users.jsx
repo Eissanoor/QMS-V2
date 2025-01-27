@@ -118,65 +118,67 @@ function Users() {
 
     const renderCell = (Roles, columnKey) => {
         switch (columnKey) {
-            case "name":
-                return <span>{Roles.name || ""}</span>;
-            case "email":
-                return <span>{Roles.email || ""}</span>;
-            case "role":
-                return (
-                  <span
-                    className="border-green-500 text-green-600 border rounded-lg px-3 py-1"
-                    title={
-                      Roles.roles && Roles.roles.length > 0
-                        ? Roles.roles.map((role) => role.name).join(", ")
-                        : "No Role Assigned"
-                    }
-                  >
-                    {Roles.roles && Roles.roles.length > 0
-                      ? Roles.roles.map((role) => role.name).join(", ")
-                      : "No Role Assigned"}
-                  </span>
-                );
-            case "actions":
-                return (
-                    <div className="relative flex justify-center items-center">
-                        <Dropdown>
-                            <DropdownTrigger>
-                                <Button isIconOnly size="sm" variant="light">
-                                    <VerticalDotsIcon className="text-default-300" />
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu className="bg-slate-300 w-full pe-5 rounded-md shadow-lg">
-                                <DropdownItem
-                                    key="Assign"
-                                    className="py-1 px-3 flex items-center gap-2 hover:bg-gray-400 rounded-md transition-all duration-200"
-                                    startContent={<FaUserPlus className="text-gray-600" />}
-                                    onClick={() => handleAssignrole(Roles)}
-                                >
-                                    Assign Role
-                                </DropdownItem>
-                                  <DropdownItem
-                                    key="Assign"
-                                    className="py-1 px-3 flex items-center gap-2 hover:bg-gray-400 rounded-md transition-all duration-200"
-                                    startContent={<IoPersonRemove className="text-gray-600" />}
-                                    onClick={() => handleAssignroleremove(Roles)}
-                                >
-                                  Remove Role
-                                </DropdownItem>
-                                <DropdownItem
-                                    key="delete"
-                                    className="py-1 px-3 hover:bg-gray-400 rounded-md text-red-600 transition-all duration-200"
-                                    startContent={<FaTrash className="text-red-600" />}
-                                    onClick={() => handleDelete(Roles)}
-                                >
-                                     Delete
-                                </DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
-                    </div>
-                );
-            default:
-                return Roles[columnKey];
+          case "name":
+            return <span>{Roles.name || ""}</span>;
+          case "email":
+            return <span>{Roles.email || ""}</span>;
+          case "role":
+            return (
+              <span
+                className="border-green-500 text-green-600 border rounded-lg px-3 py-1 block w-[500px] break-words" // w-72 is equivalent to 300px
+                title={
+                  Roles.roles && Roles.roles.length > 0
+                    ? Roles.roles.map((role) => role.name).join(", ")
+                    : "No Role Assigned"
+                }
+              >
+                {Roles.roles && Roles.roles.length > 0
+                  ? Roles.roles.map((role) => role.name).join(", ")
+                  : "No Role Assigned"}
+              </span>
+            );
+          case "actions":
+            return (
+              <div className="relative flex justify-center items-center">
+                <Dropdown>
+                  <DropdownTrigger>
+                    <Button isIconOnly size="sm" variant="light">
+                      <VerticalDotsIcon className="text-default-300" />
+                    </Button>
+                  </DropdownTrigger>
+                  <DropdownMenu className="bg-slate-300 w-full pe-5 rounded-md shadow-lg">
+                    <DropdownItem
+                      key="Assign"
+                      className="py-1 px-3 flex items-center gap-2 hover:bg-gray-400 rounded-md transition-all duration-200"
+                      startContent={<FaUserPlus className="text-gray-600" />}
+                      onClick={() => handleAssignrole(Roles)}
+                    >
+                      Assign Role
+                    </DropdownItem>
+                    <DropdownItem
+                      key="Assign"
+                      className="py-1 px-3 flex items-center gap-2 hover:bg-gray-400 rounded-md transition-all duration-200"
+                      startContent={
+                        <IoPersonRemove className="text-gray-600" />
+                      }
+                      onClick={() => handleAssignroleremove(Roles)}
+                    >
+                      Remove Role
+                    </DropdownItem>
+                    <DropdownItem
+                      key="delete"
+                      className="py-1 px-3 hover:bg-gray-400 rounded-md text-red-600 transition-all duration-200"
+                      startContent={<FaTrash className="text-red-600" />}
+                      onClick={() => handleDelete(Roles)}
+                    >
+                      Delete
+                    </DropdownItem>
+                  </DropdownMenu>
+                </Dropdown>
+              </div>
+            );
+          default:
+            return Roles[columnKey];
         }
     };
 
