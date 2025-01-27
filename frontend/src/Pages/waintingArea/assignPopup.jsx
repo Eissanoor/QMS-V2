@@ -3,7 +3,7 @@ import { baseUrl } from "../../utils/config";
 import newRequest from '../../utils/newRequest';
 import toast from 'react-hot-toast';
 
-const AssignPopup = ({ onClose, patientId,onAssignSuccess }) => {
+const AssignPopup = ({ onClose, patientId, onAssignSuccess }) => {
     const [isOpen, setIsOpen] = useState(true);
     const [departments, setDepartments] = useState([]);
     const [selectedDeptId, setSelectedDeptId] = useState(null);
@@ -25,8 +25,12 @@ const AssignPopup = ({ onClose, patientId,onAssignSuccess }) => {
                 { departmentId: selectedDeptId }
             );
             toast.success(response?.data?.message || "Department assigned to patient successfully");
-            onAssignSuccess();
+           
             handleClose();
+            
+            setTimeout(() => {
+                onAssignSuccess();
+            }, 2000);
 
         } catch (error) {
             const errorMessage = error.response?.data?.message || "Failed to assign department";

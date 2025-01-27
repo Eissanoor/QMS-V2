@@ -46,6 +46,7 @@ const WaitingArea = () => {
     try {
       const response = await fetch(`${baseUrl}/api/v1/patients/${id}`);
       const data = await response.json();
+      // Handle the fetched data as needed
     } catch (error) {
       console.error("Error fetching patient data:", error);
     }
