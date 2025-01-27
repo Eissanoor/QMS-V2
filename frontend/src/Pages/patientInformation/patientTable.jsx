@@ -1,18 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from 'react-query';
-import { FaTrash } from "react-icons/fa";
+import { FaFilePdf, FaTrash } from "react-icons/fa";
 import { CiEdit } from "react-icons/ci";
 import Swal from "sweetalert2";
 import toast from 'react-hot-toast';
 import SideNav from '../../components/Sidebar/SideNav';
 import Spinner from '../../components/spinner/spinner';
 import newRequest from '../../utils/newRequest';
-
-const fetchPatients = async () => {
-  const response = await newRequest.get(`/api/v1/patients`);
-  return response?.data?.data?.data || [];
-};
+import { baseUrl } from '../../utils/config';
 
 function PatientTable() {
   const [patients, setPatients] = useState([]);
@@ -122,6 +118,9 @@ function PatientTable() {
                     <th className="p-4 text-left text-sm font-semibold text-gray-800">
                       Contact
                     </th>
+                    <th className="p-4 text-left text-sm font-semibold text-gray-800">
+                      PDF
+                    </th>
                     <th className="p-4 text-center text-sm font-semibold text-gray-800">
                       Action
                     </th>
@@ -185,6 +184,16 @@ function PatientTable() {
                           </td>
                           <td className="p-4 text-sm text-gray-800">
                             {patient.mobileNumber}
+                          </td>
+                          <td className="p-4 text-gray-800 ">
+                            <FaFilePdf
+                              size={30}
+                              className="cursor-pointer"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                window.open(patient.ticket, "_blank");
+                              }}
+                            />
                           </td>
                           <td className="relative text-center">
                             <button
