@@ -76,8 +76,6 @@ function Users() {
     }, [page, search]);
 
     const handleDelete = async (User) => {
-        console.log(User, "User");
-        
         Swal.fire({
             title: `Are you sure to delete this record?`,
             text: `You will not be able to recover this! ${User?.name || ""}`,
@@ -163,7 +161,7 @@ function Users() {
                                     startContent={<IoPersonRemove className="text-gray-600" />}
                                     onClick={() => handleAssignroleremove(Roles)}
                                 >
-                                  Remove Assign Role
+                                  Remove Role
                                 </DropdownItem>
                                 <DropdownItem
                                     key="delete"

@@ -47,6 +47,7 @@ const Servingss = () => {
   const [callPatient, setCallPatient] = useState(false);
   const [bednumber, setbednumber] = useState('')
 
+
   const [startTime, setStartTime] = useState("");
   const formatDateTime = (dateTime) => {
     const date = new Date(dateTime);
@@ -400,10 +401,11 @@ const Servingss = () => {
                       />
                       <span className="w-4 h-4 border-4 border-black rounded-full flex items-center justify-center">
                         <span
-                          className={`w-2.5 h-2.5 rounded-full ${Allergies === "Yes"
+                          className={`w-2.5 h-2.5 rounded-full ${
+                            Allergies === "Yes"
                               ? "bg-[#EC5B01]"
                               : "bg-transparent"
-                            }`}
+                          }`}
                         ></span>
                       </span>
                       <span className="ml-2 text-sm">Yes</span>
@@ -419,10 +421,11 @@ const Servingss = () => {
                       />
                       <span className="w-4 h-4 border-4 border-black rounded-full flex items-center justify-center">
                         <span
-                          className={`w-2.5 h-2.5 rounded-full ${Allergies === "No"
+                          className={`w-2.5 h-2.5 rounded-full ${
+                            Allergies === "No"
                               ? "bg-[#EC5B01]"
                               : "bg-transparent"
-                            }`}
+                          }`}
                         ></span>
                       </span>
                       <span className="ml-2 text-sm">No</span>
@@ -591,6 +594,12 @@ const Servingss = () => {
                       )}
                     </button>
                   </div>
+                  <div className="col-span-1">
+                    <label className="block text-gray-700 font-semibold mb-2">
+                      Assign Bed Number
+                    </label>
+                    {bednumber}
+                  </div>
                   {/* Input Element */}
                   {/* <div className="col-span-3">
                                         <label className="block text-gray-700 font-semibold mb-2">
@@ -606,7 +615,7 @@ const Servingss = () => {
               </div>
             </div>
 
-            <div className="flex justify-between items-center mt-6">
+            {/* <div className="flex justify-between items-center mt-6">
               <button
                 className={`text-white px-6 py-2 rounded-lg cursor-not-allowed hover:bg-yellow-500  ${callPatient
                     ? "bg-red-500 hover:bg-red-600"
@@ -617,7 +626,7 @@ const Servingss = () => {
               >
                 {callPatient ? t("Cancel Call Patient") : t("Call Patient")}
               </button>
-              <div className="flex space-x-4">
+              {/* <div className="flex space-x-4">
                 <button
                   className={`text-white px-6 py-2 rounded-lg hover:bg-blue-600 cursor-not-allowed ${VitalSigns.BP ? "" : "opacity-50 cursor-not-allowed"
                     } ${callPatient
@@ -648,8 +657,8 @@ const Servingss = () => {
                 <button className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600">
                   {t("Close")}
                 </button>
-              </div>
-            </div>
+              </div> */}
+            {/* </div> */}
           </div>
           {/* // )} */}
         </div>
