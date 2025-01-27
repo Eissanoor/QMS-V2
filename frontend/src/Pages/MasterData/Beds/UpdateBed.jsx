@@ -18,7 +18,6 @@ const UpdateBed = ({ isVisible, setVisibility, selectdataBed, refreshBeds }) => 
         try {
             const response = await newRequest.put(`/api/v1/beds/${selectdataBed?.id || ""}`, {
                 bedNumber: Bednumber,
-                bedStatus: Bedcode,
             });
             if (response.status >= 200 && response.status < 300) {
                 toast.success(response.data?.message || "Successfully Add!");
@@ -74,7 +73,7 @@ const UpdateBed = ({ isVisible, setVisibility, selectdataBed, refreshBeds }) => 
                 />
               </div>
 
-              <div>
+              {/* <div>
                 <label className="block text-gray-700 font-semibold mb-2">
                   Status
                 </label>
@@ -88,7 +87,7 @@ const UpdateBed = ({ isVisible, setVisibility, selectdataBed, refreshBeds }) => 
                   <option>{t("Available")}</option>
                   <option>{t("Occupied")}</option>
                 </select>
-              </div>
+              </div> */}
             </div>
 
             {/* Action Buttons */}
