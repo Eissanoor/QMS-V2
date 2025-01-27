@@ -4,28 +4,6 @@ import newRequest from "../../utils/newRequest";
 import { useQuery } from "react-query";
 
 const PatientDisplay = () => {
-  // const [patients, setPatients] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-
-  // useEffect(() => {
-  //   const fetchPatients = async () => {
-  //     try {
-  //       const response = await newRequest.get(`/api/v1/patients/called`);
-  //       if (response.data.success) {
-  //         setPatients(response?.data?.data || []);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching patients:", error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-
-  //   };
-
-  //   fetchPatients();
-  // }, []);
-
     const { isLoading, data: patients = [], error } = useQuery("fetchAllMegaMenus", async () => {
     try {
       const response = await newRequest.get("/api/v1/patients/called");
