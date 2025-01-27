@@ -20,6 +20,7 @@ import Users from "./Pages/MasterData/Users/Users.jsx";
 import Roless from "./Pages/MasterData/Roles/Roless.jsx";
 import Beds from "./Pages/MasterData/Beds/Beds.jsx";
 import Servingss from "./Pages/Serving/Servingss.jsx";
+import Departmentmonitoring from "./Pages/DepartmentWaitingList/Departmentmonitoring.jsx";
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -45,8 +46,14 @@ const App = () => {
                   <Route path="/waiting-area/:id" element={<WaitingArea />} />
                   <Route path="/Servings/:id" element={<Servingss />} />
                   <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/location-assignment" element={<LocationAssignment />} />
-                  <Route path="/location-waiting-area/:id" element={<LocationWaitingArea />} />
+                  <Route
+                    path="/location-assignment"
+                    element={<LocationAssignment />}
+                  />
+                  <Route
+                    path="/location-waiting-area/:id"
+                    element={<LocationWaitingArea />}
+                  />
                   <Route path="/location" element={<Locationpage />} />
                   <Route path="/kpi" element={<Kpi />} />
                   <Route path="/patient-display" element={<PatientDisplay />} />
@@ -55,6 +62,8 @@ const App = () => {
                   <Route path="/users" element={<Users />} />
                   <Route path="/Roles" element={<Roless />} />
                   <Route path="/Beds" element={<Beds />} />
+                  {/* Department monitoring */}
+                  <Route path="/Department-monitoring/:id" element={<Departmentmonitoring />} />
                 </Routes>
               </QueryClientProvider>
             </BrowserRouter>

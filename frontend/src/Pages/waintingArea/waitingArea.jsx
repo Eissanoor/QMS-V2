@@ -42,18 +42,9 @@ const WaitingArea = () => {
   const [patientData, setPatientData] = useState(null);
   const [callPatient, setCallPatient] = useState(false);
 
-  const fetchPatientData = async () => {
+  const { isLoading, data, error ,refetch } = useQuery("fetchAllMegaMenuss", async () => {
     try {
-      const response = await fetch(`${baseUrl}/api/v1/patients/${id}`);
-      const data = await response.json();
-    } catch (error) {
-      console.error("Error fetching patient data:", error);
-    }
-  };
-
-  const { isLoading, data, error ,refetch } = useQuery("fetchAllMegaMenus", async () => {
-    try {
-      const response = await newRequest.get(`${baseUrl}/api/v1/patients/${id}`);
+      const response = await newRequest.get(`/api/v1/patients/${id}`);
       return response?.data?.data || {};
     } catch (error) {
       console.log(error);
@@ -63,7 +54,7 @@ const WaitingArea = () => {
 
   useEffect(() => {
     if (data) {
-      const patient = data; // `data` contains the patient object directly, no need to access `data.data`
+      const patient = data;
       setPdfUrl(patient?.ticket);
       setPatientData(patient);
       setPatientName(patient.name);
@@ -119,7 +110,6 @@ const WaitingArea = () => {
       );
       if (response.status >= 200) {
         toast.success(response?.data?.message || "Vital sign created successfully");
-        // fetchPatientData()
         refetch()
       } else {
         throw new Error(response?.data?.message || "Unexpected error");
@@ -147,7 +137,6 @@ const WaitingArea = () => {
 
       const data = await response.json();
       toast.success(data?.message || "Patient call status toggled successfully");
-      // fetchPatientData();
       refetch()
     } catch (error) {
       toast.error(error.response?.data?.message || "Error");
@@ -411,7 +400,7 @@ const WaitingArea = () => {
           </div>
         </div>
       )}
-      {isOpen && <AssignPopup onClose={handleClose} patientId={id} onAssignSuccess={fetchPatientData} />}
+      {isOpen && <AssignPopup onClose={handleClose} patientId={id} onAssignSuccess={refetch} />}
     </div>
   );
 };

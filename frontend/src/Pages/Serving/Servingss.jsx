@@ -5,7 +5,6 @@ import "react-phone-input-2/lib/style.css";
 import { useParams } from "react-router-dom";
 import { baseUrl } from "../../utils/config";
 import toast from "react-hot-toast";
-import Spinner from "../../components/spinner/spinner";
 import newRequest from "../../utils/newRequest";
 import AssignPopup from "../waintingArea/assignPopup";
 import { useNavigate } from 'react-router-dom';
@@ -28,7 +27,7 @@ const Servingss = () => {
   const [Age, setAge] = useState("");
   const [ChiefComplaint, setChiefComplaint] = useState("");
   const [Availablebed, setAvailablebed] = useState([]);
-  const [Allergies, setAllergies] = useState("No");
+  const [Allergies, setAllergies] = useState(false);
   const [VitalSigns, setVitalSigns] = useState({
     BP: "",
     HR: "",
@@ -70,12 +69,13 @@ const Servingss = () => {
         setSex(patient.sex);
         setNationality(patient.nationality);
         setCallPatient(patient.callPatient);
-        setbednumber(patient?.bedId || "");
+
         if (patient.beginTime) {
           setStartTime(formatDateTime(patient.beginTime));
         }
         if (patient.vitalSigns.length > 0) {
           const latestVitalSign = patient.vitalSigns[0];
+          setAllergies(latestVitalSign.allergies || false);
           setVitalSigns({
             BP: latestVitalSign.bp,
             HR: latestVitalSign.hr,
@@ -87,6 +87,13 @@ const Servingss = () => {
             Weight: latestVitalSign.weight,
             TimeVS: latestVitalSign.timeVs,
           });
+        }
+        try {
+          const response = await newRequest.get(`/api/v1/beds/${patient?.bedId || ""}`);
+          setbednumber(response?.data?.data?.bedNumber || "");
+
+        } catch (error) {
+          console.error("Error fetching departments:", error);
         }
       }
     } catch (error) {
@@ -248,6 +255,8 @@ const Servingss = () => {
     }
   };
 
+
+
   return (
     <SideNav>
       <div className="min-h-screen bg-green-100 p-8">
@@ -393,19 +402,18 @@ const Servingss = () => {
                     <label className="inline-flex items-center">
                       <input
                         type="radio"
+                        value="true"
+                        checked={Allergies === true}
+                        onChange={() => setAllergies(true)}
+                        className="hidden peer"
                         name="Allergies"
-                        value="Yes"
-                        checked={Allergies === "Yes"}
-                        onChange={(e) => setAllergies(e.target.value)}
-                        className="form-radio peer hidden"
                       />
                       <span className="w-4 h-4 border-4 border-black rounded-full flex items-center justify-center">
                         <span
-                          className={`w-2.5 h-2.5 rounded-full ${
-                            Allergies === "Yes"
+                          className={`w-2.5 h-2.5 rounded-full ${Allergies === true
                               ? "bg-[#EC5B01]"
                               : "bg-transparent"
-                          }`}
+                            }`}
                         ></span>
                       </span>
                       <span className="ml-2 text-sm">Yes</span>
@@ -413,24 +421,22 @@ const Servingss = () => {
                     <label className="inline-flex items-center">
                       <input
                         type="radio"
-                        name="Allergies"
-                        value="No"
-                        checked={Allergies === "No"}
-                        onChange={(e) => setAllergies(e.target.value)}
-                        className="form-radio peer hidden"
+                        value="false"
+                        checked={Allergies === false}
+                        onChange={() => setAllergies(false)}
+                        className="hidden peer"
                       />
                       <span className="w-4 h-4 border-4 border-black rounded-full flex items-center justify-center">
                         <span
-                          className={`w-2.5 h-2.5 rounded-full ${
-                            Allergies === "No"
+                          className={`w-2.5 h-2.5 rounded-full ${Allergies === false
                               ? "bg-[#EC5B01]"
                               : "bg-transparent"
-                          }`}
+                            }`}
                         ></span>
                       </span>
                       <span className="ml-2 text-sm">No</span>
                     </label>
-                    {Allergies === "Yes" && (
+                    {Allergies === true && (
                       <div>
                         <label className="block text-green-700 font-semibold mb-2">
                           Specify
@@ -596,21 +602,12 @@ const Servingss = () => {
                   </div>
                   <div className="col-span-1">
                     <label className="block text-gray-700 font-semibold mb-2">
-                      Assign Bed Number
+                      Assigned Bed
                     </label>
-                    {bednumber}
+                    <p className="text-blue-700 font-bold text-lg">
+                      {bednumber}
+                    </p>
                   </div>
-                  {/* Input Element */}
-                  {/* <div className="col-span-3">
-                                        <label className="block text-gray-700 font-semibold mb-2">
-                                            To Remarks
-                                        </label>
-                                        <input
-                                            type="text"
-                                            placeholder="Enter To Remarks"
-                                            className="w-full border border-green-500 rounded px-3 py-2"
-                                        />
-                                    </div> */}
                 </div>
               </div>
             </div>
