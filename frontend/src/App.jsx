@@ -1,4 +1,4 @@
-import React from "react";
+import React, { createContext, useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import DataTableProvider from "./Contexts/DataTableContext";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -21,52 +21,186 @@ import Roless from "./Pages/MasterData/Roles/Roless.jsx";
 import Beds from "./Pages/MasterData/Beds/Beds.jsx";
 import Servingss from "./Pages/Serving/Servingss.jsx";
 import Departmentmonitoring from "./Pages/DepartmentWaitingList/Departmentmonitoring.jsx";
+import newRequest from "./utils/newRequest.jsx";
+import ProtectedRoute from "./utils/ProtectedRoute.jsx";
+import NotFound from "./Pages/NotFound/NotFound.jsx";
 const queryClient = new QueryClient();
 
+export const RolesContext = createContext([]);
+
 const App = () => {
+  const [userRoles, setUserRoles] = useState([]);
+    const accessuserdata = JSON.parse(localStorage.getItem("userdata"));
+    useEffect(() => {
+      const fetchRoles = async () => {
+        try {
+          const response = await newRequest.get(`/api/v1/user/${accessuserdata?.user?.id || ""}`);
+          setUserRoles(response?.data?.data?.roles?.map(role => role.name) || []);
+          console.log(response?.data?.data,'data');
+          
+        } catch (error) {
+          console.error("Error fetching roles:", error);
+        }
+      };
+
+      fetchRoles();
+    }, []);
   return (
     <>
       <DataTableProvider>
         <RolesProvider>
           <div>
-            <BrowserRouter>
-              <QueryClientProvider client={queryClient}>
-                <Routes>
-                  <Route path="/" element={<Login />} />
-                  <Route
-                    path="/patient-information"
-                    element={<PatientInformation />}
-                  />
-                  <Route
-                    path="/update/patient-information/:Id"
-                    element={<UpdatePatientInformation />}
-                  />
-                  <Route path="/patient-table" element={<PatientTable />} />
-                  <Route path="/monitoring" element={<PatientMonitoring />} />
-                  <Route path="/waiting-area/:id" element={<WaitingArea />} />
-                  <Route path="/Servings/:id" element={<Servingss />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route
-                    path="/location-assignment"
-                    element={<LocationAssignment />}
-                  />
-                  <Route
-                    path="/location-waiting-area/:id"
-                    element={<LocationWaitingArea />}
-                  />
-                  <Route path="/location" element={<Locationpage />} />
-                  <Route path="/kpi" element={<Kpi />} />
-                  <Route path="/patient-display" element={<PatientDisplay />} />
-                  {/* Master Data */}
-                  <Route path="/Department" element={<Department />} />
-                  <Route path="/users" element={<Users />} />
-                  <Route path="/Roles" element={<Roless />} />
-                  <Route path="/Beds" element={<Beds />} />
-                  {/* Department monitoring */}
-                  <Route path="/Department-monitoring/:id" element={<Departmentmonitoring />} />
-                </Routes>
-              </QueryClientProvider>
-            </BrowserRouter>
+            <RolesContext.Provider value={userRoles}>
+              <BrowserRouter>
+                <QueryClientProvider client={queryClient}>
+                  <Routes>
+                    <Route path="/" element={<Login />} />
+                    <Route
+                      path="/patient-information"
+                      element={<PatientInformation />}
+                    />
+                    <Route
+                      path="/update/patient-information/:Id"
+                      element={<UpdatePatientInformation />}
+                    />
+                    <Route path="/patient-table" element={<PatientTable />} />
+                    <Route
+                      path="/monitoring"
+                      // element={<PatientMonitoring />}
+                      element={
+                        <ProtectedRoute allowedRoles={["Triage Waiting List"]}>
+                          <PatientMonitoring />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/waiting-area/:id"
+                      // element={<WaitingArea />}
+                      element={
+                        <ProtectedRoute allowedRoles={["Triage Waiting List"]}>
+                          <WaitingArea />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/Servings/:id"
+                      // element={<Servingss />}
+                      element={
+                        <ProtectedRoute allowedRoles={["Triage Waiting List"]}>
+                          <Servingss />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/dashboard"
+                      // element={<Dashboard />}
+                      element={
+                        <ProtectedRoute allowedRoles={["Dashboard"]}>
+                          <Dashboard />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/location-assignment"
+                      // element={<LocationAssignment />}
+                      element={
+                        <ProtectedRoute allowedRoles={["Location Assignment"]}>
+                          <LocationAssignment />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/location-waiting-area/:id"
+                      element={<LocationWaitingArea />}
+                      // element={
+                      //   <ProtectedRoute
+                      //     allowedRoles={["location-waiting-area/:id"]}
+                      //   >
+                      //     <LocationWaitingArea />
+                      //   </ProtectedRoute>
+                      // }
+                    />
+                    <Route
+                      path="/location"
+                      // element={<Locationpage />}
+                      element={
+                        <ProtectedRoute allowedRoles={["location"]}>
+                          <Locationpage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/kpi"
+                      element={
+                        <ProtectedRoute allowedRoles={["KPI"]}>
+                          <Kpi />
+                        </ProtectedRoute>
+                      }
+                    />
+                    {/* <Route path="/kpi" element={<Kpi />} /> */}
+                    <Route
+                      path="/patient-display"
+                      // element={<PatientDisplay />}
+                      element={
+                        <ProtectedRoute allowedRoles={["TV Screen"]}>
+                          <PatientDisplay />
+                        </ProtectedRoute>
+                      }
+                    />
+                    {/* Master Data */}
+                    <Route
+                      path="/Department"
+                      // element={<Department />}
+                      element={
+                        <ProtectedRoute allowedRoles={["MasterData"]}>
+                          <Department />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/users"
+                      // element={<Users />}
+                      element={
+                        <ProtectedRoute allowedRoles={["MasterData"]}>
+                          <Users />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/Roles"
+                      // element={<Roless />}
+                      element={
+                        <ProtectedRoute allowedRoles={["MasterData"]}>
+                          <Roless />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/Beds"
+                      // element={<Beds />}
+                      element={
+                        <ProtectedRoute allowedRoles={["MasterData"]}>
+                          <Beds />
+                        </ProtectedRoute>
+                      }
+                    />
+                    {/* Department monitoring */}
+                    <Route
+                      path="/Department-monitoring/:id"
+                      // element={<Departmentmonitoring />}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={["Department Waiting List"]}
+                        >
+                          <Departmentmonitoring />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </QueryClientProvider>
+              </BrowserRouter>
+            </RolesContext.Provider>
           </div>
         </RolesProvider>
       </DataTableProvider>
