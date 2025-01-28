@@ -3,7 +3,6 @@ import Button from "@mui/material/Button";
 import { useTranslation } from "react-i18next";
 import CloseIcon from "@mui/icons-material/Close";
 import newRequest from "../../../utils/newRequest";
-import { countries } from "countries-list";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import toast from "react-hot-toast";
@@ -14,52 +13,69 @@ const Removeassignrole = ({
   selectdatauser,
   refreshuser,
 }) => {
-  const [selectRoles, setselectRoles] = useState([]);
+  const [allRoles, setAllRoles] = useState([]); // All roles from the API
+  const [selectedRoles, setSelectedRoles] = useState([]); // Roles currently assigned
   const { t } = useTranslation();
   const modalRef = useRef(null);
+
   if (!isVisible) return null;
 
   useEffect(() => {
-    const fetchDepartments = async () => {
+    const fetchRoles = async () => {
       try {
+        // Fetch all roles
         const response = await newRequest.get(`/api/v1/roles/all`);
-        setselectRoles(response?.data?.data || []);
+        setAllRoles(response?.data?.data || []);
+
+        // Pre-select roles for the user
+        if (selectdatauser?.roles) {
+          setSelectedRoles(
+            selectdatauser.roles.map((role) => ({
+              id: role.id,
+              name: role.name,
+            }))
+          );
+        }
       } catch (error) {
-        console.error("Error fetching departments:", error);
+        console.error("Error fetching roles:", error);
       }
     };
 
-    fetchDepartments();
-  }, []);
+    fetchRoles();
+  }, [selectdatauser]);
 
-  const userroleadd = async () => {
-    const selectedRoleIds = selectRoles
-      .filter((role) => role.selected)
-      .map((role) => role.id);
+  const handleRemoveRoles = async () => {
     try {
-      const response = await newRequest.delete(`/api/v1/roles/remove/${selectdatauser?.id}/${selectedRoleIds}`);
-      setVisibility(false);
+      const roleIdsToRemove = selectedRoles.map((role) => role.id);
+      const response = await newRequest.delete(
+        `/api/v1/roles/remove/${selectdatauser?.id}/${roleIdsToRemove}`
+      );
       if (response.status >= 200) {
         toast.success(
-          response?.data?.message || "Roles have been assigned successfully"
+          response?.data?.message || t("Roles have been removed successfully")
         );
         refreshuser();
         setVisibility(false);
       } else {
-        throw new Error(response?.data?.message || "Unexpected error");
+        throw new Error(response?.data?.message || t("Unexpected error"));
       }
     } catch (error) {
       const errorMessage =
-        error.response?.data?.message || "Failed to assign roles";
+        error.response?.data?.message || t("Failed to remove roles");
       toast.error(errorMessage);
     }
   };
+
+  // Filter available roles (roles not already selected)
+  const availableRoles = allRoles.filter(
+    (role) => !selectedRoles.some((selectedRole) => selectedRole.id === role.id)
+  );
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       {/* Modal Container */}
       <div
-        ref={modalRef} // Attach the ref to the modal
+        ref={modalRef}
         className="bg-white rounded-lg shadow-lg w-full max-w-lg"
       >
         {/* Modal Header */}
@@ -70,11 +86,9 @@ const Removeassignrole = ({
           <h2 className="text-white text-xl font-semibold">
             {t("UnAssign Roles")}
           </h2>
-          <div className="flex items-center gap-4">
-            <button onClick={() => setVisibility(false)}>
-              <CloseIcon style={{ color: "white" }} />
-            </button>
-          </div>
+          <button onClick={() => setVisibility(false)}>
+            <CloseIcon style={{ color: "white" }} />
+          </button>
         </div>
 
         {/* Modal Content */}
@@ -82,7 +96,7 @@ const Removeassignrole = ({
           <div className="flex flex-col gap-4">
             <div>
               <label
-                htmlFor="Location"
+                htmlFor="roles"
                 className="text-lg font-medium text-gray-700"
               >
                 {t("Roles")}
@@ -90,24 +104,15 @@ const Removeassignrole = ({
               <Autocomplete
                 multiple
                 disablePortal
-                options={selectRoles}
-                getOptionLabel={(option) => option.name} // Display role name
-                value={selectRoles.filter((role) => role.selected)}
-                onChange={(event, newValue) => {
-                  setselectRoles((prevRoles) =>
-                    prevRoles.map((role) => ({
-                      ...role,
-                      selected: newValue.some(
-                        (selectedRole) => selectedRole.id === role.id
-                      ),
-                    }))
-                  );
-                }}
-                isOptionEqualToValue={(option, value) => option.id === value.id} // Ensure correct selection
+                options={availableRoles} // Available roles for selection
+                getOptionLabel={(option) => option.name}
+                value={selectedRoles} // Pre-selected roles
+                onChange={(event, newValue) => setSelectedRoles(newValue)}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    label={t("Select Roles")}
+                    label={t("Select Roles to Remove")}
                     className="w-full mt-2 p-3 border border-green-400 rounded-lg focus:ring-2 focus:ring-green-300"
                   />
                 )}
@@ -127,7 +132,7 @@ const Removeassignrole = ({
             <Button
               variant="contained"
               style={{ backgroundColor: "#13BA88", color: "#ffffff" }}
-              onClick={userroleadd}
+              onClick={handleRemoveRoles}
             >
               {t("UnAssign")}
             </Button>
