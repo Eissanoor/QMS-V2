@@ -50,6 +50,7 @@ const UpdatePatientInformation = () => {
     const [showPopup, setShowPopup] = useState(false);
     const [pdfUrl, setPdfUrl] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [pdfBlobUrl, setPdfBlobUrl] = useState(null);
     const navigate = useNavigate();
 
     const fetchPatients = async () => {
@@ -84,7 +85,7 @@ const UpdatePatientInformation = () => {
        idNumber: IDNumber,
        age: Age,
        mobileNumber: MobileNumber,
-       cheifComplaint: cheifComplaint, // Fix typo if necessary
+       cheifComplaint: cheifComplaint,
        status: Status,
      };
 
@@ -98,7 +99,19 @@ const UpdatePatientInformation = () => {
          toast.success(
            response.data?.message || "Successfully updated patient data!"
          );
-         navigate("/patient-table");
+         
+         if (response.data?.data?.ticket) {
+           const pdfResponse = await axios.get(
+            
+             `${baseUrl}/${response.data.data.ticket}`,
+             { responseType: 'blob' }
+           );
+           
+           const blobUrl = URL.createObjectURL(pdfResponse.data);
+           setPdfBlobUrl(blobUrl);
+           setPdfUrl(response.data.data.ticket);
+           setShowPopup(true);
+         }
        } else {
          throw new Error("Unexpected response status");
        }
@@ -114,6 +127,14 @@ const UpdatePatientInformation = () => {
 
     const closePopup = () => {
         setShowPopup(false);
+    };
+
+    const printTicket = () => {
+        const iframe = document.getElementById('pdfFrame');
+        if (iframe) {
+            iframe.contentWindow.focus();
+            iframe.contentWindow.print();
+        }
     };
 
     return (
@@ -298,22 +319,31 @@ const UpdatePatientInformation = () => {
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white p-6 rounded-lg shadow-lg">
                         <h2 className="text-lg font-bold">Ticket Information</h2>
-                        {pdfUrl ? (
+                        {pdfBlobUrl ? (
                             <iframe
-                                src={`${baseUrl}/${pdfUrl}`}
+                                src={pdfBlobUrl}
                                 width="100%"
                                 height="600px"
                                 title="PDF Document"
+                                id="pdfFrame"
                             />
                         ) : (
                             <p>No PDF available</p>
                         )}
-                        <button
-                            onClick={closePopup}
-                            className="mt-4 bg-red-500 text-white px-4 py-2 rounded"
-                        >
-                            Close
-                        </button>
+                        <div className="flex justify-between mt-4">
+                            <button
+                                onClick={closePopup}
+                                className="bg-red-500 text-white px-4 py-2 rounded"
+                            >
+                                Close
+                            </button>
+                            <button
+                                onClick={printTicket}
+                                className="bg-blue-500 text-white px-4 py-2 rounded"
+                            >
+                                Print
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
