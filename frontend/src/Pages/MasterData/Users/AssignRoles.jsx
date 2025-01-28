@@ -104,7 +104,7 @@ const AssignRoles = ({ isVisible, setVisibility, selectdatauser, refreshDepartme
               <Autocomplete
                 multiple
                 disablePortal
-                options={selectRoles}
+                options={selectRoles.filter((role) => !role.selected)}
                 getOptionLabel={(option) => option.name} // Display role name
                 value={selectRoles.filter((role) => role.selected)}
                 onChange={(event, newValue) => {
@@ -117,9 +117,7 @@ const AssignRoles = ({ isVisible, setVisibility, selectdatauser, refreshDepartme
                     }))
                   );
                 }}
-                isOptionEqualToValue={(option, value) =>
-                  option.id === value.id
-                } // Ensure correct selection
+                isOptionEqualToValue={(option, value) => option.id === value.id} // Ensure correct selection
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -132,20 +130,20 @@ const AssignRoles = ({ isVisible, setVisibility, selectdatauser, refreshDepartme
             </div>
           </div>
 
-            <div>
-              {/* Select All Checkbox */}
-              <div className="flex items-center gap-2 mt-2">
-                <input
-                  type="checkbox"
-                  id="selectAll"
-                  onChange={handleSelectAll}
-                  checked={selectRoles.every((role) => role.selected)}
-                />
-                <label htmlFor="selectAll" className="text-sm">
-                  {t("Select All")}
-                </label>
-              </div>
-              </div>
+          <div>
+            {/* Select All Checkbox */}
+            <div className="flex items-center gap-2 mt-2">
+              <input
+                type="checkbox"
+                id="selectAll"
+                onChange={handleSelectAll}
+                checked={selectRoles.every((role) => role.selected)}
+              />
+              <label htmlFor="selectAll" className="text-sm">
+                {t("Select All")}
+              </label>
+            </div>
+          </div>
 
           {/* Action Buttons */}
           <div className="flex justify-end gap-4 mt-6">
