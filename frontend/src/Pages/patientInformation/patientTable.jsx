@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useQuery } from 'react-query';
 import { FaFilePdf, FaTrash } from "react-icons/fa";
 import { CiEdit } from "react-icons/ci";
 import Swal from "sweetalert2";
@@ -96,7 +95,7 @@ function PatientTable() {
                   className=" px-5 py-2.5 rounded-lg text-sm tracking-wider font-medium border border-green-700 outline-none bg-transparent hover:bg-green-700 text-green-700 hover:text-white transition-all duration-300"
                   onClick={() => navigate("/patient-information")}
                 >
-                  Add New
+                  Register New Patient
                 </button>
               </div>
             </div>
@@ -117,6 +116,9 @@ function PatientTable() {
                     </th>
                     <th className="p-4 text-left text-sm font-semibold text-gray-800">
                       Contact
+                    </th>
+                    <th className="p-4 text-left text-sm font-semibold text-gray-800">
+                      ID Number
                     </th>
                     <th className="p-4 text-left text-sm font-semibold text-gray-800">
                       PDF
@@ -145,8 +147,9 @@ function PatientTable() {
                       .map((patient) => (
                         <tr
                           key={patient.id}
-                          className={`odd:bg-blue-50 ${selectedPatientId === patient.id ? "bg-white" : ""
-                            }`}
+                          className={`odd:bg-blue-50 ${
+                            selectedPatientId === patient.id ? "bg-white" : ""
+                          }`}
                           onClick={() => setSelectedPatientId(patient.id)}
                         >
                           <td className="pl-4 w-8">
@@ -169,10 +172,11 @@ function PatientTable() {
                           </td>
                           <td className="p-4 text-sm text-gray-800">
                             <span
-                              className={`w-[68px] block text-center py-1 border ${patient.status === "Active"
+                              className={`w-[68px] block text-center py-1 border ${
+                                patient.status === "Active"
                                   ? "border-green-500 text-green-600"
                                   : "border-yellow-500 text-yellow-600"
-                                } rounded text-xs`}
+                              } rounded text-xs`}
                             >
                               {patient.status}
                             </span>
@@ -183,13 +187,16 @@ function PatientTable() {
                           <td className="p-4 text-sm text-gray-800">
                             {patient.mobileNumber}
                           </td>
+                          <td className="p-4 text-sm text-gray-800">
+                            {patient.idNumber}
+                          </td>
                           <td className="p-4 text-gray-800">
                             <FaFilePdf
                               size={30}
                               className="cursor-pointer"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                const fileUrl = baseUrl + '/' + patient.ticket;
+                                const fileUrl = baseUrl + "/" + patient.ticket;
                                 window.open(fileUrl, "_blank");
                               }}
                             />
@@ -235,18 +242,20 @@ function PatientTable() {
             <div className="flex justify-end mb-4 mt-6">
               <button
                 onClick={handlePreviousPage}
-                className={`px-4 py-2 bg-green-500 text-white rounded mr-2 ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
-                  }`}
+                className={`px-4 py-2 bg-green-500 text-white rounded mr-2 ${
+                  currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
+                }`}
                 disabled={currentPage === 1}
               >
                 Previous Page
               </button>
               <button
                 onClick={handleNextPage}
-                className={`px-4 py-2 bg-green-500 text-white rounded ${currentPage === totalPages
+                className={`px-4 py-2 bg-green-500 text-white rounded ${
+                  currentPage === totalPages
                     ? "opacity-50 cursor-not-allowed"
                     : ""
-                  }`}
+                }`}
                 disabled={currentPage === totalPages}
               >
                 Next Page
