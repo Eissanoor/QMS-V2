@@ -25,11 +25,10 @@ const Removeassignrole = ({
       try {
         // Fetch all roles
         const response = await newRequest.get(`/api/v1/roles/all`);
-        setAllRoles(response?.data?.data || []);
-
+        // setAllRoles(response?.data?.data || []);
         // Pre-select roles for the user
         if (selectdatauser?.roles) {
-          setSelectedRoles(
+          setAllRoles( // setSelectedRoles
             selectdatauser.roles.map((role) => ({
               id: role.id,
               name: role.name,
@@ -92,6 +91,7 @@ const Removeassignrole = ({
         </div>
 
         {/* Modal Content */}
+
         <div className="p-6">
           <div className="flex flex-col gap-4">
             <div>
@@ -118,6 +118,33 @@ const Removeassignrole = ({
                 )}
                 sx={{ width: "100%", mt: 2 }}
               />
+              {/* <Autocomplete
+                              multiple
+                              disablePortal
+                              options={selectedRoles.filter((role) => !role.selected)}
+                              getOptionLabel={(option) => option.name} // Display role name
+                              value={selectedRoles.filter((role) => role.selected)}
+                              onChange={(event, newValue) => {
+                                setSelectedRoles((prevRoles) =>
+                                  prevRoles.map((role) => ({
+                                    ...role,
+                                    selected: newValue.some(
+                                      (selectedRole) =>
+                                        selectedRole.id === role.id
+                                    ),
+                                  }))
+                                );
+                              }}
+                              isOptionEqualToValue={(option, value) => option.id === value.id} // Ensure correct selection
+                              renderInput={(params) => (
+                                <TextField
+                                  {...params}
+                                  label={t("Select Roles")}
+                                  className="w-full mt-2 p-3 border border-green-400 rounded-lg focus:ring-2 focus:ring-green-300"
+                                />
+                              )}
+                              sx={{ width: "100%", mt: 2 }}
+                            /> */}
             </div>
           </div>
 
