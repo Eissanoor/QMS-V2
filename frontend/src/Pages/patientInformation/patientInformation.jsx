@@ -53,6 +53,8 @@ const PatientInformation = () => {
   const [pdfUrl, setPdfUrl] = useState(null);
   const [pdfBlobUrl, setPdfBlobUrl] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [patientId, setPatientId] = useState(null);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -125,6 +127,7 @@ const PatientInformation = () => {
 
       if (response.status === 200) {
         const patientData = response.data.data;
+        setPatientId(patientData.id);
         setPatientName(patientData.name || "");
         setNationality(patientData.nationality || "Saudi Arabia");
         setSex(patientData.sex || "");
@@ -136,6 +139,7 @@ const PatientInformation = () => {
         toast.success(response.data.message || "Patient found!");
       }
     } catch (error) {
+      setPatientId(null);
       toast.error(error.response?.data?.message || "Patient not found");
       setPatientName("");
       setNationality("Saudi Arabia");
@@ -143,6 +147,54 @@ const PatientInformation = () => {
       setAge("");
       setStatus("");
       setcheifComplaint("");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    if (!patientId) {
+      toast.error("Please search for a patient first");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const updateData = {
+        name: PatientName,
+        nationality: Nationality,
+        sex: Sex,
+        idNumber: IDNumber,
+        age: parseInt(Age),
+        mobileNumber: MobileNumber,
+        cheifComplaint: cheifComplaint,
+        status: Status
+      };
+
+      const response = await axios.post(
+        `${baseUrl}/api/v1/patients/re-register/${patientId}`,
+        updateData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        }
+      );
+
+      if (response.status === 200 || response.status === 201) {
+        const { data } = response.data;
+        setTicket(`${baseUrl}/${data.ticket}`);
+        setPdfUrl(data.ticket);
+        const pdfResponse = await axios.get(`${baseUrl}/${data.ticket}`, { responseType: 'blob' });
+        const blobUrl = URL.createObjectURL(pdfResponse.data);
+        setPdfBlobUrl(blobUrl);
+        setShowPopup(true);
+        toast.success("Patient information updated successfully!");
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Error updating patient information");
     } finally {
       setLoading(false);
     }
@@ -327,9 +379,23 @@ const PatientInformation = () => {
                 <button className="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600">
                   {t("Close")}
                 </button>
-                <button onClick={handleSubmit} type="submit" className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600">
-                  {t("Issue Ticket")}
-                </button>
+                {patientId ? (
+                  <button
+                    onClick={handleUpdate}
+                    type="button"
+                    className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600"
+                  >
+                    {t("Update Patient")}
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleSubmit}
+                    type="submit"
+                    className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600"
+                  >
+                    {t("Issue Ticket")}
+                  </button>
+                )}
               </div>
             </div>
           </div>
