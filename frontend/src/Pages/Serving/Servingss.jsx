@@ -45,6 +45,7 @@ const Servingss = () => {
   const [patientData, setPatientData] = useState(null);
   const [callPatient, setCallPatient] = useState(false);
   const [bednumber, setbednumber] = useState("");
+  const [assignedbednumber, setassignedbednumber] = useState("");
   const [bloodGroup, setBloodGroup] = useState("");
   const [birthDate, setBirthDate] = useState("");
   const [mrnNumber, setMrnNumber] = useState("");
@@ -69,6 +70,7 @@ const Servingss = () => {
       const data = await response.json();
       if (data.success) {
         const patient = data.data;
+        console.log(patient, "patient");
         setPdfUrl(patient?.ticket);
         setPatientData(patient);
         setPatientName(patient.name);
@@ -80,8 +82,17 @@ const Servingss = () => {
         setNationality(patient.nationality);
         setCallPatient(patient.callPatient);
         setBloodGroup(patient.bloodGroup);
-        setBirthDate(patient.birthDate.split('T')[0]);
+        setBirthDate(patient.birthDate ? patient.birthDate.split("T")[0] : "");
         setMrnNumber(patient.mrnNumber);
+
+        
+          try {
+            const response = await newRequest.get(`/api/v1/beds/${patient?.bedId || ""}`);
+            setassignedbednumber(response?.data?.data?.bedNumber || "");
+            console.log(response, "Bed");
+          } catch (error) {
+            console.error("Error fetching departments:", error);
+          }
 
         if (patient.beginTime) {
           setStartTime(formatDateTime(patient.beginTime));
@@ -111,14 +122,6 @@ const Servingss = () => {
             Weight: latestVitalSign.weight,
             TimeVS: latestVitalSign.timeVs,
           });
-        }
-        try {
-          const response = await newRequest.get(
-            `/api/v1/beds/${patient?.bedId || ""}`
-          );
-          setbednumber(response?.data?.data?.bedNumber || "");
-        } catch (error) {
-          console.error("Error fetching departments:", error);
         }
       }
     } catch (error) {
@@ -370,7 +373,7 @@ const Servingss = () => {
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-700">
-                    {t("Sex")}
+                    {t("Gender")}
                   </label>
                   <input
                     type="text"
@@ -523,90 +526,122 @@ const Servingss = () => {
                 </div>
 
                 {/* Second Section */}
-                <div className="flex items-center justify-end w-full space-x-4">
-                  {/* Input Field */}
-                  <div className="flex flex-col items-start">
-                    <label className="block text-green-700 font-semibold mb-2">
-                      Start
-                    </label>
-                    <input
-                      type="text"
-                      value={startTime || ""}
-                      readOnly
-                      placeholder="Enter Start"
-                      className="w-full border border-green-500 rounded px-3 py-2"
-                    />
-                  </div>
+                <div className="flex flex-col">
+                  <div className="flex items-center justify-end w-full space-x-4">
+                    {/* Input Field */}
+                    <div className="flex flex-col items-start">
+                      <label className="block text-green-700 font-semibold mb-2">
+                        Start
+                      </label>
+                      <input
+                        type="text"
+                        value={startTime || ""}
+                        readOnly
+                        placeholder="Enter Start"
+                        className="w-full border border-green-500 rounded px-3 py-2"
+                      />
+                    </div>
 
-                  {/* Buttons */}
-                  <div className="flex space-x-2 mt-7">
-                    <button
-                      className="bg-[#33D805] text-white font-semibold py-2 px-10 rounded hover:bg-yellow-600"
-                      onClick={handleBeginClick}
-                    >
-                      {loadingbegintime ? (
-                        <div className="flex items-center gap-2">
-                          <svg
-                            className="animate-spin h-5 w-5 text-white"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                          >
-                            <circle
-                              className="opacity-25"
-                              cx="12"
-                              cy="12"
-                              r="10"
-                              stroke="currentColor"
-                              strokeWidth="4"
-                            ></circle>
-                            <path
-                              className="opacity-75"
-                              fill="currentColor"
-                              d="M4 12a8 8 0 018-8v8z"
-                            ></path>
-                          </svg>
-                          {t("Begin...")}
-                        </div>
-                      ) : (
-                        t("Begin")
-                      )}
-                    </button>
-                    <button
-                      className="bg-red-500 text-white font-semibold py-2 px-10 rounded hover:bg-blue-600"
-                      onClick={handleEndClick}
-                    >
-                      {loadingendtime ? (
-                        <div className="flex items-center gap-2">
-                          <svg
-                            className="animate-spin h-5 w-5 text-white"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                          >
-                            <circle
-                              className="opacity-25"
-                              cx="12"
-                              cy="12"
-                              r="10"
-                              stroke="currentColor"
-                              strokeWidth="4"
-                            ></circle>
-                            <path
-                              className="opacity-75"
-                              fill="currentColor"
-                              d="M4 12a8 8 0 018-8v8z"
-                            ></path>
-                          </svg>
-                          {t("End...")}
-                        </div>
-                      ) : (
-                        t("End")
-                      )}
-                    </button>
+                    {/* Buttons */}
+                    <div className="flex space-x-2 mt-7">
+                      <button
+                        className="bg-[#33D805] text-white font-semibold py-2 px-10 rounded hover:bg-yellow-600"
+                        onClick={handleBeginClick}
+                      >
+                        {loadingbegintime ? (
+                          <div className="flex items-center gap-2">
+                            <svg
+                              className="animate-spin h-5 w-5 text-white"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                            >
+                              <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                              ></circle>
+                              <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8v8z"
+                              ></path>
+                            </svg>
+                            {t("Begin...")}
+                          </div>
+                        ) : (
+                          t("Begin")
+                        )}
+                      </button>
+                      <button
+                        className="bg-red-500 text-white font-semibold py-2 px-10 rounded hover:bg-blue-600"
+                        onClick={handleEndClick}
+                      >
+                        {loadingendtime ? (
+                          <div className="flex items-center gap-2">
+                            <svg
+                              className="animate-spin h-5 w-5 text-white"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                            >
+                              <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                              ></circle>
+                              <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8v8z"
+                              ></path>
+                            </svg>
+                            {t("End...")}
+                          </div>
+                        ) : (
+                          t("End")
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                  {/* Right side - Timing Information */}
+                  <div className="flex flex-col space-y-4 mt-8">
+                    <div className="flex gap-4">
+                      <label className="text-gray-700 font-semibold mb-1 block">
+                        Starting Time:
+                      </label>
+                      <span className="text-blue-700 font-bold text-lg">
+                        {startTime}
+                      </span>
+                    </div>
+
+                    <div className="flex gap-4">
+                      <label className="text-gray-700 font-semibold mb-1 block">
+                        Total Time:
+                      </label>
+                      <span className="text-blue-700 font-bold text-lg">
+                        {totalTime}
+                      </span>
+                    </div>
+
+                    <div className="flex gap-4">
+                      <label className="text-gray-700 font-semibold mb-1 block">
+                        Ending Time:
+                      </label>
+                      <span className="text-blue-700 font-bold text-lg">
+                        {endTime}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
+
               {/* Assigned TO: */}
               <div className="mt-4">
                 <h2 className="text-green-700 font-bold text-lg mb-2">
@@ -618,7 +653,7 @@ const Servingss = () => {
                     </strong>
                   </span>
                 </h2>
-                <div className="flex justify-between gap-4">
+                <div className="flex gap-4">
                   {/* Left side - Bed Selection */}
                   <div className="w-1/2">
                     <div className="flex flex-col">
@@ -638,7 +673,7 @@ const Servingss = () => {
                             </option>
                           ))}
                         </select>
-                        
+
                         <button
                           className="text-white px-6 py-2 rounded-lg bg-yellow-400 hover:bg-yellow-500 whitespace-nowrap"
                           onClick={Assignbed}
@@ -674,50 +709,31 @@ const Servingss = () => {
                       </div>
                     </div>
                   </div>
-
-                  {/* Right side - Timing Information */}
-                  <div className="w-1/2">
-                    <div className="flex flex-col space-y-4 mx-10">
-                      <div className="flex gap-4">
-                        <label className="text-gray-700 font-semibold mb-1 block">
-                          Starting Time:
-                        </label>
-                        <span className="text-blue-700 font-bold text-lg">
-                          {startTime}
-                        </span>
-                      </div>
-
-                      <div className="flex gap-4">
-                        <label className="text-gray-700 font-semibold mb-1 block">
-                          Total Time:
-                        </label>
-                        <span className="text-blue-700 font-bold text-lg">
-                          {totalTime}
-                        </span>
-                      </div>
-
-                      <div className="flex gap-4">
-                        <label className="text-gray-700 font-semibold mb-1 block">
-                          Ending Time:
-                        </label>
-                        <span className="text-blue-700 font-bold text-lg">
-                          {endTime}
-                        </span>
-                      </div>
-                    </div>
+                  <div className="text-green-700 font-bold text-lg my-auto">
+                    <h2 className="mt-8">
+                      {" "}
+                      Assigned Bed:{" "}
+                      <span className="text-[#2113BA]">
+                        {" "}
+                        <strong className="text-blue-700">
+                          {assignedbednumber}
+                        </strong>
+                      </span>
+                    </h2>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* <div className="flex justify-between items-center mt-6">
+            <div className="flex justify-between items-center mt-6">
               <button
-                className={`text-white px-6 py-2 rounded-lg cursor-not-allowed hover:bg-yellow-500  ${callPatient
+                className={`text-white px-6 py-2 rounded-lg hover:bg-yellow-500  ${
+                  callPatient
                     ? "bg-red-500 hover:bg-red-600"
                     : "bg-yellow-400 hover:bg-yellow-500"
-                  }`}
+                }`}
                 onClick={handleCallPatientToggle}
-                disabled
+                // disabled
               >
                 {callPatient ? t("Cancel Call Patient") : t("Call Patient")}
               </button>
@@ -753,7 +769,7 @@ const Servingss = () => {
                   {t("Close")}
                 </button>
               </div> */}
-            {/* </div> */}
+            </div>
           </div>
           {/* // )} */}
         </div>

@@ -10,6 +10,9 @@ import toast from "react-hot-toast";
 import Spinner from "../../components/spinner/spinner";
 import newRequest from "../../utils/newRequest";
 import { useQuery } from "react-query";
+import Barcode from "react-barcode";
+
+import { QRCodeSVG } from "qrcode.react";
 const WaitingArea = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
@@ -45,7 +48,8 @@ const WaitingArea = () => {
   const [bloodGroup, setBloodGroup] = useState("");
   const [birthDate, setBirthDate] = useState("");
   const [mrnNumber, setMrnNumber] = useState("");
-  const { isLoading, data, error ,refetch } = useQuery("fetchAllMegaMenuss", async () => {
+
+  const { isLoading, data, error, refetch } = useQuery("fetchAllMegaMenuss", async () => {
     try {
       const response = await newRequest.get(`/api/v1/patients/${id}`);
       return response?.data?.data || {};
@@ -70,7 +74,8 @@ const WaitingArea = () => {
       setCallPatient(patient.callPatient);
       setBloodGroup(patient.bloodGroup);
       // format date
-      setBirthDate(patient.birthDate.split('T')[0]);
+      // setBirthDate(patient.birthDate.split('T')[0]);
+      setBirthDate(patient.birthDate ? patient.birthDate.split('T')[0] : "");
       setMrnNumber(patient.mrnNumber);
       if (patient.vitalSigns?.length > 0) {
         const latestVitalSign = patient.vitalSigns[0];
@@ -242,7 +247,7 @@ const WaitingArea = () => {
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-700">
-                    {t("Sex")}
+                    {t("Gender")}
                   </label>
                   <input
                     type="text"
@@ -364,44 +369,46 @@ const WaitingArea = () => {
                     />
                   )}
                 </div>
-
               </div>
               <div className="mt-6 flex items-center space-x-4">
-
-                {patientData?.department && patientData?.department?.deptname !== "TR" && (
-                  <span className="text-sm font-medium text-green-700">
-                    {t("Assigned To  ")}
-                    <strong className="text-blue-700">{patientData?.department?.deptname}</strong>
-                  </span>
-                )}
+                {patientData?.department &&
+                  patientData?.department?.deptname !== "TR" && (
+                    <span className="text-sm font-medium text-green-700">
+                      {t("Assigned To  ")}
+                      <strong className="text-blue-700">
+                        {patientData?.department?.deptname}
+                      </strong>
+                    </span>
+                  )}
               </div>
             </div>
 
             <div className="flex justify-between items-center mt-6">
               <button
-                className={`text-white px-6 py-2 rounded-lg hover:bg-yellow-500  ${callPatient
+                className={`text-white px-6 py-2 rounded-lg hover:bg-yellow-500  ${
+                  callPatient
                     ? "bg-red-500 hover:bg-red-600"
                     : "bg-yellow-400 hover:bg-yellow-500"
-                  }`}
-
+                }`}
                 onClick={handleCallPatientToggle}
               >
                 {callPatient ? t("Cancel Call Patient") : t("Call Patient")}
               </button>
               <div className="flex space-x-4">
-              <button 
-                className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600"
-                onClick={openBandPopup}
-              >
-                {t("Print Band")}
-              </button>
                 <button
-                  className={`text-white px-6 py-2 rounded-lg hover:bg-blue-600 ${VitalSigns.BP ? "" : "opacity-50 cursor-not-allowed"
-                    } ${callPatient
+                  className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600"
+                  onClick={openBandPopup}
+                >
+                  {t("Print Band")}
+                </button>
+                <button
+                  className={`text-white px-6 py-2 rounded-lg hover:bg-blue-600 ${
+                    VitalSigns.BP ? "" : "opacity-50 cursor-not-allowed"
+                  } ${
+                    callPatient
                       ? "bg-blue-500 hover:bg-blue-600"
                       : "bg-yellow-400 hover:bg-yellow-500"
-                    }`}
-
+                  }`}
                   onClick={handleOpen}
                 >
                   {loading ? <Spinner /> : `${t("Assign")}`}
@@ -454,114 +461,132 @@ const WaitingArea = () => {
           </div>
         </div>
       )}
-      {isOpen && <AssignPopup onClose={handleClose} patientId={id} onAssignSuccess={refetch} />}
+      {isOpen && (
+        <AssignPopup
+          onClose={handleClose}
+          patientId={id}
+          onAssignSuccess={refetch}
+        />
+      )}
       {showBandPopup && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-lg font-bold mb-4">Print Band</h2>
-            <div 
+            <div
               id="printableArea"
-              className="border-2 border-black" 
-              style={{ 
-                width: "0.75in", 
-                height: "5in",
-                margin: "0 auto"
+              className="flex justify-center items-center m-auto"
+              style={{
+                height: "7in",
+                width: "0.75in", // Added width for consistency
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
               }}
             >
-              <div className="text-xs p-1" style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                <div style={{ 
-                  writingMode: 'vertical-lr', 
-                  textOrientation: 'mixed',
-                  transform: 'rotate(180deg)',
-                  width: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'start',
-                  gap: '8px',
-                  padding: '4px'
-                }}>
-                 
-                  <p style={{ fontSize: '8px', margin: '2px 0' }}>
-                    MRN: {IDNumber}
+              <div id="inside-BRCode" style={{ marginBottom: "40px" }}>
+                <QRCodeSVG value={IDNumber} width="170" height="70" />
+              </div>
+
+              <div
+                style={{
+                  margin: "0 auto",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  flexDirection: "column",
+                }}
+              >
+                {/* <div
+                  className="text-xs p-1"
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                > */}
+                <div
+                  style={{
+                    writingMode: "vertical-lr",
+                    textOrientation: "mixed",
+                    transform: "rotate(180deg)",
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    // alignItems: "center",
+                    justifyContent: "center",
+                    margin: "auto",
+                    textAlign: "left",
+                    lineHeight: "1.5",
+                  }}
+                >
+                  <p style={{ fontSize: "14px" }} className="DOG">
+                    MRN Number: {IDNumber}
                   </p>
-                  <p style={{ fontSize: '8px', margin: '2px 0' }}>
-                    DOB: {Age}
+                  <p style={{ fontSize: "14px" }} className="text-start DOG">
+                    Date of Birth: {Age}
                   </p>
-                  <p style={{ fontWeight: 'bold', fontSize: '8px', margin: '2px 0' }}>
+                  <p style={{ fontSize: "14px" }} className="text-start DOG">
+                    Blood Type: {bloodGroup}
+                  </p>
+                  <p style={{ fontWeight: "bold", fontSize: "16px" }}>
                     {PatientName?.toUpperCase()}
                   </p>
                 </div>
-                <img 
-                  src={`https://bwipjs-api.metafloor.com/?bcid=code128&text=${IDNumber}&scale=2&height=10&includetext&textxalign=center`}
-                  alt="Barcode"
-                  style={{ 
-                    width: '100%', 
-                    height: 'auto', 
-                    marginTop: '4px',
-                    // transform: 'rotate(90deg)'
-                  }}
-                />
+                {/* </div> */}
+              </div>
+
+              <div id="inside-BRCode" style={{ marginTop: "40px" }}>
+                <QRCodeSVG value={IDNumber} width="170" height="70" />
               </div>
             </div>
+
             <div className="mt-4 flex justify-end space-x-2">
               <button
                 onClick={() => {
-                  const printContent = document.getElementById('printableArea');
-                  const WinPrint = window.open('', '', 'width=900,height=650');
+                  const printContent = document.getElementById("printableArea");
+                  const WinPrint = window.open("", "", "width=900,height=650");
                   WinPrint.document.write(`
-                    <html>
-                      <head>
-                        <style>
-                          @page {
-                            size: 0.75in 5in;
-                            margin: 0;
-                          }
-                          body {
-                            margin: 0;
-                            padding: 0;
-                          }
-                          #printableContent {
-                            width: 0.75in;
-                            height: 5in;
-                            border: 2px solid black;
-                            box-sizing: border-box;
-                            font-family: Arial, sans-serif;
-                            padding: 2px;
-                          }
-                          .vertical-text {
-                            writing-mode: vertical-lr;
-                            text-orientation: mixed;
-                            transform: rotate(180deg);
-                            width: 100%;
-                            display: flex;
-                            flex-direction: column;
-                            align-items: start;
-                            gap: 8px;
-                            padding: 4px;
-                          }
-                          img {
-                            width: 100%;
-                            height: auto;
-                            margin-top: 4px;
-                            // transform: rotate(90deg);
-                          }
-                          p {
-                            margin: 2px 0;
-                            font-size: 8px;
-                            line-height: 1.2;
-                          }
-                          p:first-of-type {
-                            font-weight: bold;
-                          }
-                        </style>
-                      </head>
-                      <body>
-                        <div id="printableContent">
-                          ${printContent.innerHTML}
-                        </div>
-                      </body>
-                    </html>
-                  `);
+    <html>
+      <head>
+        <style>
+          @page {
+            size: 0.75in 7in;
+            margin: 0;
+          }
+          body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+          }
+          #printableContent {
+            width: 0.75in;
+            height: 5in;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+          }
+          p {
+            font-size: 12px;
+            margin: 0;
+          }
+          p:first-of-type {
+            font-weight: bold;
+          }
+        </style>
+      </head>
+      <body>
+        <div id="printableContent">
+          ${printContent.innerHTML}
+        </div>
+      </body>
+    </html>
+  `);
                   WinPrint.document.close();
                   WinPrint.focus();
                   setTimeout(() => {

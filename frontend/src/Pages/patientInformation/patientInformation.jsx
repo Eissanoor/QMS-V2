@@ -10,6 +10,7 @@ import axios from "axios";
 import { countries } from 'countries-list';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
+import { useNavigate } from "react-router-dom";
 
 const countryList = Object.entries(countries).map(([code, country]) => ({
     name: country.name,
@@ -39,6 +40,8 @@ const CountryDropdown = ({ value, onChange, t }) => (
 );
 
 const PatientInformation = () => {
+
+  const navigate = useNavigate();
   const { t, i18n } = useTranslation();
   const [PatientName, setPatientName] = useState("");
   const [IDNumber, setIDNumber] = useState("");
@@ -318,7 +321,7 @@ const PatientInformation = () => {
                     htmlFor="sex"
                     className="text-lg font-medium text-gray-700"
                   >
-                    {t("Sex")}
+                    {t("Gender")}
                   </label>
                   <select
                     value={Sex}
@@ -326,10 +329,10 @@ const PatientInformation = () => {
                     id="sex"
                     className="w-full mt-2 p-3 border border-green-400 rounded-lg focus:ring-2 focus:ring-green-300"
                   >
-                    <option value="">{t("Select Sex")}</option>
+                    <option value="">{t("Select Gender")}</option>
                     <option value="M">{t("Male")}</option>
                     <option value="F">{t("Female")}</option>
-                    <option value="O">{t("Other")}</option>
+                    {/* <option value="O">{t("Other")}</option> */}
                   </select>
                 </div>
                 <div>
@@ -362,19 +365,16 @@ const PatientInformation = () => {
                     className="w-full mt-2 p-3 border border-green-400 rounded-lg focus:ring-2 focus:ring-green-300"
                   >
                     <option>{t("Select Status")}</option>
-                    <option value="Non-urgent">
-                      {t("Non-urgent")}
-                    </option>
-                    <option value="Urgent">
-                      {t("Urgent")}
-                    </option>
-                    <option value="Critical">
-                      {t("Critical")}
-                    </option>
+                    <option value="Non-urgent">{t("Non-urgent")}</option>
+                    <option value="Urgent">{t("Urgent")}</option>
+                    <option value="Critical">{t("Critical")}</option>
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="bloodGroup" className="text-lg font-medium text-gray-700">
+                  <label
+                    htmlFor="bloodGroup"
+                    className="text-lg font-medium text-gray-700"
+                  >
                     {t("Blood Group")}
                   </label>
                   <select
@@ -395,7 +395,10 @@ const PatientInformation = () => {
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="birthDate" className="text-lg font-medium text-gray-700">
+                  <label
+                    htmlFor="birthDate"
+                    className="text-lg font-medium text-gray-700"
+                  >
                     {t("Birth Date")}
                   </label>
                   {/* format date */}
@@ -403,14 +406,17 @@ const PatientInformation = () => {
                   <input
                     type="date"
                     id="birthDate"
-                    value={birthDate.split('T')[0]}
+                    value={birthDate.split("T")[0]}
                     onChange={(e) => setBirthDate(e.target.value)}
                     placeholder={t("Enter birth date")}
                     className="w-full mt-2 p-3 border border-green-400 rounded-lg focus:ring-2 focus:ring-green-300"
                   />
                 </div>
                 <div>
-                  <label htmlFor="mrnNumber" className="text-lg font-medium text-gray-700">
+                  <label
+                    htmlFor="mrnNumber"
+                    className="text-lg font-medium text-gray-700"
+                  >
                     {t("MRN Number")}
                   </label>
                   <input
@@ -440,7 +446,10 @@ const PatientInformation = () => {
                 </div>
               </div>
               <div className="flex justify-between mt-6">
-                <button className="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600">
+                <button
+                  className="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600"
+                  onClick={() => navigate(-1)}
+                >
                   {t("Close")}
                 </button>
                 {patientId ? (
@@ -480,10 +489,16 @@ const PatientInformation = () => {
             ) : (
               <p>No PDF available</p>
             )}
-            <button onClick={closePopup} className="mt-4 bg-red-500 text-white px-4 py-2 rounded">
+            <button
+              onClick={closePopup}
+              className="mt-4 bg-red-500 text-white px-4 py-2 rounded"
+            >
               Close
             </button>
-            <button onClick={printTicket} className="mt-4 ml-40 bg-blue-500 text-white px-4 py-2 rounded">
+            <button
+              onClick={printTicket}
+              className="mt-4 ml-40 bg-blue-500 text-white px-4 py-2 rounded"
+            >
               Print
             </button>
           </div>

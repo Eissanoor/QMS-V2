@@ -4,7 +4,7 @@ import newRequest from "../../utils/newRequest";
 import { useQuery } from "react-query";
 
 const PatientDisplay = () => {
-    const { isLoading, data: patients = [], error } = useQuery("fetchAllMegaMenus", async () => {
+  const { isLoading, data: patients = [], error } = useQuery("fetchAllMegaMenus", async () => {
     try {
       const response = await newRequest.get("/api/v1/patients/called");
       return response?.data?.data || [];
@@ -25,41 +25,60 @@ const PatientDisplay = () => {
         ) : error ? (
           ""
         ) : (
-          patients.slice(1).map((patient) => {
-            const departmentName = patient.department
-              ? patient.department.deptname
-              : "Triage";
-            const departmentAbbreviation = departmentName.substring(0, 2);
 
-            return (
-              <div
-                key={patient.id}
-                className="bg-white p-4 rounded-lg shadow-md border-2 border-yellow-400"
-              >
-                <div className="flex flex-row justify-between">
-                  <h3 className="text-2xl font-bold text-blue-800">
-                    Ticket Number
-                  </h3>
-                  <h3 className="text-2xl font-bold text-blue-800">
-                    رقم التذكرة
-                  </h3>
-                </div>
-                <h1 className="text-center text-3xl font-bold text-blue-800 ">
-                  {patient.ticketNumber} {departmentAbbreviation}
-                </h1>
-                <h2 className="text-2xl text-red-600 text-center mt-3">
-                  {patient.name}
-                </h2>
-                <div className="flex justify-between">
-                  <p className="text-lg text-blue-800">please proceed to</p>
-                  <p className="text-xl text-blue-800">اذهب إلى</p>
-                </div>
-                <h3 className="text-2xl font-bold text-blue-800">
-                  {departmentName}
-                </h3>
-              </div>
-            );
-          })
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {patients.slice(1).map((patient) => {
+              const departmentName = patient.department
+                ? patient.department.deptname
+                : "Triage";
+              const departmentAbbreviation = departmentName.substring(0, 2);
+
+              return (
+                <>
+                  <div
+                    key={patient.id}
+                    className="bg-green-100 border-l-4 border-green-500 rounded-lg p-4 text-center cursor-pointer"
+                  onClick={() => window.open(`/waiting-area/${patient.id}`, '_blank')}
+                  >
+                    <strong className="text-gray-700 mt-2 text-2xl">{departmentName || "TR"}</strong>
+                    <h3 className="text-green-600 font-bold text-lg">{patient.ticketNumber} {departmentAbbreviation}</h3>
+                    <p className="text-black-700 mt-2 text-lg">{patient.name}</p>
+                  </div>
+                </>
+                // <div
+                //   key={patient.id}
+                //   className="bg-white p-4 rounded-lg shadow-md border-2 border-yellow-400"
+                // >
+                //   <div className="flex flex-row justify-between">
+                //     <h3 className="text-2xl font-bold text-blue-800">
+                //       Ticket Number
+                //     </h3>
+                //     <h3 className="text-2xl font-bold text-blue-800">
+                //       رقم التذكرة
+                //     </h3>
+                //   </div>
+                //   <h1 className="text-center text-3xl font-bold text-blue-800 ">
+                //     {patient.ticketNumber} {departmentAbbreviation}
+                //   </h1>
+                //   <h2 className="text-2xl text-red-600 text-center mt-3">
+                //     {patient.name}
+                //   </h2>
+                //   <div className="flex justify-between">
+                //     <p className="text-lg text-blue-800">please proceed to</p>
+                //     <p className="text-xl text-blue-800">اذهب إلى</p>
+                //   </div>
+                //   <h3 className="text-2xl font-bold text-blue-800">
+                //     {departmentName}
+                //   </h3>
+                // </div>
+              );
+            })
+            }
+          </div>
+
+
+
         )}
       </div>
 

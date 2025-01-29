@@ -125,9 +125,9 @@ const PatientMonitoring = () => {
 
       {/* Footer Section */}
       <div className="mt-6 flex justify-end">
-        <button className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600">
+        {/* <button className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600">
           Close
-        </button>
+        </button> */}
       </div>
     </div>
     </SideNav>
