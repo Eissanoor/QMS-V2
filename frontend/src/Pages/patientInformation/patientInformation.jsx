@@ -54,6 +54,9 @@ const PatientInformation = () => {
   const [pdfBlobUrl, setPdfBlobUrl] = useState(null);
   const [loading, setLoading] = useState(false);
   const [patientId, setPatientId] = useState(null);
+  const [bloodGroup, setBloodGroup] = useState("");
+  const [birthDate, setBirthDate] = useState("");
+  const [mrnNumber, setMrnNumber] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -68,6 +71,9 @@ const PatientInformation = () => {
       mobileNumber: MobileNumber,
       cheifComplaint: cheifComplaint,
       status: Status,
+      bloodGroup: bloodGroup,
+      birthDate: birthDate,
+      mrnNumber: mrnNumber,
     };
 
     try {
@@ -136,6 +142,9 @@ const PatientInformation = () => {
         setStatus(patientData.status || "");
         setMobileNumber(patientData.mobileNumber || "");
         setcheifComplaint(patientData.cheifComplaint || "");
+        setBloodGroup(patientData.bloodGroup || "");
+        setBirthDate(patientData.birthDate || "");
+        setMrnNumber(patientData.mrnNumber || "");
         toast.success(response.data.message || "Patient found!");
       }
     } catch (error) {
@@ -147,6 +156,9 @@ const PatientInformation = () => {
       setAge("");
       setStatus("");
       setcheifComplaint("");
+      setBloodGroup("");
+      setBirthDate("");
+      setMrnNumber("");
     } finally {
       setLoading(false);
     }
@@ -169,7 +181,10 @@ const PatientInformation = () => {
         age: parseInt(Age),
         mobileNumber: MobileNumber,
         cheifComplaint: cheifComplaint,
-        status: Status
+        status: Status,
+        bloodGroup: bloodGroup,
+        birthDate: birthDate,
+        mrnNumber: mrnNumber,
       };
 
       const response = await axios.post(
@@ -357,6 +372,55 @@ const PatientInformation = () => {
                       {t("Critical")}
                     </option>
                   </select>
+                </div>
+                <div>
+                  <label htmlFor="bloodGroup" className="text-lg font-medium text-gray-700">
+                    {t("Blood Group")}
+                  </label>
+                  <select
+                    value={bloodGroup}
+                    onChange={(e) => setBloodGroup(e.target.value)}
+                    id="bloodGroup"
+                    className="w-full mt-2 p-3 border border-green-400 rounded-lg focus:ring-2 focus:ring-green-300"
+                  >
+                    <option value="">{t("Select Blood Group")}</option>
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                    <option value="O+">O+</option>
+                    <option value="O-">O-</option>
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="birthDate" className="text-lg font-medium text-gray-700">
+                    {t("Birth Date")}
+                  </label>
+                  {/* format date */}
+
+                  <input
+                    type="date"
+                    id="birthDate"
+                    value={birthDate.split('T')[0]}
+                    onChange={(e) => setBirthDate(e.target.value)}
+                    placeholder={t("Enter birth date")}
+                    className="w-full mt-2 p-3 border border-green-400 rounded-lg focus:ring-2 focus:ring-green-300"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="mrnNumber" className="text-lg font-medium text-gray-700">
+                    {t("MRN Number")}
+                  </label>
+                  <input
+                    type="text"
+                    id="mrnNumber"
+                    value={mrnNumber}
+                    onChange={(e) => setMrnNumber(e.target.value)}
+                    placeholder={t("Enter MRN number")}
+                    className="w-full mt-2 p-3 border border-green-400 rounded-lg focus:ring-2 focus:ring-green-300"
+                  />
                 </div>
                 <div className="col-span-2">
                   <label

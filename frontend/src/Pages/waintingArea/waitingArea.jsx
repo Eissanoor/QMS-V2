@@ -42,7 +42,9 @@ const WaitingArea = () => {
   const [Nationality, setNationality] = useState("");
   const [patientData, setPatientData] = useState(null);
   const [callPatient, setCallPatient] = useState(false);
-
+  const [bloodGroup, setBloodGroup] = useState("");
+  const [birthDate, setBirthDate] = useState("");
+  const [mrnNumber, setMrnNumber] = useState("");
   const { isLoading, data, error ,refetch } = useQuery("fetchAllMegaMenuss", async () => {
     try {
       const response = await newRequest.get(`/api/v1/patients/${id}`);
@@ -66,6 +68,10 @@ const WaitingArea = () => {
       setSex(patient.sex);
       setNationality(patient.nationality);
       setCallPatient(patient.callPatient);
+      setBloodGroup(patient.bloodGroup);
+      // format date
+      setBirthDate(patient.birthDate.split('T')[0]);
+      setMrnNumber(patient.mrnNumber);
       if (patient.vitalSigns?.length > 0) {
         const latestVitalSign = patient.vitalSigns[0];
         setVitalSigns({
@@ -241,6 +247,39 @@ const WaitingArea = () => {
                   <input
                     type="text"
                     value={Sex}
+                    readOnly
+                    className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">
+                    {t("Blood Group")}
+                  </label>
+                  <input
+                    type="text"
+                    value={bloodGroup}
+                    readOnly
+                    className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">
+                    {t("Birth Date")}
+                  </label>
+                  <input
+                    type="text"
+                    value={birthDate}
+                    readOnly
+                    className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">
+                    {t("MRN Number")}
+                  </label>
+                  <input
+                    type="text"
+                    value={mrnNumber}
                     readOnly
                     className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
                   />

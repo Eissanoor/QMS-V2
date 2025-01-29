@@ -45,7 +45,9 @@ const Servingss = () => {
   const [patientData, setPatientData] = useState(null);
   const [callPatient, setCallPatient] = useState(false);
   const [bednumber, setbednumber] = useState("");
-
+  const [bloodGroup, setBloodGroup] = useState("");
+  const [birthDate, setBirthDate] = useState("");
+  const [mrnNumber, setMrnNumber] = useState("");
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [totalTime, setTotalTime] = useState("");
@@ -77,6 +79,9 @@ const Servingss = () => {
         setSex(patient.sex);
         setNationality(patient.nationality);
         setCallPatient(patient.callPatient);
+        setBloodGroup(patient.bloodGroup);
+        setBirthDate(patient.birthDate.split('T')[0]);
+        setMrnNumber(patient.mrnNumber);
 
         if (patient.beginTime) {
           setStartTime(formatDateTime(patient.beginTime));
@@ -374,6 +379,40 @@ const Servingss = () => {
                     className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
                   />
                 </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">
+                    {t("Blood Group")}
+                  </label>
+                  <input
+                    type="text"
+                    value={bloodGroup}
+                    readOnly
+                    className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">
+                    {t("Birth Date")}
+                  </label>
+                  <input
+                    type="text"
+                    value={birthDate}
+                    readOnly
+                    className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">
+                    {t("MRN Number")}
+                  </label>
+                  <input
+                    type="text"
+                    value={mrnNumber}
+                    readOnly
+                    className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+
                 <div className="col-span-2">
                   <label className="text-sm font-medium text-gray-700">
                     {t("Chief Complaint")}
