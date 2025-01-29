@@ -106,6 +106,48 @@ const PatientInformation = () => {
     }
   };
 
+  const searchPatient = async () => {
+    if (!IDNumber && !MobileNumber) {
+      toast.error("Please enter ID Number or Mobile Number to search");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `${baseUrl}/api/v1/patients/search?idNumber=${IDNumber}&mobileNumber=${MobileNumber}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        const patientData = response.data.data;
+        setPatientName(patientData.name || "");
+        setNationality(patientData.nationality || "Saudi Arabia");
+        setSex(patientData.sex || "");
+        setIDNumber(patientData.idNumber || "");
+        setAge(patientData.age || "");
+        setStatus(patientData.status || "");
+        setMobileNumber(patientData.mobileNumber || "");
+        setcheifComplaint(patientData.cheifComplaint || "");
+        toast.success(response.data.message || "Patient found!");
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Patient not found");
+      setPatientName("");
+      setNationality("Saudi Arabia");
+      setSex("");
+      setAge("");
+      setStatus("");
+      setcheifComplaint("");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="bg-gray-100">
       <SideNav>
@@ -152,14 +194,22 @@ const PatientInformation = () => {
                   >
                     {t("ID Number")}
                   </label>
-                  <input
-                    type="text"
-                    id="idNumber"
-                    value={IDNumber}
-                    onChange={(e) => setIDNumber(e.target.value)}
-                    placeholder={t("Enter ID number")}
-                    className="w-full mt-2 p-3 border border-green-400 rounded-lg focus:ring-2 focus:ring-green-300"
-                  />
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      id="idNumber"
+                      value={IDNumber}
+                      onChange={(e) => setIDNumber(e.target.value)}
+                      placeholder={t("Enter ID number")}
+                      className="w-full mt-2 p-3 border border-green-400 rounded-lg focus:ring-2 focus:ring-green-300"
+                    />
+                    <button
+                      onClick={searchPatient}
+                      className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+                    >
+                      {t("Search")}
+                    </button>
+                  </div>
                 </div>
                 <div>
                   <label
@@ -170,7 +220,6 @@ const PatientInformation = () => {
                   </label>
                   <div className="mt-2">
                     <PhoneInput
-
                       onChange={(e) => setMobileNumber(e)}
                       international
                       country={"sa"}
@@ -194,7 +243,6 @@ const PatientInformation = () => {
                         width: "80px", // Increased flag size
                         height: "80px", // Increased flag size
                       }}
-
                     />
                   </div>
                 </div>
