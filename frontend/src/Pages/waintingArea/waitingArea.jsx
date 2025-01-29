@@ -429,12 +429,39 @@ const WaitingArea = () => {
                 margin: "0 auto"
               }}
             >
-              <div className="text-xs p-1">
-                <p>Name: {PatientName}</p>
-                <p>ID: {IDNumber}</p>
-                <p>Age: {Age}</p>
-                <p>Sex: {Sex}</p>
-               
+              <div className="text-xs p-1" style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                <div style={{ 
+                  writingMode: 'vertical-lr', 
+                  textOrientation: 'mixed',
+                  transform: 'rotate(180deg)',
+                  width: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'start',
+                  gap: '8px',
+                  padding: '4px'
+                }}>
+                 
+                  <p style={{ fontSize: '8px', margin: '2px 0' }}>
+                    MRN: {IDNumber}
+                  </p>
+                  <p style={{ fontSize: '8px', margin: '2px 0' }}>
+                    DOB: {Age}
+                  </p>
+                  <p style={{ fontWeight: 'bold', fontSize: '8px', margin: '2px 0' }}>
+                    {PatientName?.toUpperCase()}
+                  </p>
+                </div>
+                <img 
+                  src={`https://bwipjs-api.metafloor.com/?bcid=code128&text=${IDNumber}&scale=2&height=10&includetext&textxalign=center`}
+                  alt="Barcode"
+                  style={{ 
+                    width: '100%', 
+                    height: 'auto', 
+                    marginTop: '4px',
+                    // transform: 'rotate(90deg)'
+                  }}
+                />
               </div>
             </div>
             <div className="mt-4 flex justify-end space-x-2">
@@ -447,7 +474,7 @@ const WaitingArea = () => {
                       <head>
                         <style>
                           @page {
-                            size: 0.75in 7in;
+                            size: 0.75in 5in;
                             margin: 0;
                           }
                           body {
@@ -456,15 +483,36 @@ const WaitingArea = () => {
                           }
                           #printableContent {
                             width: 0.75in;
-                            height: 7in;
+                            height: 5in;
                             border: 2px solid black;
                             box-sizing: border-box;
                             font-family: Arial, sans-serif;
-                            font-size: 8px;
                             padding: 2px;
+                          }
+                          .vertical-text {
+                            writing-mode: vertical-lr;
+                            text-orientation: mixed;
+                            transform: rotate(180deg);
+                            width: 100%;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: start;
+                            gap: 8px;
+                            padding: 4px;
+                          }
+                          img {
+                            width: 100%;
+                            height: auto;
+                            margin-top: 4px;
+                            // transform: rotate(90deg);
                           }
                           p {
                             margin: 2px 0;
+                            font-size: 8px;
+                            line-height: 1.2;
+                          }
+                          p:first-of-type {
+                            font-weight: bold;
                           }
                         </style>
                       </head>
