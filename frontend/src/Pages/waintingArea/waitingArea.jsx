@@ -15,6 +15,7 @@ const WaitingArea = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [loading, setLoading] = useState(false);
   const [pdfUrl, setPdfUrl] = useState(null);
+  const [showBandPopup, setShowBandPopup] = useState(false);
   const handleOpen = () => setIsOpen(true);
   const handleClose = () => setIsOpen(false);
 
@@ -147,6 +148,14 @@ const WaitingArea = () => {
   };
   const closePopup = () => {
     setShowPopup(false);
+  };
+
+  const openBandPopup = () => {
+    setShowBandPopup(true);
+  };
+
+  const closeBandPopup = () => {
+    setShowBandPopup(false);
   };
 
   return (
@@ -341,6 +350,12 @@ const WaitingArea = () => {
                 {callPatient ? t("Cancel Call Patient") : t("Call Patient")}
               </button>
               <div className="flex space-x-4">
+              <button 
+                className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600"
+                onClick={openBandPopup}
+              >
+                {t("Print Band")}
+              </button>
                 <button
                   className={`text-white px-6 py-2 rounded-lg hover:bg-blue-600 ${VitalSigns.BP ? "" : "opacity-50 cursor-not-allowed"
                     } ${callPatient
@@ -401,6 +416,86 @@ const WaitingArea = () => {
         </div>
       )}
       {isOpen && <AssignPopup onClose={handleClose} patientId={id} onAssignSuccess={refetch} />}
+      {showBandPopup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h2 className="text-lg font-bold mb-4">Print Band</h2>
+            <div 
+              id="printableArea"
+              className="border-2 border-black" 
+              style={{ 
+                width: "0.75in", 
+                height: "5in",
+                margin: "0 auto"
+              }}
+            >
+              <div className="text-xs p-1">
+                <p>Name: {PatientName}</p>
+                <p>ID: {IDNumber}</p>
+                <p>Age: {Age}</p>
+                <p>Sex: {Sex}</p>
+               
+              </div>
+            </div>
+            <div className="mt-4 flex justify-end space-x-2">
+              <button
+                onClick={() => {
+                  const printContent = document.getElementById('printableArea');
+                  const WinPrint = window.open('', '', 'width=900,height=650');
+                  WinPrint.document.write(`
+                    <html>
+                      <head>
+                        <style>
+                          @page {
+                            size: 0.75in 7in;
+                            margin: 0;
+                          }
+                          body {
+                            margin: 0;
+                            padding: 0;
+                          }
+                          #printableContent {
+                            width: 0.75in;
+                            height: 7in;
+                            border: 2px solid black;
+                            box-sizing: border-box;
+                            font-family: Arial, sans-serif;
+                            font-size: 8px;
+                            padding: 2px;
+                          }
+                          p {
+                            margin: 2px 0;
+                          }
+                        </style>
+                      </head>
+                      <body>
+                        <div id="printableContent">
+                          ${printContent.innerHTML}
+                        </div>
+                      </body>
+                    </html>
+                  `);
+                  WinPrint.document.close();
+                  WinPrint.focus();
+                  setTimeout(() => {
+                    WinPrint.print();
+                    WinPrint.close();
+                  }, 250);
+                }}
+                className="bg-green-500 text-white px-4 py-2 rounded"
+              >
+                Print
+              </button>
+              <button
+                onClick={closeBandPopup}
+                className="bg-red-500 text-white px-4 py-2 rounded"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
