@@ -7,7 +7,7 @@ import { baseUrl } from "../../utils/config";
 import toast from "react-hot-toast";
 import newRequest from "../../utils/newRequest";
 import AssignPopup from "../waintingArea/assignPopup";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 const Servingss = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
@@ -44,14 +44,22 @@ const Servingss = () => {
   const [Nationality, setNationality] = useState("");
   const [patientData, setPatientData] = useState(null);
   const [callPatient, setCallPatient] = useState(false);
-  const [bednumber, setbednumber] = useState('')
-
+  const [bednumber, setbednumber] = useState("");
 
   const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
+  const [totalTime, setTotalTime] = useState("");
   const formatDateTime = (dateTime) => {
     const date = new Date(dateTime);
-    const options = { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true };
-    return date.toLocaleString('en-GB', options).replace(',', '');
+    const options = {
+      day: "2-digit",
+      month: "2-digit",
+      year: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    };
+    return date.toLocaleString("en-GB", options).replace(",", "");
   };
   const fetchPatientData = async () => {
     try {
@@ -73,6 +81,17 @@ const Servingss = () => {
         if (patient.beginTime) {
           setStartTime(formatDateTime(patient.beginTime));
         }
+        if (patient.endTime) {
+          setEndTime(formatDateTime(patient.endTime));
+        }
+        if (patient.beginTime && patient.endTime) {
+          const beginTime = new Date(patient.beginTime);
+          const endTime = new Date(patient.endTime);
+          const totalTime = endTime - beginTime;
+          const hours = Math.floor(totalTime / 3600000);
+          const minutes = Math.floor((totalTime % 3600000) / 60000);
+          setTotalTime(`${hours}h ${minutes}m`);
+        }
         if (patient.vitalSigns.length > 0) {
           const latestVitalSign = patient.vitalSigns[0];
           setAllergies(latestVitalSign.allergies || false);
@@ -89,9 +108,10 @@ const Servingss = () => {
           });
         }
         try {
-          const response = await newRequest.get(`/api/v1/beds/${patient?.bedId || ""}`);
+          const response = await newRequest.get(
+            `/api/v1/beds/${patient?.bedId || ""}`
+          );
           setbednumber(response?.data?.data?.bedNumber || "");
-
         } catch (error) {
           console.error("Error fetching departments:", error);
         }
@@ -137,12 +157,15 @@ const Servingss = () => {
         }
       );
       if (response.status >= 200) {
-        toast.success(response?.data?.message || "Vital sign created successfully");
+        toast.success(
+          response?.data?.message || "Vital sign created successfully"
+        );
       } else {
         throw new Error(response?.data?.message || "Unexpected error");
       }
     } catch (error) {
-      const errorMessage = error.response?.data?.message || "Failed to save vital sign";
+      const errorMessage =
+        error.response?.data?.message || "Failed to save vital sign";
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -154,16 +177,21 @@ const Servingss = () => {
     setCallPatient(newCallPatientStatus);
 
     try {
-      const response = await fetch(`${baseUrl}/api/v1/patients/${id}/toggle-call`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ callPatient: newCallPatientStatus }),
-      });
+      const response = await fetch(
+        `${baseUrl}/api/v1/patients/${id}/toggle-call`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ callPatient: newCallPatientStatus }),
+        }
+      );
 
       const data = await response.json();
-      toast.success(data?.message || "Patient call status toggled successfully");
+      toast.success(
+        data?.message || "Patient call status toggled successfully"
+      );
     } catch (error) {
       toast.error(error.response?.data?.message || "Error");
     }
@@ -189,7 +217,7 @@ const Servingss = () => {
   }, []);
 
   const Assignbed = async () => {
-    setloadingbed(true)
+    setloadingbed(true);
     try {
       const response = await newRequest.patch(
         `/api/v1/patients/${id}/assign-bed`,
@@ -213,9 +241,11 @@ const Servingss = () => {
   };
 
   const handleBeginClick = async () => {
-    setloadingbegintime(true)
+    setloadingbegintime(true);
     try {
-      const response = await newRequest.patch(`/api/v1/patients/${id}/begin-time`);
+      const response = await newRequest.patch(
+        `/api/v1/patients/${id}/begin-time`
+      );
       const data = response;
       if (response.status == 200) {
         toast.success(response?.data?.message || "successfully begin Time");
@@ -224,7 +254,8 @@ const Servingss = () => {
         console.error("Error in API response:", data.message);
       }
     } catch (error) {
-      const errorMessage = error.response?.data?.message || "Error calling begin-time API";
+      const errorMessage =
+        error.response?.data?.message || "Error calling begin-time API";
       toast.error(errorMessage);
     } finally {
       setloadingbegintime(false);
@@ -241,21 +272,20 @@ const Servingss = () => {
       if (response.status == 200) {
         toast.success(data?.message || "End time set successfully");
         fetchPatientData();
-        navigate("/monitoring");
+        // navigate("/monitoring");
       } else {
         const errorMessage =
           data?.data?.message || "Error calling end-time API";
         toast.error(errorMessage);
       }
     } catch (error) {
-      const errorMessage = error.response?.data?.message || "Error calling end-time API";
+      const errorMessage =
+        error.response?.data?.message || "Error calling end-time API";
       toast.error(errorMessage);
     } finally {
       setloadingendtime(false);
     }
   };
-
-
 
   return (
     <SideNav>
@@ -410,10 +440,11 @@ const Servingss = () => {
                       />
                       <span className="w-4 h-4 border-4 border-black rounded-full flex items-center justify-center">
                         <span
-                          className={`w-2.5 h-2.5 rounded-full ${Allergies === true
+                          className={`w-2.5 h-2.5 rounded-full ${
+                            Allergies === true
                               ? "bg-[#EC5B01]"
                               : "bg-transparent"
-                            }`}
+                          }`}
                         ></span>
                       </span>
                       <span className="ml-2 text-sm">Yes</span>
@@ -428,10 +459,11 @@ const Servingss = () => {
                       />
                       <span className="w-4 h-4 border-4 border-black rounded-full flex items-center justify-center">
                         <span
-                          className={`w-2.5 h-2.5 rounded-full ${Allergies === false
+                          className={`w-2.5 h-2.5 rounded-full ${
+                            Allergies === false
                               ? "bg-[#EC5B01]"
                               : "bg-transparent"
-                            }`}
+                          }`}
                         ></span>
                       </span>
                       <span className="ml-2 text-sm">No</span>
@@ -547,66 +579,93 @@ const Servingss = () => {
                     </strong>
                   </span>
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
-                  {/* Select Element */}
-                  <div className="col-span-1">
-                    <label className="block text-gray-700 font-semibold mb-2">
-                      Bed Number
-                    </label>
-                    <select
-                      className="w-full border border-green-500 rounded px-3 py-2"
-                      value={bednumber}
-                      onChange={(e) => setbednumber(e.target.value)}
-                    >
-                      <option>Select Bed</option>
-                      {Availablebed.map((beds) => (
-                        <option key={beds.id} value={beds.id}>
-                          {beds.bedNumber}
-                        </option>
-                      ))}
-                    </select>
+                <div className="flex justify-between gap-4">
+                  {/* Left side - Bed Selection */}
+                  <div className="w-1/2">
+                    <div className="flex flex-col">
+                      <label className="block text-gray-700 font-semibold mb-2">
+                        Bed Number
+                      </label>
+                      <div className="flex gap-4">
+                        <select
+                          className="w-full border border-green-500 rounded px-3 py-2"
+                          value={bednumber}
+                          onChange={(e) => setbednumber(e.target.value)}
+                        >
+                          <option>Select Bed</option>
+                          {Availablebed.map((beds) => (
+                            <option key={beds.id} value={beds.id}>
+                              {beds.bedNumber}
+                            </option>
+                          ))}
+                        </select>
+                        
+                        <button
+                          className="text-white px-6 py-2 rounded-lg bg-yellow-400 hover:bg-yellow-500 whitespace-nowrap"
+                          onClick={Assignbed}
+                        >
+                          {loadingbed ? (
+                            <div className="flex items-center gap-2">
+                              <svg
+                                className="animate-spin h-5 w-5 text-white"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                              >
+                                <circle
+                                  className="opacity-25"
+                                  cx="12"
+                                  cy="12"
+                                  r="10"
+                                  stroke="currentColor"
+                                  strokeWidth="4"
+                                ></circle>
+                                <path
+                                  className="opacity-75"
+                                  fill="currentColor"
+                                  d="M4 12a8 8 0 018-8v8z"
+                                ></path>
+                              </svg>
+                              {t("Assign Bed...")}
+                            </div>
+                          ) : (
+                            t("Assign Bed")
+                          )}
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                  <div className="col-span my-auto">
-                    <button
-                      className={`text-white px-6 py-2 mt-8 rounded-lg bg-yellow-400 hover:bg-yellow-500`}
-                      onClick={Assignbed}
-                    >
-                      {loadingbed ? (
-                        <div className="flex items-center gap-2">
-                          <svg
-                            className="animate-spin h-5 w-5 text-white"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                          >
-                            <circle
-                              className="opacity-25"
-                              cx="12"
-                              cy="12"
-                              r="10"
-                              stroke="currentColor"
-                              strokeWidth="4"
-                            ></circle>
-                            <path
-                              className="opacity-75"
-                              fill="currentColor"
-                              d="M4 12a8 8 0 018-8v8z"
-                            ></path>
-                          </svg>
-                          {t("Assign Bed...")}
-                        </div>
-                      ) : (
-                        t("Assign Bed")
-                      )}
-                    </button>
-                  </div>
-                  <div className="col-span-1">
-                    <label className="block text-gray-700 font-semibold mb-2">
-                      Assigned Bed
-                    </label>
-                    <p className="text-blue-700 font-bold text-lg">
-                      {bednumber}
-                    </p>
+
+                  {/* Right side - Timing Information */}
+                  <div className="w-1/2">
+                    <div className="flex flex-col space-y-4 mx-10">
+                      <div className="flex gap-4">
+                        <label className="text-gray-700 font-semibold mb-1 block">
+                          Starting Time:
+                        </label>
+                        <span className="text-blue-700 font-bold text-lg">
+                          {startTime}
+                        </span>
+                      </div>
+
+                      <div className="flex gap-4">
+                        <label className="text-gray-700 font-semibold mb-1 block">
+                          Total Time:
+                        </label>
+                        <span className="text-blue-700 font-bold text-lg">
+                          {totalTime}
+                        </span>
+                      </div>
+
+                      <div className="flex gap-4">
+                        <label className="text-gray-700 font-semibold mb-1 block">
+                          Ending Time:
+                        </label>
+                        <span className="text-blue-700 font-bold text-lg">
+                          {endTime}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

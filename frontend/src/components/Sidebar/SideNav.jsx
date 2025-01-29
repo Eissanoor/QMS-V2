@@ -451,14 +451,14 @@ function SideNav({ children }) {
                 <X size={24} className="text-gray-600" />
               )}
             </button>
-            <h2 className="text-xl font-semibold text-gray-800">
+            {/* <h2 className="text-xl font-semibold text-gray-800">
               {t(
                 location.pathname.substring(1).replace(/-/g, " ").toUpperCase() ===
                   "PATIENT TABLE"
                   ? "Registered Patients"
                   : location.pathname.substring(1).replace(/-/g, " ").toUpperCase()
               ) || "Dashboard"}
-            </h2>
+            </h2> */}
 
           </section>
           {children}
