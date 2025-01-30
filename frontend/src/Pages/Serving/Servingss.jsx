@@ -578,7 +578,9 @@ const Servingss = () => {
                         )}
                       </button>
                       <button
-                        className="bg-red-500 text-white font-semibold py-2 px-10 rounded hover:bg-blue-600"
+                        className={`bg-red-500 text-white font-semibold py-2 px-10 rounded hover:bg-blue-600 ${
+                          endTime ? " cursor-not-allowed" : "cursor-pointer"
+                        }`}
                         onClick={handleEndClick}
                       >
                         {loadingendtime ? (
