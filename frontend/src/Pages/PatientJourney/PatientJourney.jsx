@@ -27,7 +27,6 @@ function PatientJourney() {
       const response = await newRequest.get("/api/v1/patients/journeys", {
         params: { page, search },
       });
-      console.log(response?.data?.data);
         setAllRoles(response?.data?.data?.data || []);
         setPagination(response.data.data.pagination);
     } catch (error) {

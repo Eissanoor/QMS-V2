@@ -37,7 +37,6 @@ const App = () => {
         try {
           const response = await newRequest.get(`/api/v1/user/${accessuserdata?.user?.id || ""}`);
           setUserRoles(response?.data?.data?.roles?.map(role => role.name) || []);
-          console.log(response?.data?.data,'data');
           
         } catch (error) {
           console.error("Error fetching roles:", error);
