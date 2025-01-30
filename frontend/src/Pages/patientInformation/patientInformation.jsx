@@ -277,7 +277,9 @@ const PatientInformation = () => {
                       onClick={searchPatient}
                       className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
                     >
-                      {t("Search")}
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                      </svg>
                     </button>
                   </div>
                 </div>
@@ -288,32 +290,42 @@ const PatientInformation = () => {
                   >
                     {t("Mobile Number")}
                   </label>
-                  <div className="mt-2">
-                    <PhoneInput
-                      onChange={(e) => setMobileNumber(e)}
-                      international
-                      country={"sa"}
-                      defaultCountry={"sa"}
-                      inputProps={{
-                        id: "mobileNumber",
-                        placeholder: t("Enter mobile number"),
-                      }}
-                      inputStyle={{
-                        width: "100%",
-                        border: "1px solid #05D899",
-                        borderRadius: "8px",
-                        paddingTop: "10px",
-                        paddingBottom: "10px",
-                        fontSize: "16px",
-                        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                        backgroundColor: "white",
-                        height: "auto",
-                      }}
-                      flagStyle={{
-                        width: "80px", // Increased flag size
-                        height: "80px", // Increased flag size
-                      }}
-                    />
+                  <div className="flex gap-2">
+                    <div className="w-full mt-2">
+                      <PhoneInput
+                        onChange={(e) => setMobileNumber(e)}
+                        international
+                        country={"sa"}
+                        defaultCountry={"sa"}
+                        inputProps={{
+                          id: "mobileNumber",
+                          placeholder: t("Enter mobile number"),
+                        }}
+                        inputStyle={{
+                          width: "100%",
+                          border: "1px solid #05D899",
+                          borderRadius: "8px",
+                          paddingTop: "10px",
+                          paddingBottom: "10px",
+                          fontSize: "16px",
+                          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                          backgroundColor: "white",
+                          height: "auto",
+                        }}
+                        flagStyle={{
+                          width: "80px",
+                          height: "80px",
+                        }}
+                      />
+                    </div>
+                    <button
+                      onClick={searchPatient}
+                      className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                      </svg>
+                    </button>
                   </div>
                 </div>
                 <div>
