@@ -24,6 +24,7 @@ import Departmentmonitoring from "./Pages/DepartmentWaitingList/Departmentmonito
 import newRequest from "./utils/newRequest.jsx";
 import ProtectedRoute from "./utils/ProtectedRoute.jsx";
 import NotFound from "./Pages/NotFound/NotFound.jsx";
+import PatientJourney from "./Pages/PatientJourney/PatientJourney.jsx";
 const queryClient = new QueryClient();
 
 export const RolesContext = createContext([]);
@@ -193,6 +194,15 @@ const App = () => {
                           allowedRoles={["Department Waiting List"]}
                         >
                           <Departmentmonitoring />
+                        </ProtectedRoute>
+                      }
+                    />
+
+                    <Route
+                      path="/PatientJourney"
+                      element={
+                        <ProtectedRoute allowedRoles={["Patient Journey"]}>
+                          <PatientJourney />
                         </ProtectedRoute>
                       }
                     />

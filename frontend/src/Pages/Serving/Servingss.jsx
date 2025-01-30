@@ -183,7 +183,7 @@ const Servingss = () => {
 
     try {
       const response = await fetch(
-        `${baseUrl}/api/v1/patients/${id}/toggle-call`,
+        `${baseUrl}/api/v1/patients/${id}/toggle-call?call=second`,
         {
           method: "PATCH",
           headers: {

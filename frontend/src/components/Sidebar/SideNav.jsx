@@ -16,6 +16,7 @@ import Rolesicon from "../../Images/Roles.png";
 import Department from "../../Images/Department.png";
 import Beds from "../../Images/Beds.jpg";
 import logout from "../../Images/logout.png";
+import PatientJourneyicon from "../../Images/PatientJourneyicon.png";
 import newRequest from "../../utils/newRequest";
 import { useQuery } from "react-query";
 import UpdatedRoles from "../../Pages/MasterData/Roles/UpdatedRoles";
@@ -130,6 +131,12 @@ function SideNav({ children }) {
       path: "/kpi",
       icon: <img src={KPI} alt="KPI" className="w-6 h-6" />,
       requiredRole: "KPI",
+    },
+    {
+      label: `${t("Patient Journey")}`,
+      path: "/PatientJourney",
+      icon: <img src={PatientJourneyicon} alt="KPI" className="w-6 h-6" />,
+      requiredRole: "Patient Journey",
     },
   ];
 
