@@ -6,20 +6,12 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  Button,
   Input,
   Pagination,
   Spinner,
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
 } from "@nextui-org/react";
-import { FaSearch, FaTrash, FaEdit } from "react-icons/fa";
-import Swal from "sweetalert2";
-import toast from "react-hot-toast";
+import { FaSearch,  } from "react-icons/fa";
 import newRequest from "../../utils/newRequest";
-import { BsThreeDotsVertical } from "react-icons/bs";
 import SideNav from "../../components/Sidebar/SideNav";
 
 function PatientJourney() {
@@ -166,7 +158,7 @@ const calculateTotalHours = (treatmentEnded,registration) => {
           showShadow
           classNames={{
             wrapper: "gap-0 overflow-visible h-8",
-            item: "w-8 h-8 text-sm rounded-none",
+            item: "w-8 h-8 text-sm rounded-none ",
             cursor: "bg-navy-600 text-white font-bold",
           }}
           page={page}
@@ -181,13 +173,12 @@ const calculateTotalHours = (treatmentEnded,registration) => {
   return (
     <SideNav>
       <div className="p-6 bg-blue-50 min-h-screen">
-        <div className="overflow-x-auto w-full">
           <Table
             aria-label="Patient Journey"
             bottomContent={bottomContent}
             topContent={topContent}
             classNames={{
-              wrapper: "shadow-md rounded-lg bg-white mt-6",
+              wrapper: "shadow-md rounded-lg bg-white mt-6 w-full ",
             }}
           >
             <TableHeader columns={columns}>
@@ -210,14 +201,13 @@ const calculateTotalHours = (treatmentEnded,registration) => {
               {(item) => (
                 <TableRow key={item.patientId}>
                   {(columnKey) => (
-                    <TableCell>{renderCell(item, columnKey)}</TableCell>
+                    <TableCell >{renderCell(item, columnKey)}</TableCell>
                   )}
                 </TableRow>
               )}
             </TableBody>
           </Table>
         </div>
-      </div>
     </SideNav>
   );
 }
