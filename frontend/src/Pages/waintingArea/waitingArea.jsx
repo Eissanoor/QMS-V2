@@ -11,9 +11,10 @@ import Spinner from "../../components/spinner/spinner";
 import newRequest from "../../utils/newRequest";
 import { useQuery } from "react-query";
 import Barcode from "react-barcode";
-
+import { useNavigate } from "react-router-dom";
 import { QRCodeSVG } from "qrcode.react";
 const WaitingArea = () => {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -429,7 +430,10 @@ const WaitingArea = () => {
                 <button className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600">
                   {t("Void")}
                 </button>
-                <button className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600">
+                <button className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600"
+                onClick={() => {
+                  navigate(`/patient-table`);
+                }}>
                   {t("Close")}
                 </button>
               </div>
