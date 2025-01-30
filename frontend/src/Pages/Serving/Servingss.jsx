@@ -84,12 +84,9 @@ const Servingss = () => {
         setBloodGroup(patient.bloodGroup);
         setBirthDate(patient.birthDate ? patient.birthDate.split("T")[0] : "");
         setMrnNumber(patient.mrnNumber);
-
-        
           try {
             const response = await newRequest.get(`/api/v1/beds/${patient?.bedId || ""}`);
             setassignedbednumber(response?.data?.data?.bedNumber || "");
-            console.log(response, "Bed");
           } catch (error) {
             console.error("Error fetching departments:", error);
           }
@@ -545,8 +542,11 @@ const Servingss = () => {
                     {/* Buttons */}
                     <div className="flex space-x-2 mt-7">
                       <button
-                        className="bg-[#33D805] text-white font-semibold py-2 px-10 rounded hover:bg-yellow-600"
+                        className={`bg-[#33D805] text-white font-semibold py-2 px-10 rounded hover:bg-yellow-600 ${
+                          startTime ? " cursor-not-allowed" : "cursor-pointer"
+                        }`}
                         onClick={handleBeginClick}
+                        disabled={startTime}
                       >
                         {loadingbegintime ? (
                           <div className="flex items-center gap-2">
@@ -573,7 +573,8 @@ const Servingss = () => {
                             {t("Begin...")}
                           </div>
                         ) : (
-                          t("Begin")
+                          // t("Begin")
+                          t(startTime ? "started" : "Begin")
                         )}
                       </button>
                       <button
