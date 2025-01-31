@@ -20,6 +20,9 @@ const WaitingArea = () => {
   const [loading, setLoading] = useState(false);
   const [pdfUrl, setPdfUrl] = useState(null);
   const [showBandPopup, setShowBandPopup] = useState(false);
+  const [showDischargePopup, setShowDischargePopup] = useState(false);
+  const [dischargeType, setDischargeType] = useState('');
+  const [remarks, setRemarks] = useState('');
   const handleOpen = () => setIsOpen(true);
   const handleClose = () => setIsOpen(false);
 
@@ -168,6 +171,23 @@ const WaitingArea = () => {
 
   const closeBandPopup = () => {
     setShowBandPopup(false);
+  };
+
+  const handleDischarge = async () => {
+    try {
+      const response = await newRequest.patch(
+        `/api/v1/patients/${id}/discharge`,
+        { remarks }
+      );
+      
+      if (response.status >= 200) {
+        toast.success(`Patient discharged (${dischargeType}) successfully`);
+        setShowDischargePopup(false);
+        refetch();
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to discharge patient");
+    }
   };
 
   return (
@@ -400,10 +420,22 @@ const WaitingArea = () => {
 
               <div className="flex space-x-4">
               <div className="flex space-x-3">
-                <button className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600">
+                <button 
+                  className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600"
+                  onClick={() => {
+                    setDischargeType('LAMA');
+                    setShowDischargePopup(true);
+                  }}
+                >
                   LAMA
                 </button>
-                <button className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600">
+                <button 
+                  className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600"
+                  onClick={() => {
+                    setDischargeType('DAMA');
+                    setShowDischargePopup(true);
+                  }}
+                >
                   DAMA
                 </button>
               </div>
@@ -618,6 +650,39 @@ const WaitingArea = () => {
                 className="bg-red-500 text-white px-4 py-2 rounded"
               >
                 Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showDischargePopup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+            <h2 className="text-lg font-bold mb-4">Confirm {dischargeType} Discharge</h2>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Remarks
+              </label>
+              <textarea
+                className="w-full p-2 border border-gray-300 rounded-lg"
+                rows="3"
+                value={remarks}
+                onChange={(e) => setRemarks(e.target.value)}
+                placeholder="Enter discharge remarks"
+              />
+            </div>
+            <div className="flex justify-end space-x-2">
+              <button
+                onClick={() => setShowDischargePopup(false)}
+                className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+              >
+                Close
+              </button>
+              <button
+                onClick={handleDischarge}
+                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+              >
+                Yes
               </button>
             </div>
           </div>
