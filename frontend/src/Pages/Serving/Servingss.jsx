@@ -84,12 +84,9 @@ const Servingss = () => {
         setBloodGroup(patient.bloodGroup);
         setBirthDate(patient.birthDate ? patient.birthDate.split("T")[0] : "");
         setMrnNumber(patient.mrnNumber);
-
-        
           try {
             const response = await newRequest.get(`/api/v1/beds/${patient?.bedId || ""}`);
             setassignedbednumber(response?.data?.data?.bedNumber || "");
-            console.log(response, "Bed");
           } catch (error) {
             console.error("Error fetching departments:", error);
           }
@@ -186,7 +183,7 @@ const Servingss = () => {
 
     try {
       const response = await fetch(
-        `${baseUrl}/api/v1/patients/${id}/toggle-call`,
+        `${baseUrl}/api/v1/patients/${id}/toggle-call?call=second`,
         {
           method: "PATCH",
           headers: {
@@ -271,27 +268,31 @@ const Servingss = () => {
   };
 
   const handleEndClick = async () => {
-    setloadingendtime(true);
-    try {
-      const response = await newRequest.patch(
-        `/api/v1/patients/${id}/end-time`
-      );
-      const data = response;
-      if (response.status == 200) {
-        toast.success(data?.message || "End time set successfully");
-        fetchPatientData();
-        // navigate("/monitoring");
-      } else {
+    if (!startTime) {
+      toast.error("Please select the begin date first.");
+    } else {
+      setloadingendtime(true);
+      try {
+        const response = await newRequest.patch(
+          `/api/v1/patients/${id}/end-time`
+        );
+        const data = response;
+        if (response.status == 200) {
+          toast.success(data?.message || "End time set successfully");
+          fetchPatientData();
+          // navigate("/monitoring");
+        } else {
+          const errorMessage =
+            data?.data?.message || "Error calling end-time API";
+          toast.error(errorMessage);
+        }
+      } catch (error) {
         const errorMessage =
-          data?.data?.message || "Error calling end-time API";
+          error.response?.data?.message || "Error calling end-time API";
         toast.error(errorMessage);
+      } finally {
+        setloadingendtime(false);
       }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.message || "Error calling end-time API";
-      toast.error(errorMessage);
-    } finally {
-      setloadingendtime(false);
     }
   };
 
@@ -545,8 +546,11 @@ const Servingss = () => {
                     {/* Buttons */}
                     <div className="flex space-x-2 mt-7">
                       <button
-                        className="bg-[#33D805] text-white font-semibold py-2 px-10 rounded hover:bg-yellow-600"
+                        className={`bg-[#33D805] text-white font-semibold py-2 px-10 rounded hover:bg-yellow-600 ${
+                          startTime ? " cursor-not-allowed" : "cursor-pointer"
+                        }`}
                         onClick={handleBeginClick}
+                        disabled={startTime}
                       >
                         {loadingbegintime ? (
                           <div className="flex items-center gap-2">
@@ -573,11 +577,15 @@ const Servingss = () => {
                             {t("Begin...")}
                           </div>
                         ) : (
-                          t("Begin")
+                          // t("Begin")
+                          t(startTime ? "started" : "Begin")
                         )}
                       </button>
                       <button
-                        className="bg-red-500 text-white font-semibold py-2 px-10 rounded hover:bg-blue-600"
+                        className={`bg-red-500 text-white font-semibold py-2 px-10 rounded hover:bg-blue-600 ${
+                          endTime ? " cursor-not-allowed" : "cursor-pointer"
+                        }`}
+                        disabled={endTime}
                         onClick={handleEndClick}
                       >
                         {loadingendtime ? (

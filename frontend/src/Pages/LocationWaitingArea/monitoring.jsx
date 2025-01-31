@@ -97,7 +97,7 @@ const PatientMonitoring = () => {
       {/* Now Serving Section */}
       <div className="mt-6 bg-white p-4 rounded-lg shadow-md">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-blue-700 text-xl font-bold">NOW SERVING</h2>
+          <h2 className="text-blue-700 text-xl font-bold">ASSIGNED</h2>
           <div className="flex items-center space-x-4">
             <span className="text-gray-700 font-medium">Number of Patients</span>
             <input

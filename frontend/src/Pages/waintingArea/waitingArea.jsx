@@ -139,7 +139,7 @@ const WaitingArea = () => {
     setCallPatient(newCallPatientStatus);
 
     try {
-      const response = await fetch(`${baseUrl}/api/v1/patients/${id}/toggle-call`, {
+      const response = await fetch(`${baseUrl}/api/v1/patients/${id}/toggle-call?call=first`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
