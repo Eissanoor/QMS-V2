@@ -395,7 +395,18 @@ const WaitingArea = () => {
               >
                 {callPatient ? t("Cancel Call Patient") : t("Call Patient")}
               </button>
+              {/* /i want to their two button add his caption LAMA, DAMA/ */}
+              
+
               <div className="flex space-x-4">
+              <div className="flex space-x-3">
+                <button className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600">
+                  LAMA
+                </button>
+                <button className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600">
+                  DAMA
+                </button>
+              </div>
                 <button
                   className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600"
                   onClick={openBandPopup}
