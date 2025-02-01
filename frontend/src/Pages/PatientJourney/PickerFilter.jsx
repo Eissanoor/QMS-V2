@@ -4,37 +4,42 @@ import {
   ModalContent,
   ModalBody,
   Button,
-  RadioGroup,
-  Radio,
   useDisclosure,
 } from "@heroui/react";
 import { VscSettings } from "react-icons/vsc";
+import { Input, Select, SelectItem } from "@nextui-org/react";
 
 function PickerFilter({ onFilterChange, currentStatus }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [selectedStatus, setSelectedStatus] = React.useState(
-    currentStatus || "all"
-  );
+  const [selectedStatus, setSelectedStatus] = React.useState(currentStatus || "all");
+  const [searchTerm, setSearchTerm] = React.useState("");
 
+  
   const handleStatusChange = (value) => {
-    console.log(value, "value");
+    console.log(value.target.value, "+", "dataFilter");
     
     setSelectedStatus(value);
     onFilterChange?.({
-      status: value,
+      statusfilter: value,
+      searchTerm: searchTerm,
+    });
+    //  onFilterChange({ status: value, searchTerm }); 
+  };
+
+  const handleInputChange = (e) => {
+    const newSearchTerm = e.target.value;
+    setSearchTerm(newSearchTerm);
+    onFilterChange?.({
+      statusfilter: selectedStatus,
+      searchTerm: newSearchTerm,
     });
   };
 
+
   const columns = [
-    { name: "Name", uid: "name" },
-    { name: "MRN Number", uid: "mrnNumber" },
-    { name: "Registration", uid: "registration" },
-    { name: "Triage", uid: "firstCall" },
-    { name: "Dept. Call", uid: "secondCall" },
-    { name: "Vital Signs", uid: "vitalSigns" },
-    { name: "Department Assigned", uid: "departmentAssigned" },
-    { name: "Treatment Began", uid: "treatmentBegan" },
-    { name: "Treatment Ended", uid: "treatmentEnded" },
+    { name: "patient status", uid: "name" },
+    { name: "Gender", uid: "mrnNumber" },
+    { name: "Age", uid: "registration" },
   ];
 
   return (
@@ -52,31 +57,40 @@ function PickerFilter({ onFilterChange, currentStatus }) {
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         classNames={{
-          base: "bg-white flex my-auto",
+          base: "bg-white shadow-lg flex my-auto",
           header: "border-b border-gray-200",
           body: "py-6",
           footer: "border-t border-gray-200",
         }}
-        size="sm"
+        backdrop="opaque"
+        size="lg"
       >
-        <ModalContent className="bg-white rounded-lg shadow-lg p-6 w-full max-w-sm h-auto overflow-y-auto">
+        <ModalContent className="bg-white rounded-lg shadow-lg p-6 w-full z-30">
           {(onClose) => (
-            <ModalBody className="gap-6">
-              <RadioGroup
-                label="Select a Filter"
+            <ModalBody className="gap-6 flex flex-row sm:flex-col lg:flex-row w-full">
+              <Select
+                className="max-w-xs bg-gray-50 rounded-sm "
+                placeholder="Filter"
                 value={selectedStatus}
-                onValueChange={handleStatusChange}
-                classNames={{
-                  label: "text-foreground-500 text-lg",
-                  wrapper: "space-y-3",
-                }}
+                onChange={handleStatusChange}
               >
-                {columns.map((column) => (
-                  <Radio key={column.uid} value={column.uid}>
-                    {column.name}
-                  </Radio>
+                {columns.map((key, value) => (
+                  <SelectItem
+                    key={value}
+                    value={key.uid}
+                    className="bg-white hover:bg-gray-200 w-full"
+                  >
+                    {key.name || ""}
+                  </SelectItem>
                 ))}
-              </RadioGroup>
+              </Select>
+              <Input
+                value={searchTerm}
+                onChange={handleInputChange}
+                placeholder="Search"
+                aria-label="Search term"
+                className="bg-gray-50 border border-gray-50 "
+              />
             </ModalBody>
           )}
         </ModalContent>
