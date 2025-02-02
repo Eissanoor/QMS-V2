@@ -25,14 +25,27 @@ function PatientJourney() {
 
     const [sortBy, setSortBy] = useState("createdAt");
     const [sortOrder, setSortOrder] = useState("desc");
-    const [dataFilter, setdataFilter] = useState('')
-    const [statusfilter, setstatusfilter] = useState('')
+
+    const [filters, setFilters] = useState({});
 
     const fetchAllRoles = async () => {
         setLoading(true);
         try {
+            // Clean filters object to remove empty values
+            const cleanFilters = Object.entries(filters).reduce((acc, [key, value]) => {
+                if (value !== "" && value !== null && value !== undefined) {
+                    acc[key] = value;
+                }
+                return acc;
+            }, {});
+
             const response = await newRequest.get("/api/v1/patients/journeys", {
-                params: { page, search, sortBy, order: sortOrder },
+                params: { 
+                    page,
+                    sortBy, 
+                    order: sortOrder,
+                    ...cleanFilters  // Only include filters with values
+                },
             });
             setAllRoles(response?.data?.data?.data || []);
             setPagination(response.data.data.pagination);
@@ -45,7 +58,7 @@ function PatientJourney() {
 
     useEffect(() => {
         fetchAllRoles();
-    }, [page, search, sortBy, sortOrder]);
+    }, [page, sortBy, sortOrder, filters]);
 
     const formatDateTime = (dateTime) => {
         if (!dateTime) return ""; // Handle empty values
@@ -140,13 +153,10 @@ function PatientJourney() {
                     />
 
                     <PickerFilter
-                    onFilterChange={({ datafilterss, searchTerm  }) => {
-                      setdataFilter(datafilterss);
-                       setstatusfilter(searchTerm);
-                        fetchAllRoles();
-                    }}
-                    // currentStatus={dataFilter}
-                    // currentIsActive={isActive}
+                        onFilterChange={(newFilters) => {
+                            setFilters(newFilters);
+                            fetchAllRoles();
+                        }}
                     />
 
                     <PickerSort
