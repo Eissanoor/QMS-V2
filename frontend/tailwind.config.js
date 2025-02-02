@@ -1,7 +1,9 @@
+import { nextui } from '@nextui-org/react'
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
+    "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
@@ -44,10 +46,12 @@ module.exports = {
       'serachbtn':"#350F9F",
       'applybtn':'#F35C08',
       'Allergies': '#BC0808',  
-      // 'share': '#1DAE11',  
+      'maincolor': '#13BA8885',  
       // 'orange': '#F98E1A',
       // 'cpanel': '#F28C28',
     },
   },
-}
+},
+  darkMode: "class",
+  // plugins: [nextui(), require("tailwind-scrollbar")({ nocompatible: true })],
 }

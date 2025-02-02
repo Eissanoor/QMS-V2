@@ -25,6 +25,8 @@ function PatientJourney() {
 
     const [sortBy, setSortBy] = useState("createdAt");
     const [sortOrder, setSortOrder] = useState("desc");
+    const [dataFilter, setdataFilter] = useState('')
+    const [statusfilter, setstatusfilter] = useState('')
 
     const fetchAllRoles = async () => {
         setLoading(true);
@@ -137,14 +139,15 @@ function PatientJourney() {
                         startContent={<FaSearch className="text-default-300 me-2" />}
                     />
 
-                    {/* <PickerFilter
-                    // onFilterChange={({ status, isActive }) => {
-                    //   setStatus(status);
-                    //   setIsActive(isActive);
-                    // }}
-                    // currentStatus={status}
+                    <PickerFilter
+                    onFilterChange={({ datafilterss, searchTerm  }) => {
+                      setdataFilter(datafilterss);
+                       setstatusfilter(searchTerm);
+                        fetchAllRoles();
+                    }}
+                    // currentStatus={dataFilter}
                     // currentIsActive={isActive}
-                    /> */}
+                    />
 
                     <PickerSort
                         onSort={({ sortBy: newSortBy, sortOrder: newSortOrder }) => {
@@ -169,27 +172,23 @@ function PatientJourney() {
     );
 
     const bottomContent = useMemo(
-        () => (
-            <div className="py-2 px-2 flex justify-between items-center">
-                <span className="w-[30%] text-sm text-gray-500">
-                    {pagination?.total || 0} Patient Journey in total
-                </span>
-                <Pagination
-                    isCompact
-                    showControls
-                    showShadow
-                    classNames={{
-                        wrapper: "gap-0 overflow-visible h-8",
-                        item: "w-8 h-8 text-sm rounded-none ",
-                        cursor: "bg-navy-600 text-white font-bold",
-                    }}
-                    page={page}
-                    total={pagination?.totalPages || 1}
-                    onChange={setPage}
-                />
-            </div>
-        ),
-        [page, pagination]
+      () => (
+        <div className="py-2 px-2 flex justify-between items-center">
+          <span className="w-[30%] text-sm text-gray-500">
+            {pagination?.total || 0} Patient Journey in total
+          </span>
+          <Pagination
+            isCompact
+            showControls
+            showShadow
+            color="maincolor"
+            page={page}
+            total={pagination?.totalPages || 1}
+            onChange={setPage}
+          />
+        </div>
+      ),
+      [page, pagination]
     );
 
     const handleColumnSort = (descriptor) => {
