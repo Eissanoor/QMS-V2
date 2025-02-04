@@ -796,12 +796,7 @@ const Servingss = () => {
                 >
                   {t("DAMA")}
                 </button>
-                <button
-                  className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600"
-                  onClick={() => {/* Add Void handler */}}
-                >
-                  {t("Void")}
-                </button>
+                
                 <button 
                   className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600"
                   onClick={() => navigate("/monitoring")}

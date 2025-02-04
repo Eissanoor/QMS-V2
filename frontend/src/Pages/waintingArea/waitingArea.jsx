@@ -455,7 +455,12 @@ const WaitingArea = () => {
                 >
                   {t("Re-Print")}
                 </button>
-
+                <button
+                  className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600"
+                  onClick={() => {/* Add Void handler */}}
+                >
+                  {t("Void")}
+                </button>
               
                 
               </div>
