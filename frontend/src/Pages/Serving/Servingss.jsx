@@ -319,6 +319,7 @@ const Servingss = () => {
                     {t("Patient Name")}
                   </label>
                   <input
+                    disabled
                     type="text"
                     value={PatientName}
                     onChange={(e) => setPatientName(e.target.value)}
@@ -331,6 +332,7 @@ const Servingss = () => {
                     {t("Mobile Number")}
                   </label>
                   <input
+                    disabled
                     type="text"
                     value={MobileNumber}
                     readOnly
@@ -342,6 +344,7 @@ const Servingss = () => {
                     {t("ID Number")}
                   </label>
                   <input
+                    disabled
                     type="text"
                     value={IDNumber}
                     onChange={(e) => setIDNumber(e.target.value)}
@@ -354,6 +357,7 @@ const Servingss = () => {
                     {t("Nationality")}
                   </label>
                   <input
+                    disabled
                     type="text"
                     value={Nationality}
                     readOnly
@@ -365,6 +369,7 @@ const Servingss = () => {
                     {t("Age")}
                   </label>
                   <input
+                    disabled
                     type="text"
                     value={Age}
                     onChange={(e) => setAge(e.target.value)}
@@ -377,6 +382,7 @@ const Servingss = () => {
                     {t("Gender")}
                   </label>
                   <input
+                    disabled
                     type="text"
                     value={Sex}
                     readOnly
@@ -388,6 +394,7 @@ const Servingss = () => {
                     {t("Blood Group")}
                   </label>
                   <input
+                    disabled
                     type="text"
                     value={bloodGroup}
                     readOnly
@@ -399,6 +406,7 @@ const Servingss = () => {
                     {t("Birth Date")}
                   </label>
                   <input
+                    disabled
                     type="text"
                     value={birthDate}
                     readOnly
@@ -410,6 +418,7 @@ const Servingss = () => {
                     {t("MRN Number")}
                   </label>
                   <input
+                    disabled
                     type="text"
                     value={mrnNumber}
                     readOnly
@@ -422,6 +431,7 @@ const Servingss = () => {
                     {t("Chief Complaint")}
                   </label>
                   <input
+                    disabled
                     type="text"
                     value={ChiefComplaint}
                     onChange={(e) => setChiefComplaint(e.target.value)}
@@ -452,6 +462,7 @@ const Servingss = () => {
                       {t(field)}
                     </label>
                     <input
+                      disabled
                       type="text"
                       name={field}
                       value={VitalSigns[field]}
@@ -474,6 +485,7 @@ const Servingss = () => {
                   <div className="flex items-center space-x-4">
                     <label className="inline-flex items-center">
                       <input
+                        disabled
                         type="radio"
                         value="true"
                         checked={Allergies === true}
@@ -494,6 +506,7 @@ const Servingss = () => {
                     </label>
                     <label className="inline-flex items-center">
                       <input
+                        disabled
                         type="radio"
                         value="false"
                         checked={Allergies === false}
@@ -517,6 +530,7 @@ const Servingss = () => {
                           Specify
                         </label>
                         <input
+                          disabled
                           type="text"
                           placeholder="Specify"
                           className="p-2 border border-green-500 rounded-lg"
