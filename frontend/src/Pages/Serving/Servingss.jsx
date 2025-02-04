@@ -2,12 +2,11 @@ import React, { useState, useEffect } from "react";
 import SideNav from "../../components/Sidebar/SideNav";
 import { useTranslation } from "react-i18next";
 import "react-phone-input-2/lib/style.css";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { baseUrl } from "../../utils/config";
 import toast from "react-hot-toast";
 import newRequest from "../../utils/newRequest";
 import AssignPopup from "../waintingArea/assignPopup";
-import { useNavigate } from "react-router-dom";
 const Servingss = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
@@ -17,6 +16,9 @@ const Servingss = () => {
   const [loadingbegintime, setloadingbegintime] = useState(false);
   const [loadingendtime, setloadingendtime] = useState(false);
   const [pdfUrl, setPdfUrl] = useState(null);
+  const [showDischargePopup, setShowDischargePopup] = useState(false);
+  const [dischargeType, setDischargeType] = useState('');
+  const [remarks, setRemarks] = useState('');
   const handleOpen = () => setIsOpen(true);
   const handleClose = () => setIsOpen(false);
 
@@ -293,6 +295,23 @@ const Servingss = () => {
       } finally {
         setloadingendtime(false);
       }
+    }
+  };
+
+  const handleDischarge = async () => {
+    try {
+      const response = await newRequest.patch(
+        `/api/v1/patients/${id}/discharge`,
+        { remarks }
+      );
+      
+      if (response.status >= 200) {
+        toast.success(`Patient discharged (${dischargeType}) successfully`);
+        setShowDischargePopup(false);
+        navigate("/monitoring");
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to discharge patient");
     }
   };
 
@@ -755,42 +774,41 @@ const Servingss = () => {
                     : "bg-yellow-400 hover:bg-yellow-500"
                 }`}
                 onClick={handleCallPatientToggle}
-                // disabled
               >
                 {callPatient ? t("Cancel Call Patient") : t("Call Patient")}
               </button>
-              {/* <div className="flex space-x-4">
+              <div className="flex space-x-4">
                 <button
-                  className={`text-white px-6 py-2 rounded-lg hover:bg-blue-600 cursor-not-allowed ${VitalSigns.BP ? "" : "opacity-50 cursor-not-allowed"
-                    } ${callPatient
-                      ? "bg-blue-500 hover:bg-blue-600"
-                      : "bg-yellow-400 hover:bg-yellow-500"
-                    }`}
-                  onClick={handleOpen}
-                  disabled
+                  className="bg-yellow-500 text-white px-6 py-2 rounded-lg hover:bg-yellow-600"
+                  onClick={() => {
+                    setDischargeType('LAMA');
+                    setShowDischargePopup(true);
+                  }}
                 >
-                  {loading ? <Spinner /> : `${t("Assign")}`}
+                  {t("LAMA")}
                 </button>
                 <button
-                  className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600"
-                  onClick={handleSave}
+                  className="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600"
+                  onClick={() => {
+                    setDischargeType('DAMA');
+                    setShowDischargePopup(true);
+                  }}
                 >
-                  {loading ? <Spinner /> : `${t("Save")}`}
+                  {t("DAMA")}
                 </button>
                 <button
-                  className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600"
-                  onClick={openPopup}
+                  className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600"
+                  onClick={() => {/* Add Void handler */}}
                 >
-                  {t("Re-Print")}
-                </button>
-
-                <button className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600">
                   {t("Void")}
                 </button>
-                <button className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600">
+                <button 
+                  className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600"
+                  onClick={() => navigate("/monitoring")}
+                >
                   {t("Close")}
                 </button>
-              </div> */}
+              </div>
             </div>
           </div>
           {/* // )} */}
@@ -825,6 +843,39 @@ const Servingss = () => {
             patientId={id}
             onAssignSuccess={fetchPatientData}
           />
+        )}
+        {showDischargePopup && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+              <h2 className="text-lg font-bold mb-4">Confirm {dischargeType} Discharge</h2>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Remarks
+                </label>
+                <textarea
+                  className="w-full p-2 border border-gray-300 rounded-lg"
+                  rows="3"
+                  value={remarks}
+                  onChange={(e) => setRemarks(e.target.value)}
+                  placeholder="Enter discharge remarks"
+                />
+              </div>
+              <div className="flex justify-end space-x-2">
+                <button
+                  onClick={() => setShowDischargePopup(false)}
+                  className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDischarge}
+                  className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                >
+                  Confirm
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </SideNav>
